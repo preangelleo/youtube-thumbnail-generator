@@ -6,9 +6,9 @@ smart line-breaking algorithms, and dynamic layout adjustments.
 
 Features:
 - Chinese/English differentiated text processing (30% larger fonts for Chinese)
-- Smart line-breaking: 9 chars for Chinese titles, 20 for subtitles
+- Smart line-breaking: 9 chars for Chinese titles, intelligent English wrapping
 - Triangle overlay integration into right-side images
-- Dynamic layout with title repositioning when no subtitle provided
+- Centered title layout for focused content
 - Professional templates with PNG-based text rendering
 - Multi-platform font support (Mac/Linux/RunPod/AWS)
 
@@ -18,7 +18,6 @@ Basic Usage:
     generator = FinalThumbnailGenerator("path/to/template.jpg")
     result = generator.generate_final_thumbnail(
         title="Your Amazing Title",
-        subtitle="Optional subtitle",
         author="Your Name",
         logo_path="path/to/logo.png",
         right_image_path="path/to/image.jpg",

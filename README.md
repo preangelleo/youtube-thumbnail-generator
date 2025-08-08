@@ -14,46 +14,86 @@ Professional YouTube thumbnail automatic generation tool with intelligent Chines
 ## 📋 Core Features
 
 - ✅ **Intelligent Chinese/English System**: PNG overlay technology, perfect Chinese/English text mixing
-- ✅ **Smart Line-breaking Algorithm**: Chinese 9/20 character limits, English 3-line truncation  
-- ✅ **Font Differentiation Optimization**: Chinese fonts 30% larger, subtitle height increased by 20%
+- ✅ **Smart Line-breaking Algorithm**: Chinese 9 character limits, English 3-line truncation  
+- ✅ **Font Differentiation Optimization**: Chinese fonts 30% larger for optimal readability
 - ✅ **Professional Visual Effects**: Triangle transition integrated into images, text always on top layer
 - ✅ **Intelligent Image Processing**: Auto square conversion + 900x900 filling
 - ✅ **Multi-endpoint API Support**: Flask RESTful API + Chapter functionality
 - ✅ **Smart Font Selection**: Chinese PingFang/Founder, English Lexend Bold
+- ✅ **Three Theme Modes**: Dark (black bg), Light (white bg), Custom (user template)
+- ✅ **Full Color Customization**: Title color, author color, triangle toggle - all parameterized
+- ✅ **Dynamic Font Scaling**: Auto font size adjustment based on text length (1-17 characters)
 
-## 🎨 Template Showcase
-
-### Professional Template - Currently the Only Template
+## 🎨 Three Theme Modes
 
 **Canvas Size**: 1600x900 pixels
 
-**Effect Showcase**:
+### 🌑 Dark Theme - Professional Black Background
+**Perfect for**: Tech content, gaming, serious topics  
+**Features**: Black background + White bold text + Black triangle overlay + Professional contrast
 
-#### Chinese Sample
-![Chinese Thumbnail Sample](template_samples/chinese_sample_template_1.jpg)
+#### Chinese Sample (10 characters - optimal length)
+![Chinese Dark Theme](https://api.sumatman.ai/image/20250808_232317_chinese_sample_template_dark.jpg)
 
-#### English Sample  
-![English Thumbnail Sample](template_samples/english_sample_template_1.jpg)
+#### English Sample (7 words - optimal length)  
+![English Dark Theme](https://api.sumatman.ai/image/20250808_232340_english_sample_template_dark.jpg)
 
-**5 Supported Input Parameters**:
+### 🌕 Light Theme - Clean White Background
+**Perfect for**: Educational content, lifestyle, bright topics  
+**Features**: White background + Black bold text + White triangle overlay + Clean minimalist look
+
+#### Chinese Sample (10 characters - optimal length)
+![Chinese Light Theme](https://api.sumatman.ai/image/20250808_232325_chinese_sample_template_light.jpg)
+
+#### English Sample (7 words - optimal length)
+![English Light Theme](https://api.sumatman.ai/image/20250808_232346_english_sample_template_light.jpg)
+
+### 🌈 Custom Theme - Your Own Background
+**Perfect for**: Brand content, creative projects, unique aesthetics  
+**Features**: Custom 1600x900 background + Customizable text colors + No triangle overlay + Full creative control
+
+#### Chinese Sample (10 characters - optimal length)
+![Chinese Custom Theme](https://api.sumatman.ai/image/20250808_232332_chinese_sample_template_custom.jpg)
+
+#### English Sample (7 words - optimal length)
+![English Custom Theme](https://api.sumatman.ai/image/20250808_232353_english_sample_template_custom.jpg)
+
+## 💡 Optimal Length Recommendations
+
+### 🎯 Best Results Guidelines
+For the most professional and visually appealing thumbnails:
+
+#### 🇨🇳 Chinese Titles
+**Optimal Length: 10-12 characters**
+- **10 characters**: Perfect balance, excellent readability
+- **12 characters**: Maximum recommended, maintains clarity
+- **Examples**: "AI技术指南教程" (8 chars) ✅ "完整AI技术指南教程系统" (12 chars) ✅
+
+#### 🇺🇸 English Titles  
+**Optimal Length: 7 words**
+- **7 words**: Perfect for 3-line layout without truncation
+- **Example**: "Complete AI Technology Guide Tutorial Series Episode" (7 words) ✅
+- **Note**: Longer titles may be truncated with ellipsis (...)
+
+## 📦 Supported Parameters
+
+### Required Parameters
 1. **title** - Main title text (required)
-2. **subtitle** - Subtitle text (optional)  
-3. **author** - Author name (optional, auto-capitalized)
-4. **logo_path** - Logo file path (optional)
-5. **right_image_path** - Right-side image path (optional)
 
-**Color Configuration** (currently fixed, no custom colors yet):
-- Title: White #FFFFFF
-- Subtitle: Light yellow #FFEB9C  
-- Author: Light gray #CCCCCC
-- Background: Pure black #000000
+### Optional Parameters  
+2. **author** - Author name (optional, auto-capitalized)
+3. **logo_path** - Logo file path (optional)
+4. **right_image_path** - Right-side image path (optional)
+5. **theme** - Theme mode: "dark", "light", "custom" (default: "dark")
+6. **custom_template** - Custom background path for custom theme (required when theme="custom")
+7. **title_color** - Title text color in hex format (e.g., "#FFFFFF")
+8. **author_color** - Author text color in hex format (e.g., "#CCCCCC")  
+9. **enable_triangle** - Enable/disable triangle overlay (boolean)
 
-**Layout Zones**:
-- **Left Text Area**: 700x900 pixels - Black background, text display
-- **Right Image Area**: 900x900 pixels - Square image filling  
-- **Triangle Transition**: 200x900 pixels - Elegant diagonal separation effect
-
-> **Future Plans**: We will add more template styles and custom color options!
+### Theme Defaults
+- **Dark Theme**: Black bg + White text (#FFFFFF) + Light gray author (#CCCCCC) + Black triangle
+- **Light Theme**: White bg + Black text (#000000) + Dark gray author (#666666) + White triangle
+- **Custom Theme**: User background + White text (#FFFFFF) + Light gray author (#CCCCCC) + No triangle
 
 ## 🧠 Intelligent Text System
 
@@ -66,12 +106,10 @@ Instead of drawing text directly on template:
 
 ### Chinese/English Differentiated Processing
 #### Chinese Optimization
-- **Font Enlargement**: 30% larger than English (54px vs 42px title, 26px vs 20px subtitle)
-- **Subtitle Height Increase**: 20% taller than English (36px vs 30px)
+- **Font Enlargement**: 30% larger than English (54px vs 42px title)
 - **Smart Line-breaking**: 
   - Title: Break after 9 characters, divide by 2, odd characters go to second line
-  - Subtitle: Break after 20 characters, divide by 2
-- **Line Spacing**: Title 16px, subtitle 8px
+- **Line Spacing**: Title 16px
 
 #### English Processing
 - **Space-based Line-breaking**: Natural word boundary wrapping
@@ -88,28 +126,19 @@ title="The Ultimate Complete Guide to Advanced AI Technology"
 ```
 - **Smart Line-breaking**: Auto-calculate optimal line-break positions
 - **Dynamic Height**: Adjust PNG height based on line count (55px/line + line spacing)
-- **Font**: 45px Helvetica, white #FFFFFF
-- **Effects**: Black stroke + shadow, professional visual
-- **Position**: Starting at (50, 280), actual height dynamically adjusted
+- **Dynamic Font Scaling**: Auto font size based on character count (1-17 chars)
+- **Effects**: Clean bold font with theme-based colors
+- **Position**: Starting at (55, 330), dynamically centered
 
 ### Optional Parameters
-
-**`subtitle`** (str) - Subtitle
-```python
-subtitle="Everything You Need to Know About Modern Technology"
-```
-- **Smart Adaptation**: 1 line=30px, 2 lines=68px, 3 lines=106px height
-- **Font**: 20px Helvetica, light yellow #FFEB9C  
-- **Position**: 20px spacing below title, auto-calculate Y coordinate
-- **Truncation Rule**: Auto-add ellipsis if exceeds 3 lines
 
 **`author`** (str) - Author name
 ```python
 author="Leo Wang"  # Auto-converts to "LEO WANG"
 ```
 - **Format**: Auto-convert to uppercase
-- **Position**: Fixed bottom (50, 860)
-- **Font**: 36px Lexend Bold, light gray #CCCCCC
+- **Position**: Fixed bottom (55, 800)
+- **Font**: 36px Lexend Bold, theme-based color
 
 **`logo_path`** (str) - Logo file path
 ```python
@@ -126,6 +155,40 @@ right_image_path="assets/your_image.jpg"
 - **Smart Cropping**: Auto-convert to square (center crop)
 - **Fill Method**: Scale to 900x900 pixels to fill right side
 - **Position**: Right area starting at (700, 0)
+
+### Theme & Color Parameters
+
+**`theme`** (str) - Theme mode: "dark", "light", "custom"
+```python
+theme="dark"     # Default: Black bg + white text + black triangle
+theme="light"    # White bg + black text + white triangle  
+theme="custom"   # User-provided template + custom colors
+```
+
+**`custom_template`** (str) - Custom template path (required for custom theme)
+```python
+custom_template="path/to/your_template.png"  # Must be 1600x900 PNG
+```
+
+**`title_color`** (str) - Title text color in hex format
+```python
+title_color="#FFFFFF"  # White (dark theme default)
+title_color="#000000"  # Black (light theme default)
+title_color="#FF0000"  # Red (custom example)
+```
+
+**`author_color`** (str) - Author text color in hex format  
+```python
+author_color="#CCCCCC"  # Light gray (dark theme default)
+author_color="#666666"  # Dark gray (light theme default)
+author_color="#0000FF"  # Blue (custom example)
+```
+
+**`enable_triangle`** (bool) - Enable/disable triangle overlay
+```python
+enable_triangle=True   # Default for dark/light themes
+enable_triangle=False  # Default for custom theme
+```
 
 ## 📦 Installation
 
@@ -160,23 +223,55 @@ pip install "youtube-thumbnail-generator[api]"
 ## 🚀 Usage Methods
 
 ### 1. Use as Python Library
+
+#### Dark Theme (Default)
 ```python
 from youtube_thumbnail_generator import FinalThumbnailGenerator
 
-# Initialize generator (using included template)
+# Initialize generator
 generator = FinalThumbnailGenerator("templates/professional_template.jpg")
 
-# Generate thumbnail (all parameter example)
+# Generate Dark theme thumbnail (recommended: 10-12 Chinese chars or 7 English words)
 result = generator.generate_final_thumbnail(
-    title="The Ultimate Complete Guide to Advanced AI Technology Revolution and Future Gaming Setup Reviews 2025",
-    subtitle="Everything You Need to Know About Modern Technology and Future Developments",
+    title="Complete AI Technology Guide",  # 5 words - will be enlarged
     author="Leo Wang",
-    logo_path="logos/animagent_logo.png",
-    right_image_path="assets/testing_image.jpeg",
-    output_path="outputs/final_test.jpg"
+    logo_path="logos/your_logo.png",
+    right_image_path="assets/your_image.jpg",
+    output_path="outputs/dark_theme.jpg",
+    theme="dark"  # Default theme
 )
+```
 
-print(f"Generation complete: {result}")
+#### Light Theme  
+```python
+# Generate Light theme thumbnail  
+result = generator.generate_final_thumbnail(
+    title="AI技术指南完整教程",  # 10 Chinese characters - optimal
+    author="Leo Wang",
+    logo_path="logos/your_logo.png", 
+    right_image_path="assets/your_image.jpg",
+    output_path="outputs/light_theme.jpg",
+    theme="light",
+    title_color="#000000",  # Black text for white background
+    author_color="#666666"  # Dark gray author
+)
+```
+
+#### Custom Theme
+```python
+# Generate Custom theme with your own background
+result = generator.generate_final_thumbnail(
+    title="Custom Background Demo",  # 4 words - will be enlarged
+    author="Your Name",
+    logo_path="logos/your_logo.png",
+    right_image_path=None,  # No right image needed
+    output_path="outputs/custom_theme.jpg",
+    theme="custom",
+    custom_template="your_background_1600x900.png",  # Your custom background
+    title_color="#FFFFFF",  # White text  
+    author_color="#CCCCCC",  # Light gray author
+    enable_triangle=False  # No triangle overlay
+)
 ```
 
 ### 2. Command Line API Service
@@ -199,7 +294,6 @@ from youtube_thumbnail_generator import FinalThumbnailGenerator, create_text_png
 generator = FinalThumbnailGenerator("path/to/your/template.jpg")
 result = generator.generate_final_thumbnail(
     title="Your Video Title",
-    subtitle="Subtitle",
     output_path="output/thumbnail.jpg"
 )
 
@@ -220,7 +314,6 @@ curl -X POST http://localhost:5002/api/generate/enhanced \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Amazing Tech Reviews 2025",
-    "subtitle": "The Future is Now",
     "author": "Leo Wang",
     "logo_path": "logos/animagent_logo.png",
     "right_image_path": "assets/testing_image.jpeg"
@@ -252,7 +345,7 @@ import requests
 import time
 import json
 
-def generate_thumbnail_api(title, subtitle=None, author=None, logo_path=None, image_path=None):
+def generate_thumbnail_api(title, author=None, logo_path=None, image_path=None):
     """Generate thumbnail using API"""
     
     # 1. Send generation request
@@ -260,7 +353,6 @@ def generate_thumbnail_api(title, subtitle=None, author=None, logo_path=None, im
         headers={'Content-Type': 'application/json'},
         data=json.dumps({
             "title": title,
-            "subtitle": subtitle,
             "author": author,
             "logo_path": logo_path,
             "right_image_path": image_path
@@ -290,7 +382,6 @@ def generate_thumbnail_api(title, subtitle=None, author=None, logo_path=None, im
 # Usage example
 download_url = generate_thumbnail_api(
     title="My Amazing YouTube Video Title That Is Really Long",
-    subtitle="Quick Summary of the Content", 
     author="Your Name",
     logo_path="logos/my_logo.png",
     image_path="assets/thumbnail_image.jpg"
@@ -306,7 +397,6 @@ download_url = generate_thumbnail_api(
 ```json
 {
   "title": "Required - Main title text",
-  "subtitle": "Optional - Subtitle text", 
   "author": "Optional - Author name",
   "logo_path": "Optional - Logo file path",
   "right_image_path": "Optional - Right-side image path"
@@ -339,24 +429,19 @@ download_url = generate_thumbnail_api(
 ### Short Title Effect
 ```
 Title: "Tech News 2025" 
-→ 1 line, 55px height
-Subtitle: "Daily Updates"
-→ 1 line, 30px height
-Compact layout, professional appearance
+→ 1 line, centered layout, clean appearance
 ```
 
 ### Long Title Effect  
 ```
 Title: "The Ultimate Complete Guide to Advanced AI Technology..."
-→ 5 lines, 307px height (5×55px + 4×8px line spacing)
-Subtitle: "Everything You Need to Know About Modern Technology"  
-→ 2 lines, 68px height (2×30px + 1×8px line spacing)
-Auto-adjust positions, perfect fit
+→ Multiple lines with smart line-breaking
+Auto-adjust positions for perfect fit
 ```
 
 ### Overlong Content Handling
 ```
-Subtitle exceeds 3 lines → Auto-truncate to "Very long subtitle text that goes on and on..."
+Title exceeds 3 lines → Auto-truncate with ellipsis
 Ensure stable layout, prevent content overflow
 ```
 
@@ -448,10 +533,6 @@ youtube_thumbnail_generator/
 - **Content**: Clearly express video theme, attract viewer clicks
 - **Keywords**: Front-load important keywords, improve search results
 
-### Subtitle Usage Tips
-- **Positioning**: Supplementary explanation or emphasis points
-- **Length**: Recommend 20-60 characters, auto-handle if exceeded
-- **Style**: Create hierarchical contrast with main title
 
 ### Image Selection Principles
 - **Size**: Any size, system auto-converts to square

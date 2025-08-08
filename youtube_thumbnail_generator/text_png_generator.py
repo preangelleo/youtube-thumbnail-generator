@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-基于function_add_chapter逻辑的文字PNG生成器
-专门用于生成指定尺寸的透明背景文字图片
+基于function_add_chapter逻辑的标题PNG生成器
+专门用于生成指定尺寸的透明背景标题图片
 """
 
 from PIL import Image, ImageDraw, ImageFont
@@ -54,8 +54,6 @@ def create_text_png(text, width=600, height=300, font_size=None,
         base_dimension = min(width, height)
         if auto_height and line_height_px >= 50:  # 标题模式
             font_size = 45  # 标题固定45px字体
-        elif height <= 50:  # 对于副标题（600x50），使用固定20px字体
-            font_size = 20  # 固定20px
         elif height <= 120:  # 对于矮的PNG，使用更大比例
             font_size = int(base_dimension * 0.35)  # 35%比例
         else:
@@ -73,12 +71,8 @@ def create_text_png(text, width=600, height=300, font_size=None,
     # 如果启用auto_height，预计算所需行数
     if auto_height:
         # 临时计算可用宽度
-        if height <= 50:  # 副标题特殊处理
-            temp_left_margin = 20
-            temp_max_width = width - temp_left_margin - 5
-        else:
-            temp_margin = int(min(width, height) * margin_ratio)
-            temp_max_width = width - 2 * temp_margin
+        temp_margin = int(min(width, height) * margin_ratio)
+        temp_max_width = width - 2 * temp_margin
         
         # 预计算换行
         lines = _wrap_text(text, font, temp_max_width, language, is_title)
@@ -127,8 +121,8 @@ def create_text_png(text, width=600, height=300, font_size=None,
             # 多行时：基础高度 + 行间距 - 标题用更大间距
             if is_title and line_height_px >= 50:  # 标题
                 extra_spacing = (num_lines - 1) * 16  # 标题每行之间16px间距
-            else:  # 副标题
-                extra_spacing = (num_lines - 1) * 8   # 副标题每行之间8px间距
+            else:  # 小标题
+                extra_spacing = (num_lines - 1) * 8   # 小标题每行之间8px间距
             height = num_lines * line_height_px + extra_spacing
             print(f"智能调整高度: {height}px ({num_lines}行 x {line_height_px}px + {extra_spacing}px行间距)")
         else:
@@ -136,31 +130,41 @@ def create_text_png(text, width=600, height=300, font_size=None,
             print(f"智能调整高度: {height}px ({num_lines}行 x {line_height_px}px/行)")
         
         # 中文副标题增加20%高度
-        if language == 'chinese' and not is_title:  # 仅对副标题生效
-            original_height = height
-            height = int(height * 1.2)  # 中文副标题高度增加20%
-            print(f"中文副标题高度增加20%: {original_height}px -> {height}px")
     
     # 创建透明背景的RGBA图片
     img = Image.new('RGBA', (width, height), (0, 0, 0, 0))  # 透明背景
     draw = ImageDraw.Draw(img)
     
     # 计算可用区域（统一左边距）
-    if height <= 50:  # 副标题特殊处理，增加左边距
-        left_margin = 20  # 左边距20px
-        top_margin = int(height * margin_ratio)
-        max_width = width - left_margin - 5  # 右边距只留5px，给文字更多空间
-        max_height = height - 2 * top_margin
-    else:  # 标题也使用相同的左边距20px，保持左对齐
-        left_margin = 20  # 与副标题相同的左边距
-        top_margin = int(min(width, height) * margin_ratio)
-        max_width = width - left_margin - 20  # 右边距20px
-        max_height = height - 2 * top_margin
+    left_margin = 20  # 固定左边距20px
+    top_margin = int(min(width, height) * margin_ratio)
+    max_width = width - left_margin - 20  # 右边距20px
+    max_height = height - 2 * top_margin
     
     print(f"创建文字PNG: {width}x{height}, 字体{font_size}px, 可用区域{max_width}x{max_height}")
     
     # 处理文字换行
     lines = _wrap_text(text, font, max_width, language, is_title)
+    
+    # 新增逻辑：动态字体放大（仅对中文标题生效）
+    if language == 'chinese' and is_title:
+        # 计算最长行的字符数
+        max_line_chars = max(len(line.replace(' ', '')) for line in lines)
+        
+        # 根据最长行字符数计算字体放大倍数
+        if max_line_chars < 9:  # 少于9个字需要放大
+            # 计算放大倍数：9字=正常，8字=+20%，7字=+40%，以此类推
+            scale_multiplier = 1.0 + (9 - max_line_chars) * 0.2
+            new_font_size = int(font_size * scale_multiplier)
+            
+            print(f"动态字体放大: 最长行{max_line_chars}字 -> 字体{font_size}px * {scale_multiplier:.1f} = {new_font_size}px")
+            
+            # 重新生成字体和换行
+            font = _get_best_font(text, new_font_size, language, is_title)
+            lines = _wrap_text(text, font, max_width, language, is_title)
+            font_size = new_font_size  # 更新字体大小变量
+        else:
+            print(f"字体大小保持不变: 最长行{max_line_chars}字 (≥9字)")
     
     # 英文标题强制3行限制（即使auto_height=False）
     if language == 'english' and font_size >= 40:  # 大字体标题
@@ -218,36 +222,14 @@ def create_text_png(text, width=600, height=300, font_size=None,
         if len(lines) > 1:
             if font_size >= 40:  # 标题大字体
                 line_spacing = 16  # 标题用16px行间距
-            else:  # 副标题小字体
-                line_spacing = 8   # 副标题用8px行间距
+            else:  # 标题小字体
+                line_spacing = 8   # 小字体用8px行间距
             line_y = start_y + i * (line_height + line_spacing)
         else:
             line_y = start_y + i * line_height
         
-        # 增强阴影效果（特别是接近三角形区域的文字）
-        shadow_offset = max(2, font_size // 25)  # 增大阴影偏移
-        draw.text((start_x + shadow_offset, line_y + shadow_offset), 
-                 line, font=font, fill=(0, 0, 0, 200))  # 更浓的阴影
-        
-        # 增强描边效果
-        stroke_width = max(2, font_size // 30)  # 增大描边宽度
-        for dx in range(-stroke_width, stroke_width + 1):
-            for dy in range(-stroke_width, stroke_width + 1):
-                if dx != 0 or dy != 0:
-                    draw.text((start_x + dx, line_y + dy), 
-                             line, font=font, fill=(0, 0, 0, 255))  # 黑色描边
-        
-        # 额外的白色背景层（确保文字在任何背景上都清晰）
-        bg_stroke = max(1, font_size // 35)
-        for dx in range(-bg_stroke, bg_stroke + 1):
-            for dy in range(-bg_stroke, bg_stroke + 1):
-                if dx != 0 or dy != 0:
-                    draw.text((start_x + dx, line_y + dy), 
-                             line, font=font, fill=(50, 50, 50, 255))  # 深灰背景层
-        
-        # 绘制更亮的主文字
-        bright_color = tuple(min(255, c + 30) for c in text_color[:3]) + (255,)  # 更亮的颜色
-        draw.text((start_x, line_y), line, font=font, fill=bright_color)
+        # 绘制粗体文字（无描边、无阴影、无背景）
+        draw.text((start_x, line_y), line, font=font, fill=text_color)  # 使用传入的颜色参数
         print(f"绘制文字行: '{line}' at ({start_x}, {line_y})")
     
     # 保存或返回
@@ -273,7 +255,7 @@ def _get_best_font(text, font_size, language, is_title=False):
                     "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
                     "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc"
                 ]
-            else:  # 中文副标题：霞鹜文楷 Bold
+            else:  # 中文小字体：霞鹜文楷 Bold
                 font_paths = [
                     "/usr/share/fonts/truetype/lxgw/LXGWWenKai-Bold.ttf",
                     "/usr/local/share/fonts/LXGWWenKai-Bold.ttf",
@@ -282,14 +264,15 @@ def _get_best_font(text, font_size, language, is_title=False):
                     "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc"
                 ]
         else:  # Mac
-            if is_title:  # 中文大标题：方正黑体
+            if is_title:  # 中文大标题：优先使用Bold字体
                 font_paths = [
+                    "/Library/Fonts/NotoSansCJK-Bold.ttc",
+                    "/Users/lgg/Library/Fonts/NotoSansCJK-Bold.ttc", 
+                    "/System/Library/Fonts/STHeiti Medium.ttc",
                     "/System/Library/Fonts/PingFang.ttc",
-                    "/System/Library/Fonts/STHeiti Medium.ttc", 
-                    "/System/Library/Fonts/STHeiti Light.ttc",
-                    "/Library/Fonts/NotoSansCJK-Bold.ttc"
+                    "/System/Library/Fonts/STHeiti Light.ttc"
                 ]
-            else:  # 中文副标题：霞鹜文楷 Bold
+            else:  # 中文小字体：霞鹜文楷 Bold
                 font_paths = [
                     "/usr/share/fonts/truetype/lxgw/LXGWWenKai-Bold.ttf",
                     "/usr/local/share/fonts/LXGWWenKai-Bold.ttf", 
@@ -330,20 +313,52 @@ def _get_best_font(text, font_size, language, is_title=False):
     return ImageFont.load_default()
 
 def _chinese_smart_wrap(text, max_chars=20, is_title=False):
-    """中文智能换行算法"""
-    # 标题和副标题使用不同的字符限制
+    """中文智能换行算法 - 新增特殊换行规则"""
+    # 标题和小字体使用不同的字符限制
     if is_title:
         max_chars = 9  # 标题限制9个字一行
     else:
-        max_chars = 20  # 副标题限制20个字一行
+        max_chars = 20  # 小字体限制20个字一行
     
     # 去掉空格再计算字符数（空格不算字符）
     text_no_space = text.replace(' ', '')
-    if len(text_no_space) <= max_chars:
+    total_chars_no_space = len(text_no_space)
+    
+    # 特殊规则：2-3个字强制单行显示，不允许换行
+    if is_title and total_chars_no_space <= 3:
+        print(f"特殊规则：{total_chars_no_space}个字强制单行显示")
         return [text]
     
-    # 超过限制，需要换行
-    print(f"中文{'标题' if is_title else '副标题'}超过{max_chars}字，需要换行: {len(text_no_space)}字")
+    # 如果字符数在限制内，单行显示
+    if total_chars_no_space <= max_chars:
+        return [text]
+    
+    # 4个字及以上才允许换行
+    if is_title and total_chars_no_space >= 4:
+        print(f"中文标题{total_chars_no_space}字，需要换行")
+        
+        # 除以2算法 - 基于原始文本（包含空格）
+        total_chars = len(text)
+        if total_chars % 2 == 0:
+            # 偶数：平均分配
+            first_line_chars = total_chars // 2
+            second_line_chars = total_chars // 2
+        else:
+            # 奇数：第二行比第一行多一个字
+            first_line_chars = total_chars // 2
+            second_line_chars = total_chars // 2 + 1
+        
+        first_line = text[:first_line_chars]
+        second_line = text[first_line_chars:first_line_chars + second_line_chars]
+        
+        print(f"中文智能换行: 第一行{len(first_line)}字, 第二行{len(second_line)}字")
+        print(f"第一行: '{first_line}'")
+        print(f"第二行: '{second_line}'")
+        
+        return [first_line, second_line]
+    
+    # 其他情况按原逻辑处理
+    print(f"中文{'标题' if is_title else '文字'}超过{max_chars}字，需要换行: {total_chars_no_space}字")
     
     # 除以2算法 - 基于原始文本（包含空格）
     total_chars = len(text)

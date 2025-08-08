@@ -51,18 +51,17 @@ def background_generate(task_id, **kwargs):
         output_filename = f"thumbnail_{task_id[:8]}.jpg"
         output_path = f"outputs/{output_filename}"
         
-        # 处理subtitle参数 - 空字符串转为None以支持标题居中功能
-        subtitle = kwargs.get('subtitle')
-        if subtitle == '':
-            subtitle = None
-        
         result = generator.generate_final_thumbnail(
             title=kwargs.get('title', ''),
-            subtitle=subtitle,  # 支持None值，触发标题居中
             author=kwargs.get('author'),
             logo_path=kwargs.get('logo_path'),
             right_image_path=kwargs.get('right_image_path'),
-            output_path=output_path
+            output_path=output_path,
+            theme=kwargs.get('theme', 'dark'),
+            custom_template=kwargs.get('custom_template'),
+            title_color=kwargs.get('title_color'),
+            author_color=kwargs.get('author_color'),
+            enable_triangle=kwargs.get('enable_triangle')
         )
         
         tasks[task_id]['status'] = 'completed'

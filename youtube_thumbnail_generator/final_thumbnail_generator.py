@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 最终版YouTube缩略图生成器
-按用户要求修改：Logo左边距=上边距，只保留title+subtitle，author大写
+按用户要求修改：Logo左边距=上边距，只保留title，author大写，去掉副标题功能
 """
 
 from PIL import Image, ImageDraw, ImageFont
@@ -209,8 +209,6 @@ class FinalThumbnailGenerator:
         # 参考chapter代码的逻辑: 使用9.6%的基准尺寸
         if text_type == "title":
             return int(base_dimension * 0.096)  # 主标题最大
-        elif text_type == "subtitle":
-            return int(base_dimension * 0.06)   # 副标题中等
         else:  # author
             return int(base_dimension * 0.04)   # 作者较小
     
@@ -308,18 +306,67 @@ class FinalThumbnailGenerator:
     
     def generate_final_thumbnail(self, 
                                title: str,
-                               subtitle: str = None,
                                author: str = None, 
                                logo_path: str = None,
                                right_image_path: str = None,
-                               output_path: str = "output.jpg") -> str:
+                               output_path: str = "output.jpg",
+                               theme: str = "dark",  # "dark", "light", "custom"
+                               custom_template: str = None,  # 自定义模板路径
+                               title_color: str = None,  # 标题颜色，hex格式如"#FFFFFF"
+                               author_color: str = None,  # 作者颜色，hex格式如"#CCCCCC"
+                               enable_triangle: bool = None) -> str:  # 是否启用三角形
         """生成最终版缩略图"""
         
         print(f"开始生成最终缩略图: {output_path}")
-        print(f"模板: {self.template_path}")
+        print(f"主题模式: {theme}")
+        
+        # 根据主题选择模板和默认颜色
+        actual_template_path = self.template_path
+        triangle_path = "templates/triangle_template.png"  # 默认黑色
+        
+        if theme == "light":
+            # Light主题：白底黑字白三角
+            actual_template_path = "templates/light_template.png"
+            triangle_path = "templates/triangle_white.png"
+            default_title_color = "#000000"  # 黑色字体
+            default_author_color = "#666666"  # 深灰色作者
+        elif theme == "custom" and custom_template:
+            # 自定义主题：使用用户提供的模板
+            if os.path.exists(custom_template):
+                actual_template_path = custom_template
+                default_title_color = "#FFFFFF"  # 默认白字
+                default_author_color = "#CCCCCC"  # 默认浅灰
+                triangle_path = None  # 自定义模板不使用三角形
+            else:
+                print(f"警告: 自定义模板不存在，使用默认Dark主题: {custom_template}")
+                theme = "dark"
+                default_title_color = "#FFFFFF"
+                default_author_color = "#CCCCCC"
+        else:
+            # Dark主题（默认）：黑底白字黑三角
+            actual_template_path = self.template_path
+            triangle_path = "templates/triangle_black.png"
+            default_title_color = "#FFFFFF"  # 白色字体
+            default_author_color = "#CCCCCC"  # 浅灰色作者
+        
+        # 应用用户指定的颜色，如果没有则使用主题默认颜色
+        final_title_color = title_color if title_color else default_title_color
+        final_author_color = author_color if author_color else default_author_color
+        
+        # 三角形启用逻辑
+        if enable_triangle is None:
+            # 默认逻辑：Dark和Light主题启用，Custom主题禁用
+            use_triangle = (theme in ["dark", "light"])
+        else:
+            # 用户明确指定
+            use_triangle = enable_triangle
+        
+        print(f"实际模板: {actual_template_path}")
+        print(f"标题颜色: {final_title_color}, 作者颜色: {final_author_color}")
+        print(f"三角形: {'启用' if use_triangle else '禁用'} - {triangle_path if use_triangle else 'None'}")
         
         # 打开模板图片
-        template = Image.open(self.template_path)
+        template = Image.open(actual_template_path)
         if template.mode != 'RGBA':
             template = template.convert('RGBA')
         
@@ -334,10 +381,10 @@ class FinalThumbnailGenerator:
         
         # 计算字体大小
         title_size = self._calculate_font_size(width, height, "title")
-        subtitle_size = self._calculate_font_size(width, height, "subtitle") 
+ 
         author_size = self._calculate_font_size(width, height, "author")
         
-        print(f"计算字体大小 - 标题:{title_size} 副标题:{subtitle_size} 作者:{author_size}")
+        print(f"计算字体大小 - 标题:{title_size} 作者:{author_size}")
         
         # 第一层: 添加右侧图片（如果有）
         if right_image_path and os.path.exists(right_image_path):
@@ -365,13 +412,9 @@ class FinalThumbnailGenerator:
                     # 缩放到900x900填满右侧区域
                     right_img = right_img.resize((900, 900), Image.Resampling.LANCZOS)
                     
-                    # 如果需要斜角效果，先在right_img上贴三角形
-                    # TODO: 这里可以添加斜角参数控制
-                    add_diagonal = True  # 暂时硬编码，后续可作为参数
-                    
-                    if add_diagonal:
+                    # 根据参数决定是否添加三角形效果
+                    if use_triangle and triangle_path:
                         try:
-                            triangle_path = "templates/triangle_template.png"
                             if os.path.exists(triangle_path):
                                 triangle = Image.open(triangle_path)
                                 if triangle.mode != 'RGBA':
@@ -457,35 +500,20 @@ class FinalThumbnailGenerator:
             except Exception as e:
                 print(f"Logo添加失败: {e}")
         
-        # 第三层: 使用PNG贴图方式添加文字
+        # 第三层: 使用PNG贴图方式添加标题文字
         if is_professional:
             text_x = 55  # 从50px调整到55px，往右5像素
-            # 如果没有副标题，标题下移50px居中显示
-            if not subtitle:
-                title_y = 330  # 标题位置下移50px (280 + 50)
-                print("无副标题，标题位置下移50px居中显示")
-            else:
-                title_y = 280  # 标题位置
-            subtitle_y = 580  # 副标题位置（在标题下方）
+            title_y = 330  # 标题位置居中显示
             
             # 定义PNG尺寸
             title_png_size = (600, 300)
-            subtitle_png_size = (600, 50)
         else:
             text_x = 45  # 从40px调整到45px，往右5像素
-            # 标准模板也应用同样逻辑
-            if not subtitle:
-                title_y = 280  # 标准模板下移50px (230 + 50)
-                print("无副标题，标题位置下移50px居中显示")
-            else:
-                title_y = 230
-            subtitle_y = 480
+            title_y = 280  # 标准模板居中位置
             title_png_size = (500, 250)
-            subtitle_png_size = (500, 180)
         
-        # 暂存标题和副标题PNG，等三角形覆盖后再贴入
+        # 暂存标题PNG，等三角形覆盖后再贴入
         title_img_data = None
-        subtitle_img_data = None
         
         # 生成标题PNG（但先不贴入）
         if title:
@@ -495,11 +523,19 @@ class FinalThumbnailGenerator:
             # 英文标题限制3行
             max_title_lines = 3 if title_language == "english" else 6
             
+            # 将hex颜色转换为RGB元组
+            def hex_to_rgb(hex_color):
+                """将hex颜色转换为RGB元组"""
+                hex_color = hex_color.lstrip('#')
+                return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+            
+            title_rgb = hex_to_rgb(final_title_color)
+            
             success, title_img, _ = create_text_png(
                 text=title,
                 width=550,  # 从600改为550，给右侧更多缓冲空间
                 height=280,  # 固定高度，不再自动调整
-                text_color=(255, 255, 255),  # 白色
+                text_color=title_rgb,  # 使用主题颜色
                 language=title_language,
                 auto_height=False,  # 关闭自动高度调整
                 max_lines=max_title_lines  # 英文3行，中文6行
@@ -508,30 +544,7 @@ class FinalThumbnailGenerator:
             if success:
                 title_img_data = (title_img, text_x, title_y)
                 print(f"标题PNG已生成，等待最终贴入: 位置({text_x}, {title_y}), 固定尺寸(550, 280) [宽度优化]")
-                
-                # 副标题固定位置
-                subtitle_y = title_y + 280 + 20  # 280px标题区域 + 20px间距 = 580px
         
-        # 生成副标题PNG（但先不贴入）
-        if subtitle:
-            print(f"生成副标题PNG（智能高度）")
-            # 检测副标题语言
-            subtitle_language = self._detect_language(subtitle)
-            
-            success, subtitle_img, actual_height = create_text_png(
-                text=subtitle,
-                width=550,  # 与标题保持一致，从600改为550
-                height=50,  # 初始高度，会自动调整
-                text_color=(255, 235, 156),  # 浅黄色 #FFEB9C
-                language=subtitle_language,
-                auto_height=True,
-                line_height_px=30,  # 每行30px高度
-                max_lines=3
-            )
-            
-            if success:
-                subtitle_img_data = (subtitle_img, text_x, subtitle_y, actual_height)
-                print(f"副标题PNG已生成，等待最终贴入: 位置({text_x}, {subtitle_y}), 实际尺寸(550, {actual_height}) [宽度优化]")
         
         # 作者 - 调整位置：往右往上
         if author:
@@ -547,7 +560,7 @@ class FinalThumbnailGenerator:
             author_font = self._get_best_font(author_upper, author_size)
             self._draw_text_with_effects(
                 draw, author_upper, (text_x, author_y), author_font,
-                color="#CCCCCC",
+                color=final_author_color,  # 使用主题颜色
                 max_width=550 if is_professional else 450  # 与标题副标题保持一致
             )
             
@@ -556,16 +569,11 @@ class FinalThumbnailGenerator:
         # 三角形已经在right_img处理阶段贴入，这里不再需要单独处理
         print("三角形效果已集成到右侧图片中")
         
-        # 最终步骤: 贴入标题和副标题PNG（在三角形之上）
+        # 最终步骤: 贴入标题PNG（在三角形之上）
         if title_img_data:
             title_img, tx, ty = title_img_data
             template.paste(title_img, (tx, ty), title_img)
             print(f"标题PNG最终贴入: 位置({tx}, {ty}) [最上层]")
-        
-        if subtitle_img_data:
-            subtitle_img, sx, sy, sh = subtitle_img_data
-            template.paste(subtitle_img, (sx, sy), subtitle_img)
-            print(f"副标题PNG最终贴入: 位置({sx}, {sy}), 高度{sh} [最上层]")
         
         # 保存结果
         if template.mode == 'RGBA':
