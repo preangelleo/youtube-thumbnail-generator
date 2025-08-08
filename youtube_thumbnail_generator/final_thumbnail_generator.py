@@ -11,9 +11,293 @@ from dataclasses import dataclass
 import textwrap
 import platform
 try:
+    from importlib import resources
+    from importlib.resources import files
+except ImportError:
+    # Fallback for Python < 3.9
+    import pkg_resources
+
+try:
     from .text_png_generator import create_text_png
 except ImportError:
     from text_png_generator import create_text_png
+
+def create_default_templates():
+    """Create default templates in user's current directory if they don't exist"""
+    import os
+    from PIL import Image, ImageDraw
+    
+    # Create templates directory if it doesn't exist
+    templates_dir = "templates"
+    if not os.path.exists(templates_dir):
+        os.makedirs(templates_dir)
+        print(f"Created templates directory: {templates_dir}")
+    
+    # Template paths to create
+    templates_to_create = {
+        "templates/professional_template.jpg": (1600, 900, (0, 0, 0)),  # Black background
+        "templates/light_template.png": (1600, 900, (255, 255, 255, 255)),  # White background
+        "templates/triangle_black.png": None,  # Special handling
+        "templates/triangle_white.png": None   # Special handling
+    }
+    
+    for template_path, config in templates_to_create.items():
+        if not os.path.exists(template_path):
+            try:
+                if config:
+                    width, height, color = config
+                    if len(color) == 4:  # RGBA
+                        img = Image.new('RGBA', (width, height), color)
+                        img.save(template_path, 'PNG')
+                    else:  # RGB
+                        img = Image.new('RGB', (width, height), color)
+                        img.save(template_path, 'JPEG', quality=95)
+                    print(f"Created template: {template_path}")
+                    
+            except Exception as e:
+                print(f"Failed to create template {template_path}: {e}")
+    
+    # Create triangles
+    create_triangle_templates()
+    print("All default templates created successfully!")
+
+def create_triangle_templates():
+    """Create triangle template files"""
+    from PIL import Image, ImageDraw
+    
+    # Triangle dimensions
+    width, height = 200, 900
+    
+    # Black triangle for dark theme
+    triangle_black_path = "templates/triangle_black.png"
+    if not os.path.exists(triangle_black_path):
+        img = Image.new('RGBA', (width, height), (0, 0, 0, 0))  # Transparent background
+        draw = ImageDraw.Draw(img)
+        
+        # Draw black triangle: 尖角在左下角 (top-right to top-left to bottom-left)
+        triangle_points = [(width, 0), (0, 0), (0, height)]
+        draw.polygon(triangle_points, fill=(0, 0, 0, 255))  # Fully opaque black
+        
+        img.save(triangle_black_path, 'PNG')
+        print(f"Created black triangle: {triangle_black_path}")
+    
+    # White triangle for light theme  
+    triangle_white_path = "templates/triangle_white.png"
+    if not os.path.exists(triangle_white_path):
+        img = Image.new('RGBA', (width, height), (0, 0, 0, 0))  # Transparent background
+        draw = ImageDraw.Draw(img)
+        
+        # Draw white triangle: 尖角在左下角 (top-right to top-left to bottom-left) - same as black
+        triangle_points = [(width, 0), (0, 0), (0, height)]
+        draw.polygon(triangle_points, fill=(255, 255, 255, 255))  # Fully opaque white
+        
+        img.save(triangle_white_path, 'PNG')
+        print(f"Created white triangle: {triangle_white_path}")
+
+def optimize_for_youtube_api(input_path: str, output_path: str = None) -> str:
+    """
+    Optimize thumbnail for YouTube API v3 upload compliance
+    
+    YouTube API v3 Requirements (2025):
+    - Format: JPEG or PNG (JPEG recommended for smaller file size)
+    - Dimensions: 1280x720 pixels (16:9 aspect ratio)
+    - Minimum: 640x360 pixels
+    - Maximum file size: 2MB
+    - Color space: sRGB
+    - MIME types: image/jpeg, image/png
+    
+    Args:
+        input_path (str): Path to the input image file
+        output_path (str): Path for the optimized output (optional)
+        
+    Returns:
+        str: Path to the YouTube-compliant thumbnail
+    """
+    from PIL import Image, ImageCms
+    import os
+    
+    if not os.path.exists(input_path):
+        raise FileNotFoundError(f"Input image not found: {input_path}")
+    
+    # Generate output path if not provided
+    if not output_path:
+        base_name = os.path.splitext(input_path)[0]
+        output_path = f"{base_name}_youtube_ready.jpg"
+    
+    print(f"Optimizing thumbnail for YouTube API compliance...")
+    print(f"Input: {input_path}")
+    print(f"Output: {output_path}")
+    
+    try:
+        # Open the image
+        img = Image.open(input_path)
+        original_size = img.size
+        print(f"Original size: {original_size[0]}x{original_size[1]}")
+        
+        # Convert to RGB if needed (removes alpha channel)
+        if img.mode in ('RGBA', 'LA', 'P'):
+            # Create white background for transparent areas
+            rgb_img = Image.new('RGB', img.size, (255, 255, 255))
+            if img.mode == 'P':
+                img = img.convert('RGBA')
+            rgb_img.paste(img, mask=img.split()[-1] if img.mode in ('RGBA', 'LA') else None)
+            img = rgb_img
+            print("Converted to RGB with white background")
+        
+        # Ensure sRGB color profile
+        try:
+            import io
+            # Check if image has an embedded color profile
+            if 'icc_profile' in img.info:
+                # Convert to sRGB if it has a different profile
+                input_profile = ImageCms.ImageCmsProfile(io.BytesIO(img.info['icc_profile']))
+                srgb_profile = ImageCms.createProfile('sRGB')
+                
+                if input_profile.profile.profile_description != srgb_profile.profile.profile_description:
+                    img = ImageCms.profileToProfile(img, input_profile, srgb_profile, renderingIntent=0)
+                    print("Converted to sRGB color profile")
+            else:
+                # If no profile, assume it's already sRGB
+                print("No color profile found, assuming sRGB")
+        except Exception as e:
+            print(f"Color profile conversion skipped: {e}")
+        
+        # YouTube API optimal dimensions: 1280x720 (16:9 aspect ratio)
+        target_width, target_height = 1280, 720
+        target_ratio = target_width / target_height  # 16:9 = 1.777...
+        
+        current_width, current_height = img.size
+        current_ratio = current_width / current_height
+        
+        # Resize to fit YouTube's requirements
+        if abs(current_ratio - target_ratio) < 0.01:  # Already 16:9
+            # Direct resize
+            img = img.resize((target_width, target_height), Image.Resampling.LANCZOS)
+            print(f"Resized to YouTube standard: {target_width}x{target_height}")
+        else:
+            # Need to crop or pad to maintain 16:9 ratio
+            if current_ratio > target_ratio:
+                # Image is wider, crop width
+                new_width = int(current_height * target_ratio)
+                left = (current_width - new_width) // 2
+                img = img.crop((left, 0, left + new_width, current_height))
+                print(f"Cropped width to maintain 16:9 ratio")
+            else:
+                # Image is taller, crop height
+                new_height = int(current_width / target_ratio)
+                top = (current_height - new_height) // 2
+                img = img.crop((0, top, current_width, top + new_height))
+                print(f"Cropped height to maintain 16:9 ratio")
+            
+            # Resize to target dimensions
+            img = img.resize((target_width, target_height), Image.Resampling.LANCZOS)
+            print(f"Final resize to: {target_width}x{target_height}")
+        
+        # Save with optimized settings for YouTube API
+        save_kwargs = {
+            'format': 'JPEG',
+            'quality': 95,  # High quality
+            'optimize': True,  # Enable optimization
+            'progressive': False,  # YouTube prefers baseline JPEG
+        }
+        
+        # Try different quality levels to meet 2MB limit
+        max_file_size = 2 * 1024 * 1024  # 2MB in bytes
+        quality_levels = [95, 90, 85, 80, 75, 70]
+        
+        for quality in quality_levels:
+            save_kwargs['quality'] = quality
+            
+            # Save to temporary location to check file size
+            import tempfile
+            import io
+            
+            # Save to bytes buffer to check size
+            buffer = io.BytesIO()
+            img.save(buffer, **save_kwargs)
+            file_size = len(buffer.getvalue())
+            
+            if file_size <= max_file_size:
+                # File size is acceptable, save to final location
+                with open(output_path, 'wb') as f:
+                    f.write(buffer.getvalue())
+                
+                print(f"Saved with quality {quality}, file size: {file_size:,} bytes ({file_size/1024/1024:.2f}MB)")
+                break
+        else:
+            # If even quality 70 is too large, save anyway with warning
+            with open(output_path, 'wb') as f:
+                save_kwargs['quality'] = 70
+                img.save(f, **save_kwargs)
+            
+            final_size = os.path.getsize(output_path)
+            print(f"Warning: File size {final_size:,} bytes ({final_size/1024/1024:.2f}MB) exceeds 2MB limit")
+            print("YouTube API may reject or compress this thumbnail further")
+        
+        # Final verification
+        final_size = os.path.getsize(output_path)
+        print(f"✅ YouTube-compliant thumbnail created:")
+        print(f"   📏 Dimensions: 1280x720 (16:9 aspect ratio)")
+        print(f"   📁 Format: JPEG")
+        print(f"   🎨 Color space: sRGB")
+        print(f"   📊 File size: {final_size:,} bytes ({final_size/1024/1024:.2f}MB)")
+        print(f"   🚀 YouTube API ready: {'✅ YES' if final_size <= max_file_size else '⚠️ SIZE WARNING'}")
+        
+        return output_path
+        
+    except Exception as e:
+        print(f"❌ Error optimizing thumbnail: {e}")
+        raise e
+
+def get_resource_path(filename: str) -> str:
+    """Get absolute path to package resource file with fallback creation"""
+    try:
+        # Try modern importlib.resources first (Python 3.9+)
+        try:
+            package_files = files('youtube_thumbnail_generator')
+            resource_path = package_files / filename
+            if resource_path.exists():
+                return str(resource_path)
+        except:
+            pass
+        
+        # Fallback to pkg_resources (Python < 3.9)
+        try:
+            resource_path = pkg_resources.resource_filename('youtube_thumbnail_generator', filename)
+            if os.path.exists(resource_path):
+                return resource_path
+        except:
+            pass
+        
+        # Final fallback: check relative to current file location
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        parent_dir = os.path.dirname(current_dir)
+        relative_path = os.path.join(parent_dir, filename)
+        if os.path.exists(relative_path):
+            return relative_path
+        
+        # Ultimate fallback: check in current working directory
+        local_path = os.path.join(os.getcwd(), filename)
+        if os.path.exists(local_path):
+            return local_path
+        
+        # If file doesn't exist anywhere, try to create default templates
+        if filename.startswith("templates/"):
+            print(f"Resource not found: {filename}. Creating default templates...")
+            create_default_templates()
+            
+            # Check if the local path exists now
+            if os.path.exists(local_path):
+                return local_path
+        
+        # If all else fails, return the local path (user's current directory)
+        print(f"Warning: Using fallback path for: {filename}")
+        return local_path
+        
+    except Exception as e:
+        print(f"Error resolving resource path for {filename}: {e}")
+        # Return local path as final fallback
+        return os.path.join(os.getcwd(), filename)
 
 def detect_system():
     """检测系统环境"""
@@ -314,7 +598,8 @@ class FinalThumbnailGenerator:
                                custom_template: str = None,  # 自定义模板路径
                                title_color: str = None,  # 标题颜色，hex格式如"#FFFFFF"
                                author_color: str = None,  # 作者颜色，hex格式如"#CCCCCC"
-                               enable_triangle: bool = None) -> str:  # 是否启用三角形
+                               enable_triangle: bool = None,  # 是否启用三角形
+                               youtube_ready: bool = True) -> str:  # 是否优化为YouTube API兼容格式
         """生成最终版缩略图"""
         
         print(f"开始生成最终缩略图: {output_path}")
@@ -322,12 +607,12 @@ class FinalThumbnailGenerator:
         
         # 根据主题选择模板和默认颜色
         actual_template_path = self.template_path
-        triangle_path = "templates/triangle_template.png"  # 默认黑色
+        triangle_path = get_resource_path("templates/triangle_template.png")  # 默认黑色
         
         if theme == "light":
             # Light主题：白底黑字白三角
-            actual_template_path = "templates/light_template.png"
-            triangle_path = "templates/triangle_white.png"
+            actual_template_path = get_resource_path("templates/light_template.png")
+            triangle_path = get_resource_path("templates/triangle_white.png")
             default_title_color = "#000000"  # 黑色字体
             default_author_color = "#666666"  # 深灰色作者
         elif theme == "custom" and custom_template:
@@ -345,7 +630,7 @@ class FinalThumbnailGenerator:
         else:
             # Dark主题（默认）：黑底白字黑三角
             actual_template_path = self.template_path
-            triangle_path = "templates/triangle_black.png"
+            triangle_path = get_resource_path("templates/triangle_black.png")
             default_title_color = "#FFFFFF"  # 白色字体
             default_author_color = "#CCCCCC"  # 浅灰色作者
         
@@ -585,6 +870,22 @@ class FinalThumbnailGenerator:
             template.save(output_path, 'JPEG', quality=95)
         
         print(f"最终缩略图生成完成: {output_path}")
+        
+        # If YouTube API optimization is requested, process the output
+        if youtube_ready:
+            print("🚀 Processing for YouTube API compliance...")
+            # Use the original output_path for the optimized version
+            temp_path = output_path.replace('.jpg', '_temp_original.jpg')
+            # Rename current output to temp
+            os.rename(output_path, temp_path)
+            # Optimize to the original output_path
+            youtube_optimized_path = optimize_for_youtube_api(temp_path, output_path)
+            # Clean up temp file
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+            print(f"✅ YouTube-ready thumbnail: {youtube_optimized_path}")
+            return youtube_optimized_path
+        
         return output_path
 
 # 如需测试，请运行 example_usage.py

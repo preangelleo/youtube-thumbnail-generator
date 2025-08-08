@@ -13,11 +13,11 @@ import os
 from datetime import datetime
 try:
     # 当作为包安装时的导入方式
-    from .final_thumbnail_generator import FinalThumbnailGenerator
+    from .final_thumbnail_generator import FinalThumbnailGenerator, get_resource_path
     from .function_add_chapter import add_chapter_to_image
 except ImportError:
     # 直接运行时的导入方式
-    from final_thumbnail_generator import FinalThumbnailGenerator
+    from final_thumbnail_generator import FinalThumbnailGenerator, get_resource_path
     from function_add_chapter import add_chapter_to_image
 
 app = Flask(__name__)
@@ -27,7 +27,7 @@ CORS(app)
 tasks = {}
 
 # 初始化生成器
-template_path = "templates/professional_template.jpg"
+template_path = get_resource_path("templates/professional_template.jpg")
 if not os.path.exists(template_path):
     print(f"警告: 模板文件不存在 {template_path}")
     template_path = None

@@ -27,20 +27,32 @@ Basic Usage:
     )
 """
 
-__version__ = "2.2.0"
+__version__ = "2.2.2"
 __author__ = "Leo Wang"
 __email__ = "leo@example.com"
 __license__ = "MIT"
 
 # Import main classes and functions
-from .final_thumbnail_generator import FinalThumbnailGenerator
+from .final_thumbnail_generator import FinalThumbnailGenerator, get_resource_path, create_default_templates, optimize_for_youtube_api
 from .text_png_generator import create_text_png
 from .function_add_chapter import add_chapter_to_image
+
+def get_default_template():
+    """Get path to the default professional template"""
+    return get_resource_path("templates/professional_template.jpg")
+
+def init_templates():
+    """Initialize default templates in current directory if needed"""
+    return create_default_templates()
 
 # Define what gets imported with "from youtube_thumbnail_generator import *"
 __all__ = [
     'FinalThumbnailGenerator',
     'create_text_png', 
     'add_chapter_to_image',
+    'get_default_template',
+    'get_resource_path',
+    'init_templates',
+    'optimize_for_youtube_api',
     '__version__'
 ]

@@ -5,6 +5,47 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.2] - 2025-08-08
+
+### 🎯 User Experience Enhancement
+- **YouTube-Ready by Default**: `youtube_ready=True` is now the default behavior
+- **Seamless Output**: Users get YouTube API compliant thumbnails without extra steps
+- **Clean File Naming**: Optimized thumbnails use the original filename (no `_youtube_ready` suffix)
+- **Perfect Integration**: YouTube optimization happens transparently in the background
+
+### 🔧 Technical Improvements
+- Enhanced file handling for YouTube optimization process
+- Improved temporary file management
+- Streamlined user experience for direct YouTube API uploads
+
+### 📚 Documentation Updates
+- Updated all examples to reflect YouTube-ready defaults
+- Clarified high-resolution mode usage (`youtube_ready=False`)
+- Enhanced code examples with complete thumbnail generation
+
+## [2.2.1] - 2025-08-08
+
+### 🔧 Critical Fix
+- **Package Resource Resolution**: Fixed template path resolution for PyPI installed packages
+- **Smart Fallback System**: Auto-generate templates if bundled files cannot be found
+- **Cross-Platform Compatibility**: Improved path resolution across different Python environments
+
+### 🚀 YouTube API v3 Integration
+- `optimize_for_youtube_api()`: Convert any thumbnail to YouTube API v3 compliant format
+- `youtube_ready` parameter: Built-in YouTube optimization during generation
+- **Perfect Compliance**: 1280x720 JPEG, sRGB, <2MB, baseline encoding
+- **Smart Quality Control**: Multi-level compression testing (95→90→85→80→75→70)
+
+### 🛠️ New Functions
+- `init_templates()`: Manually create default templates in project directory
+- `get_resource_path()`: Robust resource file path resolution with fallbacks
+- **Automatic Template Creation**: Templates auto-generate in user's directory if missing
+
+### 📚 Documentation Updates
+- Added manual template creation guide
+- Updated all code examples to use `get_default_template()`
+- Enhanced installation instructions with fallback system explanation
+
 ## [2.2.0] - 2025-08-08
 
 ### 🎉 Major Features Added
