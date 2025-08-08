@@ -4,21 +4,6 @@ import os
 import textwrap
 import platform
 
-def detect_system():
-    """检测系统环境"""
-    system = platform.system()
-    if system == "Darwin":
-        return {"system": "Mac"}
-    elif system == "Linux":
-        hostname = platform.node()
-        if "runpod" in hostname.lower():
-            return {"system": "RunPod"}
-        elif "aws" in hostname.lower() or "ec2" in hostname.lower():
-            return {"system": "AWS"}
-        else:
-            return {"system": "TB"}
-    else:
-        return {"system": "Unknown"}
 
 def add_chapter_to_image(text, image_path=None, output_path=None, font_size=None, text_color=(255, 255, 255), shadow_color=(0, 0, 0), shadow_offset=5, line_spacing=1.2, max_width_ratio=0.8, is_landscape=True, width=1600, height=900, font_name=None, language='chinese'):
     """
@@ -80,47 +65,61 @@ def add_chapter_to_image(text, image_path=None, output_path=None, font_size=None
     if language == 'chinese': font_name = "Noto Sans CJK SC"
     else: font_name = "Lexend Bold"
 
-    # 检测系统环境来优化字体路径搜索顺序
-    system_info = detect_system()
-    current_system = system_info.get('system', 'Unknown')
+    # 使用通用字体检测系统
+    # Use universal font detection system
+    system = platform.system()
     
     if font_name == "Lexend Bold":
-        if current_system in ['RunPod', 'AWS', 'TB']:
-            # Linux系统优先搜索系统字体目录
+        if system == "Linux":
             font_paths = [
                 "/usr/share/fonts/truetype/lexend/Lexend-Bold.ttf",
-                "/home/ubuntu/.local/share/fonts/Lexend/Lexend-Bold.ttf",
-                "/usr/local/share/fonts/Lexend-Bold.ttf"
+                "/usr/share/fonts/truetype/ubuntu/Ubuntu-B.ttf", 
+                "/usr/share/fonts/truetype/ubuntu-font-family/Ubuntu-Bold.ttf",
+                "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+                "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
             ]
-        else:
-            # Mac系统
+        elif system == "Darwin":  # macOS
             font_paths = [
-                "/Users/lgg/Library/Fonts/Lexend/Lexend-Bold.ttf",
-                "/Library/Fonts/Lexend-Bold.ttf",
-                "/System/Library/Fonts/Lexend-Bold.ttf"
+                "/System/Library/Fonts/Helvetica.ttc",
+                "/System/Library/Fonts/Arial.ttf", 
+                "/Library/Fonts/Arial Bold.ttf"
+            ]
+        elif system == "Windows":
+            font_paths = [
+                "C:\\Windows\\Fonts\\arial.ttf",
+                "C:\\Windows\\Fonts\\arialbd.ttf",
+                "C:\\Windows\\Fonts\\calibri.ttf"
             ]
     elif font_name == "Ubuntu Bold" or font_name == "Ubuntu": 
        font_paths = [
             "/usr/share/fonts/truetype/ubuntu/Ubuntu-B.ttf",  
             "/usr/share/fonts/ubuntu/Ubuntu-B.ttf",
             "/usr/share/fonts/truetype/ubuntu-font-family/Ubuntu-Bold.ttf",
-            "/System/Library/Fonts/Ubuntu-Bold.ttf",
-            "/Library/Fonts/Ubuntu-Bold.ttf"
+            "/System/Library/Fonts/Helvetica.ttc",
+            "/Library/Fonts/Arial Bold.ttf"
         ]
     elif font_name == "Noto Sans CJK SC":
-        if current_system in ['RunPod', 'AWS', 'TB']:
-            # Linux系统使用标准路径
+        if system == "Linux":
             font_paths = [
                 "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
                 "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+                "/usr/share/fonts/truetype/noto/NotoSansCJK-Bold.ttf",
                 "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",
-                "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc"
+                "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",
+                "/usr/share/fonts/truetype/arphic-uming/uming.ttc"
             ]
-        else:
-            # Mac系统
+        elif system == "Darwin":  # macOS
             font_paths = [
-                "/System/Library/Fonts/NotoSansCJK-Bold.ttc",
-                "/Library/Fonts/NotoSansCJK-Bold.ttc"
+                "/System/Library/Fonts/Hiragino Sans GB.ttc",
+                "/Library/Fonts/NotoSansCJK-Bold.ttc",
+                "/System/Library/Fonts/STHeiti Medium.ttc",
+                "/System/Library/Fonts/PingFang.ttc"
+            ]
+        elif system == "Windows":
+            font_paths = [
+                "C:\\Windows\\Fonts\\simhei.ttf",
+                "C:\\Windows\\Fonts\\msyh.ttc", 
+                "C:\\Windows\\Fonts\\simsun.ttc"
             ]
     
     # Try to load the font

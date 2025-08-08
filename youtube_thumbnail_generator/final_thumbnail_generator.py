@@ -349,21 +349,6 @@ def get_resource_path(filename: str) -> str:
         # Return local path as final fallback
         return os.path.join(os.getcwd(), filename)
 
-def detect_system():
-    """检测系统环境"""
-    system = platform.system()
-    if system == "Darwin":
-        return {"system": "Mac"}
-    elif system == "Linux":
-        hostname = platform.node()
-        if "runpod" in hostname.lower():
-            return {"system": "RunPod"}
-        elif "aws" in hostname.lower() or "ec2" in hostname.lower():
-            return {"system": "AWS"}
-        else:
-            return {"system": "TB"}
-    else:
-        return {"system": "Unknown"}
 
 @dataclass
 class TextConfig:
@@ -398,9 +383,8 @@ class FinalThumbnailGenerator:
             raise FileNotFoundError(f"模板文件不存在: {template_path}")
             
         # 获取系统信息
-        self.system_info = detect_system()
-        self.current_system = self.system_info.get('system', 'Unknown')
-        print(f"检测到系统: {self.current_system}")
+        # System-agnostic initialization
+        print(f"Using universal font detection")
         
         # 字体优先级列表
         self.font_paths = {
@@ -411,43 +395,73 @@ class FinalThumbnailGenerator:
         }
     
     def _get_chinese_font_paths(self):
-        """获取中文字体路径"""
-        if self.current_system in ['RunPod', 'AWS', 'TB']:
-            return [
+        """获取中文字体路径 - 跨平台通用"""
+        import platform
+        
+        paths = []
+        system = platform.system()
+        
+        if system == "Linux":
+            # Linux通用字体路径
+            paths.extend([
                 "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
                 "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+                "/usr/share/fonts/truetype/noto/NotoSansCJK-Bold.ttf",
                 "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",
                 "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",
-                "/usr/share/fonts/truetype/lxgw/LXGWWenKai-Bold.ttf",
-                "/usr/local/share/fonts/LXGWWenKai-Bold.ttf",
-                "/home/ubuntu/.local/share/fonts/LXGWWenKai-Bold.ttf"
-            ]
-        else:  # Mac
-            return [
-                "/System/Library/Fonts/NotoSansCJK-Bold.ttc",
+                "/usr/share/fonts/truetype/arphic-uming/uming.ttc",
+                "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"
+            ])
+        elif system == "Darwin":
+            # macOS系统字体
+            paths.extend([
+                "/System/Library/Fonts/Hiragino Sans GB.ttc",
                 "/Library/Fonts/NotoSansCJK-Bold.ttc",
-                "/Users/lgg/Library/Fonts/NotoSansCJK-Bold.ttc"
-            ]
+                "/System/Library/Fonts/STHeiti Medium.ttc",
+                "/System/Library/Fonts/PingFang.ttc"
+            ])
+        elif system == "Windows":
+            # Windows系统字体
+            paths.extend([
+                "C:\\Windows\\Fonts\\simhei.ttf",
+                "C:\\Windows\\Fonts\\msyh.ttc",
+                "C:\\Windows\\Fonts\\simsun.ttc"
+            ])
+        
+        return paths
     
     def _get_english_font_paths(self):
-        """获取英文字体路径"""
-        if self.current_system in ['RunPod', 'AWS', 'TB']:
-            return [
+        """获取英文字体路径 - 跨平台通用"""
+        import platform
+        
+        paths = []
+        system = platform.system()
+        
+        if system == "Linux":
+            # Linux通用字体路径
+            paths.extend([
                 "/usr/share/fonts/truetype/lexend/Lexend-Bold.ttf",
-                "/home/ubuntu/.local/share/fonts/Lexend/Lexend-Bold.ttf",
-                "/usr/local/share/fonts/Lexend-Bold.ttf",
                 "/usr/share/fonts/truetype/ubuntu/Ubuntu-B.ttf",
-                "/usr/share/fonts/ubuntu/Ubuntu-B.ttf",
-                "/usr/share/fonts/truetype/ubuntu-font-family/Ubuntu-Bold.ttf"
-            ]
-        else:  # Mac
-            return [
-                "/Users/lgg/Library/Fonts/Lexend/Lexend-Bold.ttf",
-                "/Library/Fonts/Lexend-Bold.ttf",
-                "/System/Library/Fonts/Lexend-Bold.ttf",
-                "/System/Library/Fonts/Ubuntu-Bold.ttf",
-                "/Library/Fonts/Ubuntu-Bold.ttf"
-            ]
+                "/usr/share/fonts/truetype/ubuntu-font-family/Ubuntu-Bold.ttf",
+                "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+                "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+            ])
+        elif system == "Darwin":
+            # macOS系统字体
+            paths.extend([
+                "/System/Library/Fonts/Helvetica.ttc",
+                "/System/Library/Fonts/Arial.ttf",
+                "/Library/Fonts/Arial Bold.ttf"
+            ])
+        elif system == "Windows":
+            # Windows系统字体
+            paths.extend([
+                "C:\\Windows\\Fonts\\arial.ttf",
+                "C:\\Windows\\Fonts\\arialbd.ttf",
+                "C:\\Windows\\Fonts\\calibri.ttf"
+            ])
+        
+        return paths
     
     def _detect_language(self, text: str) -> str:
         """检测文本语言"""
