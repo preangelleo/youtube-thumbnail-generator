@@ -1,0 +1,84 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+api_server.log
+
+# Local test files and outputs
+outputs/*.jpg
+outputs/*.jpeg
+outputs/*.png
+temp_*
+test_*
+debug_*
+
+# Backup and temporary directories
+backup/
+uploads/
+Temps/
+
+# Local configuration and sensitive data
+config.py
+py_config.py
+.env
+*.env
+
+# Large font files (users can download their own)
+fonts/
+*.ttf
+*.ttc
+*.otf
+
+# Local assets (keep only sample templates)
+assets/testing_image.jpeg
+logos/animagent_logo.png
+
+# Keep empty directories structure
+!outputs/.gitkeep
+!uploads/.gitkeep
