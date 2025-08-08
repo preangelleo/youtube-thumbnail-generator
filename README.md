@@ -12,16 +12,39 @@
 - ✅ **多端API支持**: Flask RESTful API + Chapter功能
 - ✅ **字体智能选择**: 中文PingFang/方正黑体，英文Lexend Bold
 
-## 🎨 模板规格
+## 🎨 模板展示
 
-### 专业模板 (Professional Template)
+### 专业模板 (Professional Template) - 当前唯一模板
 
 **画布尺寸**: 1600x900 像素
+
+**效果展示**:
+
+#### 中文样例
+![中文缩略图样例](template_samples/chinese_sample_template_1.jpg)
+
+#### 英文样例  
+![英文缩略图样例](template_samples/english_sample_template_1.jpg)
+
+**支持的5个输入参数**:
+1. **title** - 主标题文字 (必填)
+2. **subtitle** - 副标题文字 (可选)  
+3. **author** - 作者名称 (可选，自动转大写)
+4. **logo_path** - Logo文件路径 (可选)
+5. **right_image_path** - 右侧图片路径 (可选)
+
+**颜色配置** (当前版本固定，暂不支持自定义):
+- 标题: 白色 #FFFFFF
+- 副标题: 淡黄色 #FFEB9C  
+- 作者: 浅灰色 #CCCCCC
+- 背景: 纯黑色 #000000
 
 **布局分区**:
 - **左侧文字区域**: 700x900 像素 - 黑色背景，文字显示
 - **右侧图片区域**: 900x900 像素 - 正方形图片填充  
 - **三角形过渡**: 200x900 像素 - 优雅的斜线分割效果
+
+> **未来计划**: 我们将添加更多模板样式和自定义颜色选项！
 
 ## 🧠 智能文字系统
 
