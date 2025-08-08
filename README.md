@@ -215,10 +215,20 @@ pip install "youtube-thumbnail-generator[api]"
 
 ### Package Information
 - **PyPI Page**: https://pypi.org/project/youtube-thumbnail-generator/
-- **Current Version**: 2.1.0
+- **Current Version**: 2.2.0
 - **License**: MIT
 - **Python Support**: 3.7+
 - **Dependencies**: Pillow (required), Flask+CORS (optional for API)
+
+### 📦 What's Included Automatically
+When you install via PyPI or GitHub, you get everything you need:
+- ✅ **All Templates**: Dark, Light, and Custom background templates
+- ✅ **Triangle Assets**: Black and white triangle overlays  
+- ✅ **Professional Template**: 1600x900 high-quality base template
+- ✅ **Font Assets**: Chinese/English optimized fonts
+- ✅ **Sample Assets**: Testing logo and image files
+
+**No additional downloads needed** - start generating thumbnails immediately after installation!
 
 ## 🚀 Usage Methods
 

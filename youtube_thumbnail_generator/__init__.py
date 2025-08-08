@@ -1,31 +1,33 @@
 """
-YouTube Thumbnail Generator v2.1
+YouTube Thumbnail Generator v2.2
 
-A professional YouTube thumbnail generation library with intelligent Chinese/English text processing,
-smart line-breaking algorithms, and dynamic layout adjustments.
+A professional YouTube thumbnail generation library with three theme modes, intelligent Chinese/English 
+text processing, smart line-breaking algorithms, and full color customization.
 
 Features:
-- Chinese/English differentiated text processing (30% larger fonts for Chinese)
-- Smart line-breaking: 9 chars for Chinese titles, intelligent English wrapping
-- Triangle overlay integration into right-side images
-- Centered title layout for focused content
-- Professional templates with PNG-based text rendering
-- Multi-platform font support (Mac/Linux/RunPod/AWS)
+- Three Theme Modes: Dark, Light, Custom with automatic color defaults
+- Full Color Customization: title_color, author_color parameters with hex support
+- Dynamic Font Scaling: Auto-scaling based on text length (1-17 characters)
+- Triangle Control: enable_triangle parameter for overlay management
+- Custom Background Support: Use your own 1600x900 templates
+- Chinese/English Optimization: 30% larger fonts for Chinese, optimal lengths guidance
+- Smart Line-breaking: 9 chars for Chinese titles, intelligent English wrapping
+- Professional Templates: All templates included automatically in package
 
 Basic Usage:
     from youtube_thumbnail_generator import FinalThumbnailGenerator
     
-    generator = FinalThumbnailGenerator("path/to/template.jpg")
+    generator = FinalThumbnailGenerator("templates/professional_template.jpg")
     result = generator.generate_final_thumbnail(
         title="Your Amazing Title",
-        author="Your Name",
-        logo_path="path/to/logo.png",
-        right_image_path="path/to/image.jpg",
+        author="Your Name", 
+        theme="dark",  # "dark", "light", or "custom"
+        title_color="#FFFFFF",  # Custom colors
         output_path="output.jpg"
     )
 """
 
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 __author__ = "Leo Wang"
 __email__ = "leo@example.com"
 __license__ = "MIT"
