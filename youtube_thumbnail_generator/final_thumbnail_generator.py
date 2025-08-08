@@ -61,38 +61,88 @@ def create_default_templates():
     create_triangle_templates()
     print("All default templates created successfully!")
 
-def create_triangle_templates():
-    """Create triangle template files"""
+def generate_triangle_template(color: str = "black", direction: str = "bottom", 
+                              output_path: str = None, width: int = 200, height: int = 900) -> str:
+    """
+    Generate triangle template with customizable color and direction
+    
+    Args:
+        color (str): Triangle color - "black", "white", or hex color like "#FF0000"
+        direction (str): Triangle point direction - "bottom" (point at bottom-left) or "top" (point at top-left)
+        output_path (str): Custom output path (optional)
+        width (int): Triangle width in pixels (default: 200)
+        height (int): Triangle height in pixels (default: 900)
+        
+    Returns:
+        str: Path to the generated triangle file
+        
+    Examples:
+        generate_triangle_template("black", "bottom")  # Default black triangle, point at bottom-left
+        generate_triangle_template("white", "top")     # White triangle, point at top-left
+        generate_triangle_template("#FF0000", "bottom", "red_triangle.png")  # Custom red triangle
+    """
     from PIL import Image, ImageDraw
     
-    # Triangle dimensions
-    width, height = 200, 900
+    # Generate default output path if not provided
+    if not output_path:
+        direction_suffix = "bottom" if direction == "bottom" else "top"
+        if color.startswith("#"):
+            color_name = color.replace("#", "hex")
+        else:
+            color_name = color
+        output_path = f"templates/triangle_{color_name}_{direction_suffix}.png"
     
-    # Black triangle for dark theme
-    triangle_black_path = "templates/triangle_black.png"
-    if not os.path.exists(triangle_black_path):
-        img = Image.new('RGBA', (width, height), (0, 0, 0, 0))  # Transparent background
-        draw = ImageDraw.Draw(img)
-        
-        # Draw black triangle: 尖角在左下角 (top-right to top-left to bottom-left)
-        triangle_points = [(width, 0), (0, 0), (0, height)]
-        draw.polygon(triangle_points, fill=(0, 0, 0, 255))  # Fully opaque black
-        
-        img.save(triangle_black_path, 'PNG')
-        print(f"Created black triangle: {triangle_black_path}")
+    # Ensure output directory exists
+    output_dir = os.path.dirname(output_path)
+    if output_dir:  # Only if there's a directory component
+        os.makedirs(output_dir, exist_ok=True)
     
-    # White triangle for light theme  
-    triangle_white_path = "templates/triangle_white.png"
-    if not os.path.exists(triangle_white_path):
-        img = Image.new('RGBA', (width, height), (0, 0, 0, 0))  # Transparent background
-        draw = ImageDraw.Draw(img)
-        
-        # Draw white triangle: 尖角在左下角 (top-right to top-left to bottom-left) - same as black
+    # Create transparent background
+    img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+    
+    # Define triangle points based on direction
+    if direction == "bottom":
+        # Point at bottom-left: top-right to top-left to bottom-left
         triangle_points = [(width, 0), (0, 0), (0, height)]
-        draw.polygon(triangle_points, fill=(255, 255, 255, 255))  # Fully opaque white
-        
-        img.save(triangle_white_path, 'PNG')
-        print(f"Created white triangle: {triangle_white_path}")
+    else:  # direction == "top"  
+        # Point at top-left: top-left to bottom-left to bottom-right
+        triangle_points = [(0, 0), (0, height), (width, height)]
+    
+    # Convert color to RGB
+    if color == "black":
+        fill_color = (0, 0, 0, 255)
+    elif color == "white":
+        fill_color = (255, 255, 255, 255)
+    elif color.startswith("#"):
+        # Convert hex to RGBA
+        hex_color = color.lstrip('#')
+        if len(hex_color) == 6:
+            r, g, b = int(hex_color[0:2], 16), int(hex_color[2:4], 16), int(hex_color[4:6], 16)
+            fill_color = (r, g, b, 255)
+        else:
+            print(f"Warning: Invalid hex color {color}, using black")
+            fill_color = (0, 0, 0, 255)
+    else:
+        print(f"Warning: Unknown color {color}, using black")
+        fill_color = (0, 0, 0, 255)
+    
+    # Draw triangle
+    draw.polygon(triangle_points, fill=fill_color)
+    
+    # Save triangle
+    img.save(output_path, 'PNG')
+    print(f"Generated triangle: {output_path}")
+    print(f"  Color: {color}, Direction: {direction}, Size: {width}x{height}")
+    
+    return output_path
+
+def create_triangle_templates():
+    """Create default triangle template files for dark and light themes"""
+    # Create default triangles needed by the system
+    generate_triangle_template("black", "bottom", "templates/triangle_black.png")
+    generate_triangle_template("white", "bottom", "templates/triangle_white.png")
+    print("Default triangle templates created!")
 
 def optimize_for_youtube_api(input_path: str, output_path: str = None) -> str:
     """

@@ -33,7 +33,7 @@ __email__ = "leo@example.com"
 __license__ = "MIT"
 
 # Import main classes and functions
-from .final_thumbnail_generator import FinalThumbnailGenerator, get_resource_path, create_default_templates, optimize_for_youtube_api
+from .final_thumbnail_generator import FinalThumbnailGenerator, get_resource_path, create_default_templates, optimize_for_youtube_api, generate_triangle_template
 from .text_png_generator import create_text_png
 from .function_add_chapter import add_chapter_to_image
 
@@ -54,5 +54,6 @@ __all__ = [
     'get_resource_path',
     'init_templates',
     'optimize_for_youtube_api',
+    'generate_triangle_template',
     '__version__'
 ]

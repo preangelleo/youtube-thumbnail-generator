@@ -522,10 +522,33 @@ from youtube_thumbnail_generator import init_templates
 # This creates a 'templates/' directory with all required files:
 # - professional_template.jpg (1600x900 black background)
 # - light_template.png (1600x900 white background) 
-# - triangle_black.png (200x900 semi-transparent black triangle)
-# - triangle_white.png (200x900 semi-transparent white triangle)
+# - triangle_black.png (200x900 opaque black triangle)
+# - triangle_white.png (200x900 opaque white triangle)
 init_templates()
 ```
+
+### Advanced Triangle Customization
+For advanced users who want custom triangle effects:
+
+```python
+from youtube_thumbnail_generator import generate_triangle_template
+
+# Generate 4 different triangle variants:
+generate_triangle_template("black", "bottom")    # Default: point at bottom-left
+generate_triangle_template("black", "top")       # Point at top-left  
+generate_triangle_template("white", "bottom")    # White, point at bottom-left
+generate_triangle_template("white", "top")       # White, point at top-left
+
+# Custom colors and sizes:
+generate_triangle_template("#FF0000", "bottom", "red_triangle.png", 300, 900)
+generate_triangle_template("#00FF00", "top", "green_triangle_top.png")
+```
+
+#### Triangle Options:
+- **Colors**: `"black"`, `"white"`, or hex colors like `"#FF0000"`
+- **Directions**: `"bottom"` (point at bottom-left), `"top"` (point at top-left)
+- **Custom sizes**: width and height in pixels
+- **Custom paths**: specify your own output filename
 
 ### File Path Rules
 - **Relative Paths**: Relative to project root directory
@@ -638,13 +661,69 @@ youtube_thumbnail_generator/
 - **Content**: Choose visually impactful images
 - **Quality**: Recommend high resolution, ensure clarity after scaling
 
-## 🚨 Important Notes
+## 🚨 Troubleshooting & Important Notes
 
-1. **File Paths**: Ensure all file paths are correct and files exist
-2. **Font Dependencies**: System will auto-downgrade to available fonts
-3. **Output Overwrite**: Default output `final_test.jpg`, will overwrite same-name files
-4. **API Async**: API uses async processing, need to poll status
-5. **Memory Usage**: Large image processing may use significant memory
+### 🔧 Common Issues & Solutions
+
+#### Template Files Not Found
+If you encounter `FileNotFoundError` for template files:
+
+**Problem**: Templates missing after PyPI installation or in development.
+
+**Solutions** (try in order):
+1. **Automatic Resolution** - The system will automatically create missing templates
+2. **Manual Creation**:
+   ```python
+   from youtube_thumbnail_generator import init_templates
+   init_templates()  # Creates all required templates
+   ```
+3. **Resource Path Check**:
+   ```python
+   from youtube_thumbnail_generator import get_resource_path
+   print(get_resource_path("templates/professional_template.jpg"))
+   ```
+
+#### Custom Triangle Effects Not Working
+**Problem**: Default triangles don't match your design needs.
+
+**Solution**: Generate custom triangles:
+```python
+from youtube_thumbnail_generator import generate_triangle_template
+
+# 4 basic variants:
+generate_triangle_template("black", "bottom")  # Standard
+generate_triangle_template("black", "top")     # Inverted
+generate_triangle_template("white", "bottom")  # Light theme
+generate_triangle_template("white", "top")     # Light inverted
+
+# Custom colors:
+generate_triangle_template("#FF6B35", "bottom", "custom_orange.png")
+```
+
+#### YouTube API Upload Failures
+**Problem**: Generated thumbnails rejected by YouTube API.
+
+**Check**: Ensure you're using the YouTube-optimized version:
+```python
+result = generator.generate_final_thumbnail(
+    title="Your Title",
+    youtube_ready=True  # This is now default - ensures 1280x720, <2MB, sRGB
+)
+
+# Or manually optimize existing thumbnails:
+from youtube_thumbnail_generator import optimize_for_youtube_api
+youtube_path = optimize_for_youtube_api("your_thumbnail.jpg")
+```
+
+### 📋 System Requirements & Notes
+
+1. **File Paths**: All paths are automatically resolved with smart fallbacks
+2. **Font Dependencies**: System will auto-downgrade to available fonts  
+3. **Template Management**: Missing templates are auto-created in your project directory
+4. **Output Format**: Default YouTube-ready (1280x720 JPEG), use `youtube_ready=False` for high-res
+5. **API Processing**: API uses async processing, poll status for completion
+6. **Memory Usage**: Large image processing may use significant memory
+7. **Cross-Platform**: Full compatibility across macOS, Linux, and Windows
 
 ---
 
