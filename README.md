@@ -4,6 +4,13 @@ Professional YouTube thumbnail automatic generation tool with intelligent Chines
 
 **Author**: Leo Wang (https://leowang.net)
 
+[![PyPI version](https://badge.fury.io/py/youtube-thumbnail-generator.svg)](https://badge.fury.io/py/youtube-thumbnail-generator)
+[![Downloads](https://static.pepy.tech/badge/youtube-thumbnail-generator)](https://pepy.tech/project/youtube-thumbnail-generator)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+**🌍 Available on PyPI**: https://pypi.org/project/youtube-thumbnail-generator/  
+**📂 GitHub Repository**: https://github.com/preangelleo/youtube-thumbnail-generator
+
 ## 📋 Core Features
 
 - ✅ **Intelligent Chinese/English System**: PNG overlay technology, perfect Chinese/English text mixing
@@ -120,33 +127,35 @@ right_image_path="assets/your_image.jpg"
 - **Fill Method**: Scale to 900x900 pixels to fill right side
 - **Position**: Right area starting at (700, 0)
 
-## 📦 Installation Methods
+## 📦 Installation
 
-### Method 1: Install from PyPI (Recommended)
+The package is officially available on PyPI and can be installed worldwide:
+
+### Quick Install (Recommended)
 ```bash
-# Install the latest stable version
 pip install youtube-thumbnail-generator
-
-# Include API service dependencies  
-pip install youtube-thumbnail-generator[api]
 ```
 
-### Method 2: Install from GitHub (Latest Development)
-```bash
-pip install git+https://github.com/preangelleo/youtube-thumbnail-generator.git
-```
-
-### Method 3: Local Development Install
-```bash
-git clone https://github.com/preangelleo/youtube-thumbnail-generator.git
-cd youtube-thumbnail-generator
-pip install -e .
-```
-
-### Method 4: Include API Service (from PyPI)
+### With API Service Support
 ```bash
 pip install "youtube-thumbnail-generator[api]"
 ```
+
+### Alternative Installation Methods
+
+| Method | Command | Use Case |
+|--------|---------|----------|
+| **PyPI (Stable)** | `pip install youtube-thumbnail-generator` | Production use, stable releases |
+| **PyPI with API** | `pip install "youtube-thumbnail-generator[api]"` | Include Flask API dependencies |
+| **GitHub (Latest)** | `pip install git+https://github.com/preangelleo/youtube-thumbnail-generator.git` | Latest development features |
+| **Development** | `git clone ... && pip install -e .` | Local development and testing |
+
+### Package Information
+- **PyPI Page**: https://pypi.org/project/youtube-thumbnail-generator/
+- **Current Version**: 2.1.0
+- **License**: MIT
+- **Python Support**: 3.7+
+- **Dependencies**: Pillow (required), Flask+CORS (optional for API)
 
 ## 🚀 Usage Methods
 
@@ -416,6 +425,21 @@ youtube_thumbnail_generator/
 - ✅ Smart font selection
 - ✅ Complete text effects
 - ✅ Flask API integration
+
+## 🏆 Project Status
+
+### PyPI Distribution
+- **📦 Live on PyPI**: https://pypi.org/project/youtube-thumbnail-generator/
+- **🌍 Global Install**: `pip install youtube-thumbnail-generator`  
+- **📊 Download Stats**: Available on [PyPI Stats](https://pepy.tech/project/youtube-thumbnail-generator)
+- **🔖 Latest Version**: 2.1.0
+- **📅 Published**: August 2025
+
+### Community & Support
+- **⭐ GitHub Stars**: https://github.com/preangelleo/youtube-thumbnail-generator
+- **🐛 Issue Tracking**: https://github.com/preangelleo/youtube-thumbnail-generator/issues
+- **📖 Documentation**: Complete README and API docs
+- **🌐 International**: Full English documentation for global users
 
 ## 🎯 Best Practices
 
