@@ -376,23 +376,58 @@ class LogoConfig:
 class FinalThumbnailGenerator:
     """最终版缩略图生成器"""
     
-    def __init__(self, template_path: str):
-        """初始化生成器"""
+    def __init__(self, template_path: str = None):
+        """初始化生成器
+        
+        Args:
+            template_path (str, optional): 模板文件路径。
+                                         如果不提供，将使用默认黑色模板
+        """
+        if template_path is None:
+            # 使用默认黑色模板
+            template_path = get_resource_path("templates/professional_template.jpg")
+            print(f"Using default black template: {template_path}")
+        
         self.template_path = template_path
         if not os.path.exists(template_path):
-            raise FileNotFoundError(f"模板文件不存在: {template_path}")
-            
-        # 获取系统信息
-        # System-agnostic initialization
-        print(f"Using universal font detection")
+            print(f"Template not found at {template_path}, creating default templates...")
+            create_default_templates()
+            # 再次检查模板是否存在
+            if not os.path.exists(template_path):
+                raise FileNotFoundError(f"无法创建默认模板: {template_path}")
         
-        # 字体优先级列表
+        # 验证模板尺寸必须为 1600x900
+        self._validate_template_size(template_path)
+            
+        # 系统初始化 - 使用通用字体检测
+        print(f"Initialized with template: {os.path.basename(self.template_path)}")
+        
+        # 初始化字体优先级列表
         self.font_paths = {
             # 中文字体
             "chinese": self._get_chinese_font_paths(),
-            # 英文字体 - Lexend Bold
+            # 英文字体
             "english": self._get_english_font_paths()
         }
+    
+    def _validate_template_size(self, template_path: str):
+        """验证模板尺寸必须为 1600x900"""
+        try:
+            from PIL import Image
+            with Image.open(template_path) as img:
+                width, height = img.size
+                if width != 1600 or height != 900:
+                    raise ValueError(
+                        f"模板尺寸不正确: {width}x{height}. "
+                        f"必须为 1600x900 像素。\n"
+                        f"请使用正确尺寸的模板或使用默认模板。"
+                    )
+                print(f"Template size verified: {width}x{height} ✓")
+        except Exception as e:
+            if "模板尺寸不正确" in str(e):
+                raise e  # 重新抛出尺寸错误
+            else:
+                print(f"Warning: Could not validate template size: {e}")
     
     def _get_chinese_font_paths(self):
         """获取中文字体路径 - 跨平台通用"""

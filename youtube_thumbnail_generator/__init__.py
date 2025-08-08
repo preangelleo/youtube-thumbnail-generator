@@ -45,6 +45,24 @@ def init_templates():
     """Initialize default templates in current directory if needed"""
     return create_default_templates()
 
+def create_generator(template_path=None):
+    """创建缩略图生成器 - 不需要指定模板路径
+    
+    Args:
+        template_path (str, optional): 模板文件路径。如果不提供，使用默认黑色模板
+        
+    Returns:
+        FinalThumbnailGenerator: 缩略图生成器实例
+        
+    Example:
+        # 使用默认模板
+        generator = create_generator()
+        
+        # 使用自定义模板
+        generator = create_generator('my_template.jpg')
+    """
+    return FinalThumbnailGenerator(template_path)
+
 # Define what gets imported with "from youtube_thumbnail_generator import *"
 __all__ = [
     'FinalThumbnailGenerator',
@@ -53,6 +71,7 @@ __all__ = [
     'get_default_template',
     'get_resource_path',
     'init_templates',
+    'create_generator',
     'optimize_for_youtube_api',
     'generate_triangle_template',
     '__version__'
