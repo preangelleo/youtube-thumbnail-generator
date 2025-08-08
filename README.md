@@ -122,26 +122,30 @@ right_image_path="assets/your_image.jpg"
 
 ## 📦 Installation Methods
 
-### Method 1: Install from GitHub (Recommended)
+### Method 1: Install from PyPI (Recommended)
+```bash
+# Install the latest stable version
+pip install youtube-thumbnail-generator
+
+# Include API service dependencies  
+pip install youtube-thumbnail-generator[api]
+```
+
+### Method 2: Install from GitHub (Latest Development)
 ```bash
 pip install git+https://github.com/preangelleo/youtube-thumbnail-generator.git
 ```
 
-### Method 2: Local Development Install
+### Method 3: Local Development Install
 ```bash
 git clone https://github.com/preangelleo/youtube-thumbnail-generator.git
 cd youtube-thumbnail-generator
 pip install -e .
 ```
 
-### Method 3: Core Functions Only
+### Method 4: Include API Service (from PyPI)
 ```bash
-pip install git+https://github.com/preangelleo/youtube-thumbnail-generator.git
-```
-
-### Method 4: Include API Service
-```bash
-pip install "git+https://github.com/preangelleo/youtube-thumbnail-generator.git[api]"
+pip install "youtube-thumbnail-generator[api]"
 ```
 
 ## 🚀 Usage Methods
@@ -442,7 +446,7 @@ youtube_thumbnail_generator/
 
 ## 💡 Quick Start
 
-1. **Install Dependencies**: `pip install git+https://github.com/preangelleo/youtube-thumbnail-generator.git`
+1. **Install Package**: `pip install youtube-thumbnail-generator`
 2. **Prepare Assets**: Put logos and images in corresponding directories
 3. **Direct Test**: 
    ```python
