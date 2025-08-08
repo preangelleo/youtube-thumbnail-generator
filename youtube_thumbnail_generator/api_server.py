@@ -11,8 +11,14 @@ import threading
 import time
 import os
 from datetime import datetime
-from final_thumbnail_generator import FinalThumbnailGenerator
-from function_add_chapter import add_chapter_to_image
+try:
+    # 当作为包安装时的导入方式
+    from .final_thumbnail_generator import FinalThumbnailGenerator
+    from .function_add_chapter import add_chapter_to_image
+except ImportError:
+    # 直接运行时的导入方式
+    from final_thumbnail_generator import FinalThumbnailGenerator
+    from function_add_chapter import add_chapter_to_image
 
 app = Flask(__name__)
 CORS(app)
@@ -259,7 +265,8 @@ def index():
         }
     })
 
-if __name__ == '__main__':
+def main():
+    """命令行入口函数"""
     # 确保必要的目录存在
     os.makedirs('outputs', exist_ok=True)
     os.makedirs('logos', exist_ok=True)
@@ -271,3 +278,6 @@ if __name__ == '__main__':
     print("主要端点: POST /api/generate/enhanced")
     
     app.run(host='0.0.0.0', port=5002, debug=False)
+
+if __name__ == '__main__':
+    main()

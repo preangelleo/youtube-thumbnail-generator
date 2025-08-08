@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "youtube-thumbnail-generator"
+version = "2.1.0"
+authors = [
+    {name = "Leo Wang", email = "leo@example.com"},
+]
+description = "AI-powered YouTube thumbnail generator with Chinese/English support and intelligent text processing"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.7"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Multimedia :: Graphics",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+]
+keywords = [
+    "youtube", "thumbnail", "generator", "ai", "chinese", "english", 
+    "text-processing", "image-generation", "PIL", "graphics", "automation"
+]
+dependencies = [
+    "Pillow>=8.0.0",
+]
+
+[project.optional-dependencies]
+api = ["flask>=2.0.0", "flask-cors>=3.0.0"]
+dev = ["pytest>=6.0", "black", "flake8"]
+full = ["flask>=2.0.0", "flask-cors>=3.0.0"]
+
+[project.urls]
+Homepage = "https://github.com/preangelleo/youtube-thumbnail-generator"
+Documentation = "https://github.com/preangelleo/youtube-thumbnail-generator#readme"
+Repository = "https://github.com/preangelleo/youtube-thumbnail-generator"
+"Bug Reports" = "https://github.com/preangelleo/youtube-thumbnail-generator/issues"
+
+[project.scripts]
+youtube-thumbnail-api = "youtube_thumbnail_generator.api_server:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["youtube_thumbnail_generator*"]
+
+[tool.setuptools.package-data]
+youtube_thumbnail_generator = [
+    "../templates/*.jpg",
+    "../templates/*.png", 
+    "../template_samples/*.jpg"
+]

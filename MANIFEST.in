@@ -1,0 +1,25 @@
+# Include documentation
+include README.md
+include README_API.md
+include LICENSE
+include requirements.txt
+
+# Include template files
+recursive-include templates *.jpg *.png
+recursive-include template_samples *.jpg
+
+# Include example scripts
+include example_usage.py
+include create_triangle_template.py
+
+# Include package data
+recursive-include youtube_thumbnail_generator *.py
+
+# Exclude unwanted files
+exclude *.log
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+recursive-exclude backup *
+recursive-exclude outputs *.jpg *.jpeg *.png
+recursive-exclude uploads *
+exclude .DS_Store

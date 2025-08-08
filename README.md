@@ -1,133 +1,159 @@
-# YouTube 缩略图生成器 v2.1
+# YouTube Thumbnail Generator v2.1
 
-专业的YouTube缩略图自动生成工具，支持中英文智能文字布局、Logo、图片的精确控制和动态适配。
+Professional YouTube thumbnail automatic generation tool with intelligent Chinese/English text layout, logo, and precise image control with dynamic adaptation.
 
-## 📋 核心特性
+**Author**: Leo Wang (https://leowang.net)
 
-- ✅ **中英文智能系统**: PNG贴图技术，完美处理中英文混排
-- ✅ **智能换行算法**: 中文9字/20字限制，英文3行截断
-- ✅ **字体差异化优化**: 中文字体增大30%，副标题高度增加20%
-- ✅ **专业视觉效果**: 三角形过渡集成到图片，文字始终最上层
-- ✅ **图片智能处理**: 自动正方形转换 + 900x900填充
-- ✅ **多端API支持**: Flask RESTful API + Chapter功能
-- ✅ **字体智能选择**: 中文PingFang/方正黑体，英文Lexend Bold
+## 📋 Core Features
 
-## 🎨 模板展示
+- ✅ **Intelligent Chinese/English System**: PNG overlay technology, perfect Chinese/English text mixing
+- ✅ **Smart Line-breaking Algorithm**: Chinese 9/20 character limits, English 3-line truncation  
+- ✅ **Font Differentiation Optimization**: Chinese fonts 30% larger, subtitle height increased by 20%
+- ✅ **Professional Visual Effects**: Triangle transition integrated into images, text always on top layer
+- ✅ **Intelligent Image Processing**: Auto square conversion + 900x900 filling
+- ✅ **Multi-endpoint API Support**: Flask RESTful API + Chapter functionality
+- ✅ **Smart Font Selection**: Chinese PingFang/Founder, English Lexend Bold
 
-### 专业模板 (Professional Template) - 当前唯一模板
+## 🎨 Template Showcase
 
-**画布尺寸**: 1600x900 像素
+### Professional Template - Currently the Only Template
 
-**效果展示**:
+**Canvas Size**: 1600x900 pixels
 
-#### 中文样例
-![中文缩略图样例](template_samples/chinese_sample_template_1.jpg)
+**Effect Showcase**:
 
-#### 英文样例  
-![英文缩略图样例](template_samples/english_sample_template_1.jpg)
+#### Chinese Sample
+![Chinese Thumbnail Sample](template_samples/chinese_sample_template_1.jpg)
 
-**支持的5个输入参数**:
-1. **title** - 主标题文字 (必填)
-2. **subtitle** - 副标题文字 (可选)  
-3. **author** - 作者名称 (可选，自动转大写)
-4. **logo_path** - Logo文件路径 (可选)
-5. **right_image_path** - 右侧图片路径 (可选)
+#### English Sample  
+![English Thumbnail Sample](template_samples/english_sample_template_1.jpg)
 
-**颜色配置** (当前版本固定，暂不支持自定义):
-- 标题: 白色 #FFFFFF
-- 副标题: 淡黄色 #FFEB9C  
-- 作者: 浅灰色 #CCCCCC
-- 背景: 纯黑色 #000000
+**5 Supported Input Parameters**:
+1. **title** - Main title text (required)
+2. **subtitle** - Subtitle text (optional)  
+3. **author** - Author name (optional, auto-capitalized)
+4. **logo_path** - Logo file path (optional)
+5. **right_image_path** - Right-side image path (optional)
 
-**布局分区**:
-- **左侧文字区域**: 700x900 像素 - 黑色背景，文字显示
-- **右侧图片区域**: 900x900 像素 - 正方形图片填充  
-- **三角形过渡**: 200x900 像素 - 优雅的斜线分割效果
+**Color Configuration** (currently fixed, no custom colors yet):
+- Title: White #FFFFFF
+- Subtitle: Light yellow #FFEB9C  
+- Author: Light gray #CCCCCC
+- Background: Pure black #000000
 
-> **未来计划**: 我们将添加更多模板样式和自定义颜色选项！
+**Layout Zones**:
+- **Left Text Area**: 700x900 pixels - Black background, text display
+- **Right Image Area**: 900x900 pixels - Square image filling  
+- **Triangle Transition**: 200x900 pixels - Elegant diagonal separation effect
 
-## 🧠 智能文字系统
+> **Future Plans**: We will add more template styles and custom color options!
 
-### 核心技术：PNG贴图 + 三角形集成
-不再直接在模板上绘制文字，而是：
-1. **独立渲染**: 先生成透明背景的PNG文字图片
-2. **智能调整**: 根据文字长度动态调整PNG尺寸
-3. **三角形集成**: 三角形先贴到右侧图片，再整体贴到模板
-4. **文字覆盖**: PNG文字最后贴入，确保在最上层显示
+## 🧠 Intelligent Text System
 
-### 中英文差异化处理
-#### 中文优化
-- **字体增大**: 比英文大30% (54px vs 42px标题，26px vs 20px副标题)
-- **副标题增高**: 比英文高20% (36px vs 30px)
-- **智能换行**: 
-  - 标题：超过9字换行，除以2分配，奇数字符放第二行
-  - 副标题：超过20字换行，除以2分配
-- **行间距**: 标题16px，副标题8px
+### Core Technology: PNG Overlay + Triangle Integration
+Instead of drawing text directly on template:
+1. **Independent Rendering**: Generate transparent PNG text images first
+2. **Smart Adjustment**: Dynamically adjust PNG size based on text length
+3. **Triangle Integration**: Paste triangle to right-side image first, then paste combined image to template
+4. **Text Overlay**: PNG text pasted last, ensuring it's always on the top layer
 
-#### 英文处理
-- **空格换行**: 按单词边界自然换行
-- **3行限制**: 标题最多3行，超过自动截断+省略号
-- **标准字体**: Lexend Bold
-- **标准行间距**: 8px
+### Chinese/English Differentiated Processing
+#### Chinese Optimization
+- **Font Enlargement**: 30% larger than English (54px vs 42px title, 26px vs 20px subtitle)
+- **Subtitle Height Increase**: 20% taller than English (36px vs 30px)
+- **Smart Line-breaking**: 
+  - Title: Break after 9 characters, divide by 2, odd characters go to second line
+  - Subtitle: Break after 20 characters, divide by 2
+- **Line Spacing**: Title 16px, subtitle 8px
 
-## 📝 输入参数详解
+#### English Processing
+- **Space-based Line-breaking**: Natural word boundary wrapping
+- **3-line Limit**: Title max 3 lines, auto-truncate with ellipsis
+- **Standard Font**: Lexend Bold
+- **Standard Line Spacing**: 8px
 
-### 必填参数
-**`title`** (str) - 主标题
+## 📝 Input Parameter Details
+
+### Required Parameters
+**`title`** (str) - Main title
 ```python
 title="The Ultimate Complete Guide to Advanced AI Technology"
 ```
-- **智能换行**: 自动计算最优换行位置
-- **动态高度**: 根据行数调整PNG高度(55px/行 + 行间距)
-- **字体**: 45px Helvetica，白色 #FFFFFF
-- **效果**: 黑色描边 + 阴影，专业视觉
-- **位置**: (50, 280)起始，实际高度动态调整
+- **Smart Line-breaking**: Auto-calculate optimal line-break positions
+- **Dynamic Height**: Adjust PNG height based on line count (55px/line + line spacing)
+- **Font**: 45px Helvetica, white #FFFFFF
+- **Effects**: Black stroke + shadow, professional visual
+- **Position**: Starting at (50, 280), actual height dynamically adjusted
 
-### 可选参数
+### Optional Parameters
 
-**`subtitle`** (str) - 副标题
+**`subtitle`** (str) - Subtitle
 ```python
 subtitle="Everything You Need to Know About Modern Technology"
 ```
-- **智能适配**: 1行=30px，2行=68px，3行=106px高度
-- **字体**: 20px Helvetica，淡黄色 #FFEB9C  
-- **位置**: 标题下方20px间距，自动计算Y坐标
-- **截断规则**: 超过3行自动添加省略号
+- **Smart Adaptation**: 1 line=30px, 2 lines=68px, 3 lines=106px height
+- **Font**: 20px Helvetica, light yellow #FFEB9C  
+- **Position**: 20px spacing below title, auto-calculate Y coordinate
+- **Truncation Rule**: Auto-add ellipsis if exceeds 3 lines
 
-**`author`** (str) - 作者名称
+**`author`** (str) - Author name
 ```python
-author="Leo Wang"  # 自动转为 "LEO WANG"
+author="Leo Wang"  # Auto-converts to "LEO WANG"
 ```
-- **格式**: 自动转换为全大写
-- **位置**: 固定底部 (50, 860)
-- **字体**: 36px Lexend Bold，浅灰色 #CCCCCC
+- **Format**: Auto-convert to uppercase
+- **Position**: Fixed bottom (50, 860)
+- **Font**: 36px Lexend Bold, light gray #CCCCCC
 
-**`logo_path`** (str) - Logo文件路径
+**`logo_path`** (str) - Logo file path
 ```python
 logo_path="logos/your_logo.png"
 ```
-- **位置**: 左上角 (50, 50)，左边距=上边距
-- **区域**: 240x150像素，自动等比缩放
-- **格式**: 支持 PNG/JPG，自动处理透明度
+- **Position**: Top-left corner (50, 50), left margin = top margin
+- **Area**: 240x150 pixels, auto aspect ratio scaling
+- **Format**: Supports PNG/JPG, auto-handle transparency
 
-**`right_image_path`** (str) - 右侧图片路径
+**`right_image_path`** (str) - Right-side image path
 ```python
 right_image_path="assets/your_image.jpg"
 ```
-- **智能裁剪**: 自动转换为正方形（居中裁剪）
-- **填充方式**: 缩放到900x900像素填满右侧
-- **位置**: (700, 0)开始的右侧区域
+- **Smart Cropping**: Auto-convert to square (center crop)
+- **Fill Method**: Scale to 900x900 pixels to fill right side
+- **Position**: Right area starting at (700, 0)
 
-## 🚀 使用方法
+## 📦 Installation Methods
 
-### 1. 直接Python调用
+### Method 1: Install from GitHub (Recommended)
+```bash
+pip install git+https://github.com/preangelleo/youtube-thumbnail-generator.git
+```
+
+### Method 2: Local Development Install
+```bash
+git clone https://github.com/preangelleo/youtube-thumbnail-generator.git
+cd youtube-thumbnail-generator
+pip install -e .
+```
+
+### Method 3: Core Functions Only
+```bash
+pip install git+https://github.com/preangelleo/youtube-thumbnail-generator.git
+```
+
+### Method 4: Include API Service
+```bash
+pip install "git+https://github.com/preangelleo/youtube-thumbnail-generator.git[api]"
+```
+
+## 🚀 Usage Methods
+
+### 1. Use as Python Library
 ```python
-from final_thumbnail_generator import FinalThumbnailGenerator
+from youtube_thumbnail_generator import FinalThumbnailGenerator
 
-# 初始化生成器
+# Initialize generator (using included template)
 generator = FinalThumbnailGenerator("templates/professional_template.jpg")
 
-# 生成缩略图（所有参数示例）
+# Generate thumbnail (all parameter example)
 result = generator.generate_final_thumbnail(
     title="The Ultimate Complete Guide to Advanced AI Technology Revolution and Future Gaming Setup Reviews 2025",
     subtitle="Everything You Need to Know About Modern Technology and Future Developments",
@@ -137,18 +163,45 @@ result = generator.generate_final_thumbnail(
     output_path="outputs/final_test.jpg"
 )
 
-print(f"生成完成: {result}")
+print(f"Generation complete: {result}")
 ```
 
-### 2. API 服务调用
+### 2. Command Line API Service
+Launch API directly after installation:
 
-#### 启动服务
 ```bash
-python api_server.py
-# 服务运行在 http://localhost:5002
+# Start API service directly
+youtube-thumbnail-api
+
+# Or use Python module method
+python -m youtube_thumbnail_generator.api_server
 ```
 
-#### 生成缩略图
+### 3. Use in Other Python Projects
+```python
+# In your Python projects
+from youtube_thumbnail_generator import FinalThumbnailGenerator, create_text_png
+
+# Quick thumbnail generation
+generator = FinalThumbnailGenerator("path/to/your/template.jpg")
+result = generator.generate_final_thumbnail(
+    title="Your Video Title",
+    subtitle="Subtitle",
+    output_path="output/thumbnail.jpg"
+)
+
+# Or generate text PNG only
+success, text_img, height = create_text_png(
+    text="Test Text",
+    width=600,
+    height=200,
+    language="chinese"
+)
+```
+
+### 4. API Service Calls
+
+#### Generate Thumbnail
 ```bash
 curl -X POST http://localhost:5002/api/generate/enhanced \
   -H "Content-Type: application/json" \
@@ -161,35 +214,35 @@ curl -X POST http://localhost:5002/api/generate/enhanced \
   }'
 ```
 
-#### 响应示例
+#### Response Example
 ```json
 {
   "task_id": "abc123-def456-ghi789",
   "status": "processing",
-  "message": "缩略图生成任务已启动"
+  "message": "Thumbnail generation task started"
 }
 ```
 
-#### 查看任务状态
+#### Check Task Status
 ```bash
 curl http://localhost:5002/api/status/abc123-def456-ghi789
 ```
 
-#### 下载结果
+#### Download Result
 ```bash
 curl -O http://localhost:5002/api/download/final_test.jpg
 ```
 
-### 3. Python API客户端示例
+### 3. Python API Client Example
 ```python
 import requests
 import time
 import json
 
 def generate_thumbnail_api(title, subtitle=None, author=None, logo_path=None, image_path=None):
-    """使用API生成缩略图"""
+    """Generate thumbnail using API"""
     
-    # 1. 发起生成请求
+    # 1. Send generation request
     response = requests.post('http://localhost:5002/api/generate/enhanced', 
         headers={'Content-Type': 'application/json'},
         data=json.dumps({
@@ -203,25 +256,25 @@ def generate_thumbnail_api(title, subtitle=None, author=None, logo_path=None, im
     
     task_data = response.json()
     task_id = task_data['task_id']
-    print(f"任务已创建: {task_id}")
+    print(f"Task created: {task_id}")
     
-    # 2. 轮询状态直到完成
+    # 2. Poll status until complete
     while True:
         status_response = requests.get(f'http://localhost:5002/api/status/{task_id}')
         status_data = status_response.json()
         
-        print(f"状态: {status_data['status']}")
+        print(f"Status: {status_data['status']}")
         
         if status_data['status'] == 'completed':
-            print(f"生成完成! 下载: {status_data['download_url']}")
+            print(f"Generation complete! Download: {status_data['download_url']}")
             return status_data['download_url']
         elif status_data['status'] == 'failed':
-            print(f"生成失败: {status_data['error']}")
+            print(f"Generation failed: {status_data['error']}")
             return None
         
         time.sleep(1)
 
-# 使用示例
+# Usage example
 download_url = generate_thumbnail_api(
     title="My Amazing YouTube Video Title That Is Really Long",
     subtitle="Quick Summary of the Content", 
@@ -231,166 +284,173 @@ download_url = generate_thumbnail_api(
 )
 ```
 
-## 🎯 API 端点完整指南
+## 🎯 Complete API Endpoint Guide
 
-### 缩略图生成
+### Thumbnail Generation
 `POST /api/generate/enhanced`
 
-**请求体**:
+**Request Body**:
 ```json
 {
-  "title": "必填 - 主标题文字",
-  "subtitle": "可选 - 副标题文字", 
-  "author": "可选 - 作者名称",
-  "logo_path": "可选 - Logo文件路径",
-  "right_image_path": "可选 - 右侧图片路径"
+  "title": "Required - Main title text",
+  "subtitle": "Optional - Subtitle text", 
+  "author": "Optional - Author name",
+  "logo_path": "Optional - Logo file path",
+  "right_image_path": "Optional - Right-side image path"
 }
 ```
 
-### Chapter图片生成  
+### Chapter Image Generation  
 `POST /api/generate/chapter`
 
-**请求体**:
+**Request Body**:
 ```json
 {
-  "text": "必填 - 要显示的文字",
-  "language": "可选 - english/chinese",
-  "font_size": "可选 - 字体大小",
-  "width": "可选 - 图片宽度，默认1600", 
-  "height": "可选 - 图片高度，默认900"
+  "text": "Required - Text to display",
+  "language": "Optional - english/chinese",
+  "font_size": "Optional - Font size",
+  "width": "Optional - Image width, default 1600", 
+  "height": "Optional - Image height, default 900"
 }
 ```
 
-### 其他端点
-- `GET /api/status/<task_id>` - 查看任务状态
-- `GET /api/download/<filename>` - 下载生成文件
-- `GET /api/health` - 健康检查
-- `GET /api/templates` - 获取可用模板
-- `GET /api/assets` - 获取资源列表
+### Other Endpoints
+- `GET /api/status/<task_id>` - Check task status
+- `GET /api/download/<filename>` - Download generated file
+- `GET /api/health` - Health check
+- `GET /api/templates` - Get available templates
+- `GET /api/assets` - Get resource list
 
-## 📊 智能布局示例
+## 📊 Smart Layout Examples
 
-### 短标题效果
+### Short Title Effect
 ```
-标题: "Tech News 2025" 
-→ 1行，55px高度
-副标题: "Daily Updates"
-→ 1行，30px高度
-布局紧凑，专业美观
-```
-
-### 长标题效果  
-```
-标题: "The Ultimate Complete Guide to Advanced AI Technology..."
-→ 5行，307px高度 (5×55px + 4×8px行间距)
-副标题: "Everything You Need to Know About Modern Technology"  
-→ 2行，68px高度 (2×30px + 1×8px行间距)
-自动调整位置，完美适配
+Title: "Tech News 2025" 
+→ 1 line, 55px height
+Subtitle: "Daily Updates"
+→ 1 line, 30px height
+Compact layout, professional appearance
 ```
 
-### 超长内容处理
+### Long Title Effect  
 ```
-副标题超过3行 → 自动截断为 "Very long subtitle text that goes on and on..."
-保证布局稳定，避免内容溢出
+Title: "The Ultimate Complete Guide to Advanced AI Technology..."
+→ 5 lines, 307px height (5×55px + 4×8px line spacing)
+Subtitle: "Everything You Need to Know About Modern Technology"  
+→ 2 lines, 68px height (2×30px + 1×8px line spacing)
+Auto-adjust positions, perfect fit
 ```
 
-## 🔧 高级配置
-
-### 文件路径规则
-- **相对路径**: 相对于项目根目录
-- **Logo目录**: `logos/` - 存放所有Logo文件
-- **素材目录**: `assets/` - 存放背景图片
-- **输出目录**: `outputs/` - 生成结果存放
-- **模板目录**: `templates/` - 模板文件存放
-
-### 支持的图片格式
-- **输入**: PNG, JPG, JPEG (支持透明度)
-- **输出**: JPG (高质量，95%质量)
-- **处理**: 自动色彩模式转换
-
-### 字体优先级
+### Overlong Content Handling
 ```
-英文字体:
-1. Helvetica (Mac系统)
-2. Lexend Bold (如已安装)
+Subtitle exceeds 3 lines → Auto-truncate to "Very long subtitle text that goes on and on..."
+Ensure stable layout, prevent content overflow
+```
+
+## 🔧 Advanced Configuration
+
+### File Path Rules
+- **Relative Paths**: Relative to project root directory
+- **Logo Directory**: `logos/` - Store all logo files
+- **Assets Directory**: `assets/` - Store background images
+- **Output Directory**: `outputs/` - Generated results storage
+- **Template Directory**: `templates/` - Template file storage
+
+### Supported Image Formats
+- **Input**: PNG, JPG, JPEG (supports transparency)
+- **Output**: JPG (high quality, 95% quality)
+- **Processing**: Auto color mode conversion
+
+### Font Priority
+```
+English Fonts:
+1. Helvetica (Mac system)
+2. Lexend Bold (if installed)
 3. Ubuntu Bold (Linux)
-4. 系统默认字体
+4. System default font
 
-中文字体:
+Chinese Fonts:
 1. Noto Sans CJK Bold
-2. 思源黑体
-3. 文泉驿字体
+2. Source Han Sans
+3. WenQuanYi fonts
 ```
 
-## 📁 项目结构
+## 📁 Project Structure
 ```
 youtube_thumbnail_generator/
-├── final_thumbnail_generator.py     # 核心生成器
-├── text_png_generator.py           # PNG文字渲染器  
-├── api_server.py                   # Flask API服务
-├── function_add_chapter.py         # Chapter功能
-├── create_triangle_template.py     # 三角形模板生成
+├── youtube_thumbnail_generator/
+│   ├── __init__.py                   # Package initialization
+│   ├── final_thumbnail_generator.py  # Core generator
+│   ├── text_png_generator.py         # PNG text renderer  
+│   ├── api_server.py                 # Flask API service
+│   └── function_add_chapter.py       # Chapter functionality
 ├── templates/
-│   ├── professional_template.jpg   # 1600x900专业模板
-│   └── triangle_template.png       # 200x900三角形过渡
-├── logos/                          # Logo文件目录
-├── assets/                         # 图片素材目录  
-├── outputs/                        # 生成结果目录
-├── README.md                       # 项目文档
-└── README_API.md                   # API详细文档
+│   ├── professional_template.jpg     # 1600x900 professional template
+│   └── triangle_template.png         # 200x900 triangle transition
+├── template_samples/                 # Template showcase samples
+├── setup.py                          # Package setup
+├── pyproject.toml                    # Modern Python packaging
+├── README.md                         # Project documentation
+└── README_API.md                     # Detailed API documentation
 ```
 
-## 📈 版本历史
+## 📈 Version History
 
-### v2.0 (当前版本) - 智能布局革命
-- ✅ **PNG贴图技术**: 文字渲染与模板分离，完美控制
-- ✅ **智能高度调整**: 根据内容长度动态调整布局
-- ✅ **行间距优化**: 8px行间距，提升阅读体验
-- ✅ **三角形过渡**: 200x900斜线分割，专业视觉效果
-- ✅ **截断机制**: 超长内容智能截断，布局稳定
-- ✅ **双API支持**: 缩略图 + Chapter 双功能API
+### v2.1 (Current) - Smart Layout Revolution
+- ✅ **PNG Overlay Technology**: Text rendering separated from template, perfect control
+- ✅ **Smart Height Adjustment**: Dynamically adjust layout based on content length
+- ✅ **Line Spacing Optimization**: 8px line spacing, improved reading experience
+- ✅ **Triangle Transition**: 200x900 diagonal separation, professional visual effects
+- ✅ **Truncation Mechanism**: Smart truncation for overlong content, stable layout
+- ✅ **Dual API Support**: Thumbnail + Chapter dual-function API
+- ✅ **Python Package**: Installable as pip package, use in any Python project
 
-### v1.0 - 基础功能
-- ✅ 专业模板布局设计
-- ✅ 自动图片正方形转换  
-- ✅ 5参数输入系统
-- ✅ 智能字体选择
-- ✅ 完整的文字效果
-- ✅ Flask API 集成
+### v1.0 - Basic Functionality
+- ✅ Professional template layout design
+- ✅ Auto square image conversion  
+- ✅ 5-parameter input system
+- ✅ Smart font selection
+- ✅ Complete text effects
+- ✅ Flask API integration
 
-## 🎯 最佳实践
+## 🎯 Best Practices
 
-### 标题文字建议
-- **长度**: 建议50-100字符，系统自动优化显示
-- **内容**: 清晰表达视频主题，吸引观众点击
-- **关键词**: 前置重要关键词，提升搜索效果
+### Title Text Suggestions
+- **Length**: Recommend 50-100 characters, system auto-optimizes display
+- **Content**: Clearly express video theme, attract viewer clicks
+- **Keywords**: Front-load important keywords, improve search results
 
-### 副标题使用技巧
-- **定位**: 补充说明或强调要点
-- **长度**: 建议20-60字符，超过自动处理
-- **风格**: 与主标题形成层次对比
+### Subtitle Usage Tips
+- **Positioning**: Supplementary explanation or emphasis points
+- **Length**: Recommend 20-60 characters, auto-handle if exceeded
+- **Style**: Create hierarchical contrast with main title
 
-### 图片选择原则
-- **尺寸**: 任意尺寸，系统自动转为正方形
-- **内容**: 选择视觉冲击力强的图片
-- **质量**: 建议高分辨率，确保缩放后清晰
+### Image Selection Principles
+- **Size**: Any size, system auto-converts to square
+- **Content**: Choose visually impactful images
+- **Quality**: Recommend high resolution, ensure clarity after scaling
 
-## 🚨 注意事项
+## 🚨 Important Notes
 
-1. **文件路径**: 确保所有文件路径正确且文件存在
-2. **字体依赖**: 系统会自动降级到可用字体
-3. **输出覆盖**: 默认输出`final_test.jpg`，会覆盖同名文件
-4. **API异步**: API采用异步处理，需要轮询状态
-5. **内存使用**: 大图片处理可能占用较多内存
+1. **File Paths**: Ensure all file paths are correct and files exist
+2. **Font Dependencies**: System will auto-downgrade to available fonts
+3. **Output Overwrite**: Default output `final_test.jpg`, will overwrite same-name files
+4. **API Async**: API uses async processing, need to poll status
+5. **Memory Usage**: Large image processing may use significant memory
 
 ---
 
-## 💡 快速开始
+## 💡 Quick Start
 
-1. **安装依赖**: `pip install pillow flask flask-cors`
-2. **准备素材**: 将Logo和图片放入对应目录
-3. **直接测试**: `python final_thumbnail_generator.py`
-4. **API服务**: `python api_server.py`
-5. **查看结果**: 检查 `outputs/final_test.jpg`
+1. **Install Dependencies**: `pip install git+https://github.com/preangelleo/youtube-thumbnail-generator.git`
+2. **Prepare Assets**: Put logos and images in corresponding directories
+3. **Direct Test**: 
+   ```python
+   from youtube_thumbnail_generator import FinalThumbnailGenerator
+   generator = FinalThumbnailGenerator("templates/professional_template.jpg")
+   generator.generate_final_thumbnail(title="Test Title", output_path="test.jpg")
+   ```
+4. **API Service**: `youtube-thumbnail-api`
+5. **Check Result**: Look at generated file
 
-现在就开始创建专业的YouTube缩略图吧！🎬✨
+Start creating professional YouTube thumbnails now! 🎬✨

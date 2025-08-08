@@ -16,10 +16,18 @@ parts/
 sdist/
 var/
 wheels/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 MANIFEST
+
+# PyPI distribution
+dist/
+build/
+*.egg-info/
+*.tar.gz
+*.whl
 
 # Virtual Environment
 .env

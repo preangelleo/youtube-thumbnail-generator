@@ -10,7 +10,10 @@ import os
 from dataclasses import dataclass
 import textwrap
 import platform
-from text_png_generator import create_text_png
+try:
+    from .text_png_generator import create_text_png
+except ImportError:
+    from text_png_generator import create_text_png
 
 def detect_system():
     """检测系统环境"""
