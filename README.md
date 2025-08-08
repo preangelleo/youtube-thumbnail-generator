@@ -5,7 +5,7 @@ Professional YouTube thumbnail automatic generation tool with intelligent Chines
 **Author**: Leo Wang (https://leowang.net)
 
 [![PyPI version](https://badge.fury.io/py/youtube-thumbnail-generator.svg)](https://badge.fury.io/py/youtube-thumbnail-generator)
-[![Downloads](https://static.pepy.tech/badge/youtube-thumbnail-generator)](https://pepy.tech/project/youtube-thumbnail-generator)
+📦 [![Downloads](https://img.shields.io/pypi/dm/youtube-thumbnail-generator)](https://pypi.org/project/youtube-thumbnail-generator/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **🌍 Available on PyPI**: https://pypi.org/project/youtube-thumbnail-generator/  
