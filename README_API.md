@@ -1,4 +1,4 @@
-# YouTube Thumbnail Generator v2.3.0 - API Documentation
+# YouTube Thumbnail Generator v2.4.3 - API Documentation
 
 **Author**: Leo Wang (https://leowang.net)
 

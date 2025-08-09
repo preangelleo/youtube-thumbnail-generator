@@ -5,6 +5,76 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.3] - 2025-01-09
+
+### 🧠 Smart Image Processing
+- **Intelligent resize algorithm**: Auto scale-up when min dimension < 900px
+- **Center crop for both horizontal and vertical images**: Preserves aspect ratio during scaling  
+- **Perfect 900x900 thumbnails** from any input size
+- **High-quality Lanczos resampling** for best results
+
+### 📏 Configurable Logo System
+- **Logo size controlled by LOGO_SIZE constant** (100x100px, reduced from 150x150px)
+- **Easy customization** for different logo requirements
+- **Smart center-cropping** for non-square logos
+- **Variable-based positioning** for flip mode: `width - logo_margin - logo_size`
+
+### 🌐 CDN-Hosted Examples  
+- **All 24 examples now hosted** on public CDN (https://api.sumatman.ai/image/)
+- **Dramatically reduced package size** from 2.3MB to 127KB (94% reduction)
+- **Fast worldwide loading** from CDN
+- **Always up-to-date** example gallery
+
+### 📖 Documentation Improvements
+- **Removed duplicate guides** (PYPI_SETUP_GUIDE.md, QUICK_START_GUIDE.md)  
+- **Streamlined README** with essential information only
+- **Version history moved to CHANGELOG.md**
+- **Clear logo usage recommendations** to prevent cropping issues
+
+### 🎯 Package Optimization
+- **Removed all sample images** (using CDN links)
+- **Cleaned backup and temp directories**
+- **Smaller, cleaner package distribution**
+- **Only essential files included**
+
+## [2.4.2] - 2025-01-08
+
+### 🎨 Enhanced Examples Gallery
+- **Complete EXAMPLES.md** with all 12 template combinations using enhanced stroke effects
+- **New sample generation** with enhanced Chinese bold rendering
+- **Simplified README** with direct link to comprehensive gallery
+- **Better navigation** between README and detailed examples
+
+## [2.4.1] - 2025-01-08
+
+### 🚀 Complete API Integration  
+- **New `/api/generate/random` endpoint** for 12 random template combinations
+- **Enhanced API parameters** for `triangle_direction`, `flip`, `google_api_key`, `youtube_ready`
+- **Comprehensive API documentation** with parameter descriptions and combination reference
+- **API testing verified** with curl commands
+
+## [2.4.0] - 2025-01-07
+
+### 🆕 AI-Powered Title Optimization
+- **Google Gemini 2.0 Flash API integration** for mixed-language title fixing
+- **Smart line-breaking**: AI creates optimal line breaks (Chinese: 2 lines, English: 3 lines)
+- **Pre-formatted bypass**: Titles with existing \n line breaks skip AI optimization
+- **Language-specific rules**: Character-based for CJK, word-based for Latin scripts
+- **Configurable system prompt** in title_optimizer.py
+- **Environment variable support**: `GOOGLE_API_KEY` auto-detection
+
+### 🎨 Perfect Chinese Bold Rendering
+- **STHeiti Medium font priority** + intelligent stroke effects
+- **Smart stroke colors**: RGB(128,128,128) for white text, RGB(192,192,192) for black text  
+- **Brightness-based detection** for optimal stroke selection
+- **Auto-enable stroke** for Chinese fonts ≥30px
+- **Enhanced stroke width**: 8% for Chinese vs 5% for English
+
+### 🎮 Enhanced Interactive Testing
+- **Enter-to-continue experience** with intelligent defaults
+- **Title-only input required** (all other parameters optional)
+- **12 template combinations** with triangle enable/disable options
+
 ## [2.2.6] - 2025-08-09
 
 ### 🔧 Critical Font & Layout Fixes
