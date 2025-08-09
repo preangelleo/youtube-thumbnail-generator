@@ -16,7 +16,7 @@ LOGO_SIZE = 100  # Logo目标尺寸 (像素), 100x100正方形
 
 # Import title optimizer (optional dependency)
 try:
-    from title_optimizer import create_title_optimizer
+    from .title_optimizer import create_title_optimizer
     TITLE_OPTIMIZER_AVAILABLE = True
 except ImportError:
     TITLE_OPTIMIZER_AVAILABLE = False
@@ -438,9 +438,9 @@ class FinalThumbnailGenerator:
             try:
                 self.title_optimizer = create_title_optimizer(google_api_key)
                 if self.title_optimizer.is_available:
-                    print("Title optimization enabled with Google Gemini API")
+                    print("Title optimization enabled with Gemini API")
                 else:
-                    print("Title optimization disabled - no valid Google API key")
+                    print("Title optimization disabled - no valid Gemini API key")
             except Exception as e:
                 print(f"Failed to initialize title optimizer: {e}")
         else:

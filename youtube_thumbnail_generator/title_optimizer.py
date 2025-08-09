@@ -4,7 +4,6 @@ Title Optimizer using Google Gemini API
 Optimizes mixed-language titles into single-language, properly formatted titles.
 """
 
-import google.generativeai as genai
 import os
 import logging
 from typing import Optional, Tuple
@@ -12,6 +11,9 @@ from typing import Optional, Tuple
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Gemini model configuration - easy to change in one place
+GEMINI_FLASH_MODEL = "gemini-2.0-flash-001"
 
 # System prompt for title optimization with smart line-breaking
 TITLE_OPTIMIZATION_SYSTEM_PROMPT = """You are a professional YouTube title optimizer. Your task is to convert mixed-language or poorly formatted titles into clean, single-language titles optimized for YouTube thumbnails with intelligent line-breaking.
@@ -82,17 +84,19 @@ class TitleOptimizer:
         Initialize title optimizer with Gemini API
         
         Args:
-            api_key: Google API key. If None, tries to get from environment
+            api_key: Gemini API key. If None, tries to get from GEMINI_API_KEY or GOOGLE_API_KEY environment variables
         """
-        self.api_key = api_key or os.getenv("GOOGLE_API_KEY")
+        # Support both GEMINI_API_KEY (preferred) and GOOGLE_API_KEY (backwards compatibility)
+        self.api_key = api_key or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
         self.model = None
         self.is_available = False
         
         if self.api_key:
             try:
+                import google.generativeai as genai
                 genai.configure(api_key=self.api_key)
                 self.model = genai.GenerativeModel(
-                    "gemini-2.0-flash-exp",
+                    GEMINI_FLASH_MODEL,
                     system_instruction=TITLE_OPTIMIZATION_SYSTEM_PROMPT
                 )
                 self.is_available = True
@@ -101,7 +105,7 @@ class TitleOptimizer:
                 logger.warning(f"Failed to initialize Gemini API: {e}")
                 self.is_available = False
         else:
-            logger.info("No Google API key provided - title optimization disabled")
+            logger.info("No Gemini API key provided - title optimization disabled")
     
     def optimize_title(self, title: str) -> Tuple[str, bool]:
         """
@@ -130,6 +134,7 @@ class TitleOptimizer:
         
         try:
             # Generate optimized title using system instruction
+            import google.generativeai as genai
             response = self.model.generate_content(
                 title,
                 generation_config=genai.types.GenerationConfig(
@@ -188,7 +193,7 @@ def create_title_optimizer(api_key: Optional[str] = None) -> TitleOptimizer:
     Factory function to create title optimizer
     
     Args:
-        api_key: Google API key. If None, tries environment variables
+        api_key: Gemini API key. If None, tries GEMINI_API_KEY or GOOGLE_API_KEY environment variables
         
     Returns:
         TitleOptimizer instance

@@ -27,7 +27,7 @@ Basic Usage:
     )
 """
 
-__version__ = "2.4.10"
+__version__ = "2.4.11"
 __author__ = "Leo Wang"
 __email__ = "me@leowang.net"
 __license__ = "MIT"
@@ -46,12 +46,13 @@ def init_templates():
     return create_default_templates()
 
 def create_generator(template_path=None, google_api_key=None):
-    """创建缩略图生成器 - 支持模板路径和Google API key
+    """创建缩略图生成器 - 支持模板路径和Gemini API key
     
     Args:
         template_path (str, optional): 模板文件路径。如果不提供，使用默认黑色模板
-        google_api_key (str, optional): Google API key for title optimization.
-                                       If not provided, tries environment variable GOOGLE_API_KEY.
+        google_api_key (str, optional): Gemini API key for title optimization.
+                                       If not provided, tries environment variable GEMINI_API_KEY.
+                                       For backwards compatibility, also checks GOOGLE_API_KEY.
                                        If unavailable, title optimization is disabled.
         
     Returns:
@@ -65,10 +66,10 @@ def create_generator(template_path=None, google_api_key=None):
         generator = create_generator('my_template.jpg')
         
         # 启用title优化功能
-        generator = create_generator(google_api_key='your_google_api_key')
+        generator = create_generator(google_api_key='your_gemini_api_key')
         
         # 或设置环境变量
-        # export GOOGLE_API_KEY=your_google_api_key
+        # export GEMINI_API_KEY=your_gemini_api_key
         generator = create_generator()  # 会自动从环境变量获取API key
     """
     return FinalThumbnailGenerator(template_path, google_api_key)

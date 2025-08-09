@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.11] - 2025-01-09
+
+### 🐛 Bug Fixes
+- **Fixed**: Title optimization now works correctly - resolved "google-generativeai package not installed" false error
+- **Fixed**: Import path issue that prevented title optimizer from loading properly
+- **Fixed**: Removed duplicate source files from root directory - proper package structure maintained
+
+### 🔄 API Changes  
+- **Renamed**: API key environment variable from `GOOGLE_API_KEY` to `GEMINI_API_KEY` (backwards compatible)
+- **Updated**: All documentation and error messages now refer to "Gemini API key" instead of "Google API key"
+- **Supported**: Both `GEMINI_API_KEY` and `GOOGLE_API_KEY` environment variables work for backwards compatibility
+
+### 📝 Documentation Updates
+- **README**: Updated to use `GEMINI_API_KEY` in all examples
+- **Error Messages**: Now show "no valid Gemini API key" instead of "no valid Google API key"
+- **API Docs**: Updated to reflect Gemini API key naming convention
+
+### 🏗️ Project Structure
+- **Cleaned**: Removed duplicate Python files from root directory
+- **Maintained**: Single source of truth in `youtube_thumbnail_generator/` package directory
+- **Standard**: Follows Python package best practices
+
+## [2.4.10] - 2025-01-09 ⚠️ INCOMPLETE FIX
+
+### 🐛 Attempted Bug Fix
+- **Issue**: Tried to fix "google-generativeai package not installed" false error
+- **Result**: Fix was incomplete - import issue remained
+- **Recommendation**: Skip this version and use v2.4.11
+
 ## [2.4.9] - 2025-01-09
 
 ### 🚨 CRITICAL HOTFIX - Missing Source Code in v2.4.8

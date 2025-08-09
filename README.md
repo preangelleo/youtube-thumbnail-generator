@@ -204,10 +204,10 @@ Fix mixed-language titles automatically with Google Gemini API:
 from youtube_thumbnail_generator import create_generator
 
 # Method 1: Pass API key directly
-generator = create_generator(google_api_key="your_google_api_key_here")
+generator = create_generator(google_api_key="your_gemini_api_key_here")
 
 # Method 2: Set environment variable (recommended)
-# export GOOGLE_API_KEY="your_google_api_key_here"
+# export GEMINI_API_KEY="your_gemini_api_key_here"
 generator = create_generator()  # Auto-detects from environment
 
 # Optimization happens automatically during generation
