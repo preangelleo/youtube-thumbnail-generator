@@ -64,16 +64,32 @@ Professional YouTube thumbnail automatic generation tool with intelligent Chines
 ### 🎯 Best Results Guidelines
 For the most professional and visually appealing thumbnails:
 
+#### ⚠️ **IMPORTANT: Single Language Only**
+**Our system is optimized for single-language titles. Mixed languages may cause formatting issues.**
+
+🚫 **Avoid Mixed Languages**:
+- ❌ "AI技术指南 Complete Guide" - English words may be improperly split in Chinese mode
+- ❌ "Complete AI 技术指南" - Chinese characters may break English word spacing
+- ❌ "学习 Python Programming" - Mixed mode causes unpredictable line breaks
+
+✅ **Use Single Languages**:
+- ✅ "AI技术指南完整教程" - Pure Chinese
+- ✅ "Complete AI Technology Guide" - Pure English
+
 #### 🇨🇳 Chinese Titles
 **Optimal Length: 10-12 characters**
 - **10 characters**: Perfect balance, excellent readability
 - **12 characters**: Maximum recommended, maintains clarity
+- **Pure Chinese Only**: Avoid mixing English words for best results
 - **Examples**: "AI技术指南教程" (8 chars) ✅ "完整AI技术指南教程系统" (12 chars) ✅
+- **Line Breaking**: Smart 9-character per line splitting optimized for Chinese text flow
 
 #### 🇺🇸 English Titles  
 **Optimal Length: 7 words**
 - **7 words**: Perfect for 3-line layout without truncation
+- **Pure English Only**: Avoid mixing Chinese characters for best results
 - **Example**: "Complete AI Technology Guide Tutorial Series Episode" (7 words) ✅
+- **Line Breaking**: Word-boundary wrapping preserves English word integrity
 - **Note**: Longer titles may be truncated with ellipsis (...)
 
 ## 📦 Supported Parameters
@@ -242,6 +258,75 @@ When you install via PyPI or GitHub, you get everything you need:
 **No additional downloads needed** - start generating thumbnails immediately after installation!
 
 ## 🚀 Usage Methods
+
+### 0. Interactive Testing Tool (New!)
+
+Before diving into programmatic usage, try our interactive testing tool to quickly validate all features:
+
+#### **initial_test.py** - Comprehensive Feature Validator
+
+```bash
+# Run interactive test (included with the package)
+python initial_test.py
+```
+
+**What it does:**
+- **Interactive Input**: Prompts you to enter any title you want to test
+- **Complete Coverage**: Tests all 10 possible configurations automatically:
+  - Dark theme: 4 variations (standard/flip × bottom/top triangle)
+  - Light theme: 4 variations (standard/flip × bottom/top triangle)  
+  - Custom theme: 2 variations (standard/flip layouts)
+- **Real Results**: Generates actual thumbnail files you can inspect
+- **Feature Validation**: Tests title positioning, logo placement, flip layouts, triangle overlays
+
+**Example Session:**
+```
+============================================================
+🎨 YouTube Thumbnail Generator - Interactive Test
+============================================================
+
+请输入要测试的标题 (Enter title to test): Complete AI Technology Guide
+
+测试配置 (Test configurations):
+- Dark theme: 4 variations (2 flip × 2 triangle)
+- Light theme: 4 variations (2 flip × 2 triangle)
+- Custom theme: 2 variations (2 flip only)
+Total: 10 configurations
+
+使用标题: 'Complete AI Technology Guide'
+
+[1/10] 生成: dark_std_bottom
+  ✅ 成功: Outputs/interactive_test/test_dark_std_bottom.jpg (182.4 KB)
+
+[2/10] 生成: dark_std_top
+  ✅ 成功: Outputs/interactive_test/test_dark_std_top.jpg (181.0 KB)
+
+...
+
+🎉 测试完成 (Test completed)!
+生成文件: 10/10
+输出目录: Outputs/interactive_test
+```
+
+**Output Files:**
+- `test_dark_std_bottom.jpg` - Dark theme, standard layout, bottom triangle
+- `test_dark_std_top.jpg` - Dark theme, standard layout, top triangle
+- `test_dark_flip_bottom.jpg` - Dark theme, flipped layout, bottom triangle
+- `test_dark_flip_top.jpg` - Dark theme, flipped layout, top triangle
+- `test_light_std_bottom.jpg` - Light theme, standard layout, bottom triangle
+- `test_light_std_top.jpg` - Light theme, standard layout, top triangle
+- `test_light_flip_bottom.jpg` - Light theme, flipped layout, bottom triangle
+- `test_light_flip_top.jpg` - Light theme, flipped layout, top triangle
+- `test_custom_std.jpg` - Custom theme, standard layout
+- `test_custom_flip.jpg` - Custom theme, flipped layout
+
+**Why Use initial_test.py:**
+- ✅ **Quick Validation**: Test all features with one command
+- ✅ **Visual Results**: See exactly how your titles will look
+- ✅ **Layout Comparison**: Compare standard vs flipped layouts
+- ✅ **Triangle Preview**: See both triangle directions
+- ✅ **Zero Setup**: Uses default templates and assets
+- ✅ **Development Tool**: Perfect for testing during integration
 
 ### 1. Use as Python Library
 
@@ -579,25 +664,71 @@ Chinese Fonts:
 ## 📁 Project Structure
 ```
 youtube_thumbnail_generator/
-├── youtube_thumbnail_generator/
-│   ├── __init__.py                   # Package initialization
-│   ├── final_thumbnail_generator.py  # Core generator
-│   ├── text_png_generator.py         # PNG text renderer  
-│   ├── api_server.py                 # Flask API service
-│   └── function_add_chapter.py       # Chapter functionality
-├── templates/
-│   ├── professional_template.jpg     # 1600x900 professional template
-│   └── triangle_template.png         # 200x900 triangle transition
-├── template_samples/                 # Template showcase samples
-├── setup.py                          # Package setup
-├── pyproject.toml                    # Modern Python packaging
-├── README.md                         # Project documentation
-└── README_API.md                     # Detailed API documentation
+├── __init__.py                       # Package initialization
+├── final_thumbnail_generator.py      # Core generator engine
+├── text_png_generator.py             # PNG text renderer with Chinese/English optimization
+├── api_server.py                     # Flask API service
+├── function_add_chapter.py           # Chapter functionality  
+├── youtube_standards.py              # YouTube API compliance utilities
+├── initial_test.py                   # Interactive testing tool (NEW!)
+├── assets/
+│   ├── animagent_logo.png           # Default testing logo
+│   └── testing_image.jpeg           # Default testing image
+├── fonts/                           # Built-in font assets (auto-downloaded)
+│   ├── Ubuntu-B.ttf                # Ubuntu Bold font
+│   └── NotoSansCJK-Bold.ttc        # Noto Sans CJK Bold font
+├── templates/                       # Auto-generated templates
+│   ├── professional_template.jpg    # 1600x900 dark theme template
+│   ├── light_template.png          # 1600x900 light theme template
+│   ├── triangle_black.png          # Black triangle overlay (bottom)
+│   ├── triangle_white.png          # White triangle overlay (bottom)
+│   ├── triangle_black_top.png      # Black triangle overlay (top)
+│   ├── triangle_white_top.png      # White triangle overlay (top)
+│   ├── triangle_black_bottom.png   # Black triangle overlay (bottom variant)
+│   └── triangle_white_bottom.png   # White triangle overlay (bottom variant)
+├── Outputs/                         # Generated thumbnails output
+│   └── interactive_test/           # initial_test.py outputs
+├── setup.py                         # Package setup
+├── pyproject.toml                   # Modern Python packaging
+├── CHANGELOG.md                     # Version history and updates
+└── README.md                        # Complete project documentation
 ```
+
+### Key File Descriptions
+
+**Core Engine Files:**
+- `final_thumbnail_generator.py` - Main thumbnail generation engine with theme support, flip layouts, and text positioning
+- `text_png_generator.py` - Advanced text rendering with Chinese/English optimization, smart line-breaking, and font scaling
+- `youtube_standards.py` - YouTube API v3 compliance utilities and image optimization
+
+**User Tools:**
+- `initial_test.py` - **Interactive testing tool** - Run to test all 10 configurations with any title
+- `api_server.py` - RESTful API service for web integration
+
+**Auto-Generated Assets:**
+- `templates/` - All theme templates auto-created if missing
+- `fonts/` - Built-in fonts downloaded on first use
+- `assets/` - Default logos and images for testing
+
+**Testing and Development:**
+- `Outputs/interactive_test/` - Results from initial_test.py runs
+- `CHANGELOG.md` - Detailed version history and feature updates
 
 ## 📈 Version History
 
-### v2.2.2 (Current) - YouTube-Ready by Default
+### v2.3.0 (Current) - Advanced Layout & Text Engine
+- ✅ **Interactive Testing Tool**: New `initial_test.py` for comprehensive feature validation
+- ✅ **Flip Layout System**: Mirror layouts with precise positioning for creative variety
+- ✅ **Advanced Text Engine**: 
+  - Chinese: 18-character limit with "..." truncation, 9-character per line smart breaking
+  - English: 3-line limit with ellipsis truncation, word-boundary wrapping
+- ✅ **Logo Position Control**: Configurable logo margins (20px default) with flip support
+- ✅ **Triangle Direction Control**: Top and bottom triangle variants for all themes
+- ✅ **Right-Aligned Text**: PNG internal right-alignment for flip layouts
+- ✅ **Built-in Font System**: Ubuntu and Noto Sans CJK fonts auto-downloaded
+- ✅ **Refined Positioning**: Precise margin calculations for professional alignment
+
+### v2.2.2 - YouTube-Ready by Default  
 - ✅ **Default YouTube Optimization**: All thumbnails are YouTube API compliant by default
 - ✅ **Seamless User Experience**: No extra steps needed for YouTube uploads
 - ✅ **Clean File Management**: Optimized files use original filenames
@@ -651,9 +782,14 @@ youtube_thumbnail_generator/
 ## 🎯 Best Practices
 
 ### Title Text Suggestions
+- **Language Purity**: Use single language only - avoid mixing Chinese and English for best formatting
 - **Length**: Recommend 50-100 characters, system auto-optimizes display
 - **Content**: Clearly express video theme, attract viewer clicks
 - **Keywords**: Front-load important keywords, improve search results
+- **Examples**:
+  - ✅ Good: "AI技术指南完整教程" (Pure Chinese)
+  - ✅ Good: "Complete AI Technology Guide" (Pure English)  
+  - ❌ Avoid: "AI技术 Complete Guide" (Mixed languages)
 
 
 ### Image Selection Principles
@@ -664,6 +800,22 @@ youtube_thumbnail_generator/
 ## 🚨 Troubleshooting & Important Notes
 
 ### 🔧 Common Issues & Solutions
+
+#### Mixed Language Text Formatting Issues
+**Problem**: Text appears broken, words split incorrectly, or unexpected line breaks.
+
+**Root Cause**: Our system uses different text processing for Chinese vs English:
+- **Chinese Mode**: Splits text by character count (9 chars/line), may break English words
+- **English Mode**: Splits by word boundaries, may not handle Chinese characters properly
+
+**Solutions**:
+1. **Use Pure Chinese**: `"AI技术指南完整教程"` ✅
+2. **Use Pure English**: `"Complete AI Technology Guide"` ✅
+3. **Avoid Mixed**: `"AI技术 Guide"` ❌ `"Learn Python编程"` ❌
+
+**Language Detection**: The system auto-detects based on character ratio:
+- ≥30% Chinese characters → Chinese mode (9-char line breaking)
+- <30% Chinese characters → English mode (word-boundary breaking)
 
 #### Template Files Not Found
 If you encounter `FileNotFoundError` for template files:
