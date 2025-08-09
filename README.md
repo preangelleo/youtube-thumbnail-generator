@@ -1,4 +1,4 @@
-# YouTube Thumbnail Generator v2.4.3
+# YouTube Thumbnail Generator v2.4.4
 
 Professional YouTube thumbnail generator with enhanced Chinese font bold rendering, AI-powered title optimization, and intelligent text layout system.
 
@@ -33,13 +33,13 @@ Professional YouTube thumbnail generator with enhanced Chinese font bold renderi
 **Perfect for**: Tech content, gaming, serious topics  
 **Features**: Enhanced Chinese bold rendering with intelligent stroke effects
 
-**English Example:**
-![Professional Dark Triangle - English](https://api.sumatman.ai/image/20250809_162119_combo_01_dark_tri_top_std.jpg)
+**Examples Available:**
+- **English Example**: Professional dark theme with triangle overlay - perfect for tech content
+- **Chinese Example**: Enhanced Chinese bold rendering with intelligent stroke effects
 
-**Chinese Example:**  
-![Professional Dark Triangle - Chinese](https://api.sumatman.ai/image/20250809_162058_combo_01_dark_tri_top_std.jpg)
+**[🎨 View Live Examples →](https://github.com/preangelleo/youtube-thumbnail-generator/blob/main/EXAMPLES.md)**
 
-#### 📖 **[View Complete Examples Gallery →](EXAMPLES.md)**
+#### 📖 **[View Complete Examples Gallery →](https://github.com/preangelleo/youtube-thumbnail-generator/blob/main/EXAMPLES.md)**
 
 **More Examples Available:**
 - **12 Template Combinations**: Professional, Standard, Triangle themes × Dark/Light × With/Without triangle overlays
@@ -117,7 +117,7 @@ youtube-thumbnail-api
 # Starts service at http://localhost:5002
 ```
 
-**📖 [Complete API Documentation →](README_API.md)**
+**📖 [Complete API Documentation →](https://github.com/preangelleo/youtube-thumbnail-generator/blob/main/README_API.md)**
 
 ## 📝 Key Parameters
 
@@ -152,7 +152,13 @@ python your_script.py
 - ❌ "AI技术指南 Complete Guide" → ✅ "AI技术完整\n指南教程" (clean Chinese)
 - ❌ "Learn Python编程" → ✅ "Learn Python\nProgramming\nComplete Guide" (clean English)
 
-## ✨ What's New in v2.4.3
+## ✨ What's New in v2.4.4
+
+- 🔗 **Fixed PyPI Documentation Links**: All documentation links now work properly from both GitHub and PyPI
+- 📖 **PyPI-Compatible README**: Removed external CDN images that caused broken image icons on PyPI
+- 🎯 **Better User Navigation**: Clear links to GitHub-hosted documentation from any platform
+
+## What's New in v2.4.3
 
 - 🧠 **Smart Image Processing**: Intelligent resize and center-crop algorithm for perfect 900x900 thumbnails
 - 📏 **Configurable Logo Size**: Logo size controlled by LOGO_SIZE constant (100x100px)  
@@ -160,13 +166,13 @@ python your_script.py
 - 📖 **Simplified Documentation**: Removed duplicate guides, streamlined user experience
 - ⚠️ **Logo Recommendations**: Clear guidance for square logo usage
 
-**📋 [Complete Version History →](CHANGELOG.md)**
+**📋 [Complete Version History →](https://github.com/preangelleo/youtube-thumbnail-generator/blob/main/CHANGELOG.md)**
 
 ## 📖 Documentation
 
-- **[Examples Gallery](EXAMPLES.md)** - All 24 template combinations with CDN-hosted examples
-- **[API Documentation](README_API.md)** - Complete REST API reference  
-- **[Version History](CHANGELOG.md)** - Detailed changelog and feature updates
+- **[Examples Gallery](https://github.com/preangelleo/youtube-thumbnail-generator/blob/main/EXAMPLES.md)** - All 24 template combinations with CDN-hosted examples
+- **[API Documentation](https://github.com/preangelleo/youtube-thumbnail-generator/blob/main/README_API.md)** - Complete REST API reference  
+- **[Version History](https://github.com/preangelleo/youtube-thumbnail-generator/blob/main/CHANGELOG.md)** - Detailed changelog and feature updates
 - **[PyPI Package](https://pypi.org/project/youtube-thumbnail-generator/)** - Install via pip
 
 ## 🚨 Important Notes
