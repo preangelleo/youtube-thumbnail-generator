@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.1] - 2025-01-09
+
+### 🎨 Improvements
+- **Chinese Title Display**: Enhanced bottom margins for better text display
+  - 1-line Chinese titles: Height increased to 160px (+20px)
+  - 2-line Chinese titles: Height increased to 260px (+40px)
+  - 3-line Chinese titles: Height increased to 360px (+60px)
+- **Text Centering**: Improved vertical margins for all line counts (+10px)
+- **Bug Fix**: Fixed issue where 3-line Chinese titles with 4 characters per line were getting cut off at the bottom
+- **Font Scaling**: Better support for enlarged text (up to 87px) with sufficient bottom space
+
 ## [2.5.0] - 2025-01-09
 
 ### 🤖 NEW FEATURE - AI Agent Support
