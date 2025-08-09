@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.6] - 2025-08-09
+
+### 🔧 Critical Font & Layout Fixes
+- **Fixed Font Sizing**: Restored proper 45px base font size for titles (was too small with 9.6% ratio)
+- **Fixed Left Alignment**: Restored 20px fixed left margin system (was incorrectly center-aligned)
+- **Enhanced Chinese Fonts**: Restored 30% font size boost for Chinese text readability
+- **Dynamic Font Scaling**: Added English dynamic scaling (<7 words get enlarged, like Chinese <9 chars)
+- **Improved Font Priority**: English now uses Lexend Bold > Arial Bold > Helvetica fallback chain
+- **Smart Line Breaking**: Restored complete intelligent line-breaking algorithms for both languages
+- **3-Line Truncation**: Fixed English title truncation with smart ellipsis handling
+- **Auto Font Scaling**: Restored automatic font scaling when text is too tall for container
+
+### 🐛 Bug Fixes
+- Fixed regression from commit 2af732b where universal font detection broke layout
+- Fixed English fonts defaulting to small Helvetica instead of bold fonts
+- Fixed missing Chinese font enlargement and dynamic scaling features
+- Fixed text positioning from center-aligned back to professional left-aligned layout
+- Added comprehensive debug logging for font loading troubleshooting
+
+### ✅ Testing
+- Comprehensive testing with 4 complete scenarios: Chinese 16 chars + English 7 words in dark/light themes
+- All features tested with logo, right image, triangle effects, and YouTube API compliance
+- Verified 1280x720 output, <2MB file size, sRGB color space compatibility
+
 ## [2.2.2] - 2025-08-08
 
 ### 🎯 User Experience Enhancement

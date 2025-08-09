@@ -47,7 +47,8 @@ def _get_universal_font_paths(language="english"):
             ])
         elif system == "Darwin":  # macOS
             paths.extend([
-                "/Library/Fonts/Lexend-Bold.ttf",  # 优先使用Lexend Bold
+                os.path.expanduser("~/Library/Fonts/Lexend/Lexend-Bold.ttf"),  # 用户目录下的Lexend Bold
+                "/Library/Fonts/Lexend-Bold.ttf",  # 系统级Lexend Bold
                 "/System/Library/Fonts/Supplemental/Arial Bold.ttf",  # Arial Bold优先于普通Arial
                 "/Library/Fonts/Arial Bold.ttf",   # 用户安装的Arial Bold
                 "/System/Library/Fonts/Arial.ttf", 
@@ -77,14 +78,39 @@ def _get_best_font(text, font_size, language, is_title=False):
                 print(f"Failed to load {path}: {e}")
                 continue
     
-    # Fallback to default font
-    print(f"No suitable font found for {language}, using default")
+    # Fallback to built-in fonts
+    print(f"使用内置字体作为 fallback")
+    try:
+        # 获取内置字体路径
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        if language == 'chinese':
+            # 中文优先使用 Noto，fallback 到 Ubuntu
+            builtin_fonts = [
+                os.path.join(current_dir, "fonts", "NotoSansCJK-Bold.ttc"),
+                os.path.join(current_dir, "fonts", "Ubuntu-B.ttf")
+            ]
+        else:
+            # 英文使用 Ubuntu Bold
+            builtin_fonts = [
+                os.path.join(current_dir, "fonts", "Ubuntu-B.ttf")
+            ]
+        
+        for builtin_path in builtin_fonts:
+            if os.path.exists(builtin_path):
+                font = ImageFont.truetype(builtin_path, font_size)
+                print(f"成功加载内置字体: {builtin_path}")
+                return font
+    except Exception as e:
+        print(f"Failed to load built-in fonts: {e}")
+    
+    # Final fallback to default font
+    print(f"No suitable font found for {language}, using system default")
     return ImageFont.load_default()
 
 def create_text_png(text, width=600, height=300, font_size=None, 
                    text_color=(255, 255, 255), output_path=None, 
                    language='english', margin_ratio=0.05, auto_height=False, 
-                   line_height_px=50, max_lines=3):
+                   line_height_px=50, max_lines=3, use_stroke=False, align='left'):
     """
     创建指定尺寸的透明背景文字PNG
     恢复完整的字体缩放、对齐、换行功能
@@ -101,6 +127,8 @@ def create_text_png(text, width=600, height=300, font_size=None,
         auto_height (bool): 是否自动调整高度
         line_height_px (int): 行高像素
         max_lines (int): 最大行数
+        use_stroke (bool): 是否使用黑色描边
+        align (str): 对齐方式 'left' 或 'right'
         
     Returns:
         tuple: (success, image, actual_height)
@@ -220,8 +248,8 @@ def create_text_png(text, width=600, height=300, font_size=None,
             
             # 根据最长行字符数计算字体放大倍数
             if max_line_chars < 9:  # 少于9个字需要放大
-                # 计算放大倍数：9字=正常，8字=+20%，7字=+40%，以此类推
-                scale_multiplier = 1.0 + (9 - max_line_chars) * 0.2
+                # 计算放大倍数：9字=正常，8字=+10%，7字=+20%，以此类推
+                scale_multiplier = 1.0 + (9 - max_line_chars) * 0.1
                 new_font_size = int(font_size * scale_multiplier)
                 
                 print(f"动态字体放大: 最长行{max_line_chars}字 -> 字体{font_size}px * {scale_multiplier:.1f} = {new_font_size}px")
@@ -298,8 +326,13 @@ def create_text_png(text, width=600, height=300, font_size=None,
         total_text_height = len(lines) * line_height
         print(f"文字过高，缩小字体: {font_size}px -> {new_font_size}px")
     
-    # 计算起始位置（左对齐，垂直居中）
-    start_x = left_margin
+    # 计算起始位置（根据align参数决定对齐方式，垂直居中）
+    if align == 'right':
+        # 右对齐：从右边距开始
+        start_x = width - 20  # 右边距20px
+    else:
+        # 左对齐：从左边距开始
+        start_x = left_margin
     start_y = top_margin + (max_height - total_text_height) // 2
     
     # 绘制文字（添加正确的行间距）
@@ -314,9 +347,32 @@ def create_text_png(text, width=600, height=300, font_size=None,
         else:
             line_y = start_y + i * line_height
         
-        # 绘制文字（左对齐）
-        draw.text((start_x, line_y), line, font=font, fill=text_color)
-        print(f"绘制文字行: '{line}' at ({start_x}, {line_y})")
+        # 绘制文字（根据对齐方式调整每行位置）
+        if align == 'right':
+            # 右对齐：计算每行宽度，从右边开始绘制
+            try:
+                if hasattr(font, 'getlength'):
+                    line_width = font.getlength(line)
+                else:
+                    bbox = font.getbbox(line)
+                    line_width = bbox[2] - bbox[0]
+            except:
+                line_width = len(line) * (font_size * 0.6)
+            
+            line_x = start_x - line_width
+        else:
+            # 左对齐
+            line_x = start_x
+            
+        if use_stroke:
+            # 使用深灰色描边，描边宽度为字体大小的5%
+            stroke_width = max(2, int(font_size * 0.05))
+            draw.text((line_x, line_y), line, font=font, fill=text_color, 
+                     stroke_width=stroke_width, stroke_fill=(64, 64, 64))  # 深灰色 RGB(64,64,64)
+            print(f"绘制文字行(带描边): '{line}' at ({line_x}, {line_y}), 描边宽度: {stroke_width}px")
+        else:
+            draw.text((line_x, line_y), line, font=font, fill=text_color)
+            print(f"绘制文字行: '{line}' at ({line_x}, {line_y})")
     
     # 保存文件
     if output_path:
@@ -355,25 +411,62 @@ def _chinese_smart_wrap(text, max_chars=20, is_title=False):
     if is_title and total_chars_no_space >= 4:
         print(f"中文标题{total_chars_no_space}字，需要换行")
         
-        # 除以2算法 - 基于原始文本（包含空格）
-        total_chars = len(text)
-        if total_chars % 2 == 0:
-            # 偶数：平均分配
-            first_line_chars = total_chars // 2
-            second_line_chars = total_chars // 2
-        else:
-            # 奇数：第二行比第一行多一个字
-            first_line_chars = total_chars // 2
-            second_line_chars = total_chars // 2 + 1
+        # 如果总字符数≤18，使用除以2算法保证美观
+        if total_chars_no_space <= 18:
+            # 除以2算法 - 基于原始文本（包含空格）
+            total_chars = len(text)
+            if total_chars % 2 == 0:
+                # 偶数：平均分配
+                first_line_chars = total_chars // 2
+                second_line_chars = total_chars // 2
+            else:
+                # 奇数：第二行比第一行多一个字
+                first_line_chars = total_chars // 2
+                second_line_chars = total_chars // 2 + 1
+            
+            first_line = text[:first_line_chars]
+            second_line = text[first_line_chars:first_line_chars + second_line_chars]
+            
+            # 检查是否违反9字符限制
+            first_line_no_space = len(first_line.replace(' ', ''))
+            second_line_no_space = len(second_line.replace(' ', ''))
+            
+            if first_line_no_space <= max_chars and second_line_no_space <= max_chars:
+                # 符合9字符限制，使用除以2的结果
+                print(f"中文智能换行: 第一行{first_line_no_space}字, 第二行{second_line_no_space}字")
+                print(f"第一行: '{first_line}'")
+                print(f"第二行: '{second_line}'")
+                return [first_line, second_line]
         
-        first_line = text[:first_line_chars]
-        second_line = text[first_line_chars:first_line_chars + second_line_chars]
+        # 如果除以2算法违反9字符限制，或总字符数>18，按9字符严格分行
+        print(f"使用严格9字符分行算法")
+        lines = []
+        remaining_text = text
         
-        print(f"中文智能换行: 第一行{len(first_line)}字, 第二行{len(second_line)}字")
-        print(f"第一行: '{first_line}'")
-        print(f"第二行: '{second_line}'")
+        while len(remaining_text.replace(' ', '')) > 0:
+            if len(remaining_text.replace(' ', '')) <= max_chars:
+                # 剩余字符不超过9个，作为最后一行
+                lines.append(remaining_text)
+                break
+            else:
+                # 找到第9个非空格字符的位置
+                char_count = 0
+                cut_position = 0
+                for i, char in enumerate(remaining_text):
+                    if char != ' ':
+                        char_count += 1
+                    cut_position = i + 1
+                    if char_count == max_chars:
+                        break
+                
+                lines.append(remaining_text[:cut_position])
+                remaining_text = remaining_text[cut_position:]
         
-        return [first_line, second_line]
+        for i, line in enumerate(lines, 1):
+            line_chars = len(line.replace(' ', ''))
+            print(f"第{i}行: '{line}' ({line_chars}字)")
+        
+        return lines
     
     # 其他情况按原逻辑处理
     print(f"中文{'标题' if is_title else '文字'}超过{max_chars}字，需要换行: {total_chars_no_space}字")

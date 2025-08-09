@@ -139,10 +139,18 @@ def generate_triangle_template(color: str = "black", direction: str = "bottom",
 
 def create_triangle_templates():
     """Create default triangle template files for dark and light themes"""
-    # Create default triangles needed by the system
-    generate_triangle_template("black", "bottom", "templates/triangle_black.png")
-    generate_triangle_template("white", "bottom", "templates/triangle_white.png")
-    print("Default triangle templates created!")
+    # Create all four triangle variations
+    # 尖朝下 (bottom - 倒梯形)
+    generate_triangle_template("black", "bottom", "templates/triangle_black.png")  # 保持兼容性
+    generate_triangle_template("white", "bottom", "templates/triangle_white.png")  # 保持兼容性
+    generate_triangle_template("black", "bottom", "templates/triangle_black_bottom.png")
+    generate_triangle_template("white", "bottom", "templates/triangle_white_bottom.png")
+    
+    # 尖朝上 (top - 正梯形)
+    generate_triangle_template("black", "top", "templates/triangle_black_top.png")
+    generate_triangle_template("white", "top", "templates/triangle_white_top.png")
+    
+    print("Default triangle templates created (4 variations: black/white × top/bottom)!")
 
 def optimize_for_youtube_api(input_path: str, output_path: str = None) -> str:
     """
@@ -396,8 +404,7 @@ class FinalThumbnailGenerator:
             if not os.path.exists(template_path):
                 raise FileNotFoundError(f"无法创建默认模板: {template_path}")
         
-        # 验证模板尺寸必须为 1600x900
-        self._validate_template_size(template_path)
+        # 注意：不在初始化时验证模板尺寸，因为用户应该在generate时选择模板
             
         # 系统初始化 - 使用通用字体检测
         print(f"Initialized with template: {os.path.basename(self.template_path)}")
@@ -410,19 +417,54 @@ class FinalThumbnailGenerator:
             "english": self._get_english_font_paths()
         }
     
-    def _validate_template_size(self, template_path: str):
-        """验证模板尺寸必须为 1600x900"""
+    def _ensure_template_size(self, template_path: str) -> Image.Image:
+        """确保模板尺寸为 1600x900，如果不是则强制转换"""
         try:
             from PIL import Image
-            with Image.open(template_path) as img:
-                width, height = img.size
-                if width != 1600 or height != 900:
-                    raise ValueError(
-                        f"模板尺寸不正确: {width}x{height}. "
-                        f"必须为 1600x900 像素。\n"
-                        f"请使用正确尺寸的模板或使用默认模板。"
-                    )
+            img = Image.open(template_path)
+            width, height = img.size
+            
+            if width == 1600 and height == 900:
                 print(f"Template size verified: {width}x{height} ✓")
+                return img
+            
+            print(f"模板尺寸 {width}x{height} 不符合要求，强制转换为 1600x900")
+            
+            # 计算缩放比例
+            target_width, target_height = 1600, 900
+            scale_x = target_width / width
+            scale_y = target_height / height
+            
+            # 使用较大的缩放比例，确保覆盖整个画布
+            scale = max(scale_x, scale_y)
+            
+            # 缩放图片
+            new_width = int(width * scale)
+            new_height = int(height * scale)
+            img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+            
+            # 创建1600x900的画布
+            canvas = Image.new('RGB', (target_width, target_height))
+            
+            # 计算居中位置
+            x = (target_width - new_width) // 2
+            y = (target_height - new_height) // 2
+            
+            # 如果缩放后的图片大于目标尺寸，需要裁剪
+            if new_width > target_width or new_height > target_height:
+                # 裁剪中心部分
+                left = max(0, -x)
+                top = max(0, -y)
+                right = left + target_width
+                bottom = top + target_height
+                img = img.crop((left, top, right, bottom))
+                x = 0
+                y = 0
+            
+            # 粘贴到画布上
+            canvas.paste(img, (x, y))
+            print(f"模板已转换为标准尺寸: 1600x900")
+            return canvas
         except Exception as e:
             if "模板尺寸不正确" in str(e):
                 raise e  # 重新抛出尺寸错误
@@ -687,6 +729,25 @@ class FinalThumbnailGenerator:
         
         return square_image
     
+    def _preprocess_logo(self, logo_path: str, target_size: int = 150) -> Image.Image:
+        """预处理Logo为固定大小的正方形"""
+        try:
+            logo = Image.open(logo_path)
+            if logo.mode != 'RGBA':
+                logo = logo.convert('RGBA')
+            
+            # 转换为正方形
+            logo = self._convert_to_square(logo)
+            
+            # 缩放到目标大小
+            logo = logo.resize((target_size, target_size), Image.Resampling.LANCZOS)
+            print(f"Logo预处理完成: 缩放到 {target_size}x{target_size}")
+            
+            return logo
+        except Exception as e:
+            print(f"Logo预处理失败: {e}")
+            return None
+    
     def generate_final_thumbnail(self, 
                                title: str,
                                author: str = None, 
@@ -698,11 +759,18 @@ class FinalThumbnailGenerator:
                                title_color: str = None,  # 标题颜色，hex格式如"#FFFFFF"
                                author_color: str = None,  # 作者颜色，hex格式如"#CCCCCC"
                                enable_triangle: bool = None,  # 是否启用三角形
+                               triangle_direction: str = "bottom",  # 三角形方向: "bottom"(倒梯形) 或 "top"(正梯形)
+                               flip: bool = False,  # 是否镜像翻转布局
+                               flip_margin: int = None,  # flip时的右边距，None时使用默认值50
                                youtube_ready: bool = True) -> str:  # 是否优化为YouTube API兼容格式
         """生成最终版缩略图"""
         
         print(f"开始生成最终缩略图: {output_path}")
         print(f"主题模式: {theme}")
+        if theme != "custom":
+            print(f"三角形方向: {triangle_direction} ({'正梯形' if triangle_direction == 'top' else '倒梯形'})")
+        if flip:
+            print(f"布局模式: 镜像翻转 (Flip=True)")
         
         # 根据主题选择模板和默认颜色
         actual_template_path = self.template_path
@@ -711,25 +779,32 @@ class FinalThumbnailGenerator:
         if theme == "light":
             # Light主题：白底黑字白三角
             actual_template_path = get_resource_path("templates/light_template.png")
-            triangle_path = get_resource_path("templates/triangle_white.png")
+            # 根据方向选择三角形
+            if triangle_direction == "top":
+                triangle_path = get_resource_path("templates/triangle_white_top.png")
+            else:  # bottom
+                triangle_path = get_resource_path("templates/triangle_white.png")
             default_title_color = "#000000"  # 黑色字体
             default_author_color = "#666666"  # 深灰色作者
-        elif theme == "custom" and custom_template:
-            # 自定义主题：使用用户提供的模板
-            if os.path.exists(custom_template):
-                actual_template_path = custom_template
-                default_title_color = "#FFFFFF"  # 默认白字
-                default_author_color = "#CCCCCC"  # 默认浅灰
-                triangle_path = None  # 自定义模板不使用三角形
-            else:
-                print(f"警告: 自定义模板不存在，使用默认Dark主题: {custom_template}")
-                theme = "dark"
-                default_title_color = "#FFFFFF"
-                default_author_color = "#CCCCCC"
+        elif theme == "custom":
+            # 自定义主题：必须提供模板路径
+            if not custom_template:
+                raise ValueError("Custom主题必须提供custom_template参数")
+            if not os.path.exists(custom_template):
+                raise FileNotFoundError(f"自定义模板文件不存在: {custom_template}")
+            
+            actual_template_path = custom_template
+            default_title_color = "#FFFFFF"  # 默认白字
+            default_author_color = "#CCCCCC"  # 默认浅灰
+            triangle_path = None  # 自定义模板不使用三角形
         else:
             # Dark主题（默认）：黑底白字黑三角
             actual_template_path = self.template_path
-            triangle_path = get_resource_path("templates/triangle_black.png")
+            # 根据方向选择三角形
+            if triangle_direction == "top":
+                triangle_path = get_resource_path("templates/triangle_black_top.png")
+            else:  # bottom
+                triangle_path = get_resource_path("templates/triangle_black.png")
             default_title_color = "#FFFFFF"  # 白色字体
             default_author_color = "#CCCCCC"  # 浅灰色作者
         
@@ -745,20 +820,54 @@ class FinalThumbnailGenerator:
             # 用户明确指定
             use_triangle = enable_triangle
         
+        # 设置默认的 logo 和 image 路径 - 仅对 dark 和 light 主题
+        if theme != "custom":  # 只有非 custom 主题才使用默认值
+            if logo_path is None:
+                default_logo = get_resource_path("logos/animagent_logo.png")
+                if os.path.exists(default_logo):
+                    logo_path = default_logo
+                    print(f"使用默认 Logo: {logo_path}")
+            
+            if right_image_path is None:
+                default_image = get_resource_path("assets/testing_image.jpeg")
+                if os.path.exists(default_image):
+                    right_image_path = default_image
+                    print(f"使用默认右侧图片: {right_image_path}")
+        else:
+            # Custom 主题：用户没提供的就不添加
+            if logo_path is None:
+                print("Custom 主题：未提供 Logo，不添加")
+            if right_image_path is None:
+                print("Custom 主题：未提供右侧图片，不添加")
+        
         print(f"实际模板: {actual_template_path}")
         print(f"标题颜色: {final_title_color}, 作者颜色: {final_author_color}")
         print(f"三角形: {'启用' if use_triangle else '禁用'} - {triangle_path if use_triangle else 'None'}")
         
         # 打开模板图片
-        template = Image.open(actual_template_path)
+        if theme == "custom":
+            # Custom模板需要确保尺寸为1600x900
+            template = self._ensure_template_size(actual_template_path)
+        else:
+            template = Image.open(actual_template_path)
+        
         if template.mode != 'RGBA':
             template = template.convert('RGBA')
         
         width, height = template.size
         print(f"模板尺寸: {width}x{height}")
         
-        # 判断是否为专业模板
-        is_professional = width >= 1500
+        # 所有模板统一使用1600x900的布局
+        is_professional = True  # 统一使用专业模板布局
+        
+        # Flip 布局计算辅助函数
+        def calc_x_position(x, element_width=0):
+            """根据 flip 参数计算 X 位置"""
+            if not flip:
+                return x
+            else:
+                # 镜像翻转：x' = width - x - element_width
+                return width - x - element_width
         
         # 创建绘图对象
         draw = ImageDraw.Draw(template)
@@ -780,11 +889,17 @@ class FinalThumbnailGenerator:
                 # 将输入图片转换为正方形
                 right_img = self._convert_to_square(right_img)
                 
-                # 确定右侧区域 - 新布局：左侧700px，右侧900px
+                # 确定右侧区域 - 新布局：左侧700px，右侧900px（flip时相反）
                 if is_professional:  # 1600x900 -> 700x900 + 900x900
-                    right_area = (700, 0, 1600, 900)
+                    if not flip:
+                        right_area = (700, 0, 1600, 900)
+                    else:
+                        right_area = (0, 0, 900, 900)  # flip时图片在左侧
                 else:  # 1280x720
-                    right_area = (640, 0, 1280, 720)
+                    if not flip:
+                        right_area = (640, 0, 1280, 720)
+                    else:
+                        right_area = (0, 0, 640, 720)
                 
                 right_width = right_area[2] - right_area[0]
                 right_height = right_area[3] - right_area[1]
@@ -812,14 +927,22 @@ class FinalThumbnailGenerator:
                                     triangle = triangle.resize((new_width, 900), Image.Resampling.LANCZOS)
                                     print(f"三角形缩放到right_img尺寸: {triangle_width}x{triangle_height} -> {new_width}x900")
                                 
-                                # 在right_img的左侧贴三角形 (x=0位置)
-                                right_img.paste(triangle, (0, 0), triangle)
-                                print(f"三角形已贴到right_img左侧: 尺寸{triangle.size}")
+                                # 在right_img的左侧贴三角形 (flip时贴在右侧并水平翻转)
+                                if not flip:
+                                    right_img.paste(triangle, (0, 0), triangle)
+                                    print(f"三角形已贴到right_img左侧: 尺寸{triangle.size}")
+                                else:
+                                    # flip时：1.水平翻转三角形 2.贴在右侧
+                                    triangle = triangle.transpose(Image.FLIP_LEFT_RIGHT)
+                                    triangle_x = right_img.width - triangle.width
+                                    right_img.paste(triangle, (triangle_x, 0), triangle)
+                                    print(f"三角形已水平翻转并贴到right_img右侧: 位置({triangle_x}, 0), 尺寸{triangle.size}")
                                 
                         except Exception as e:
                             print(f"在right_img上贴三角形失败: {e}")
                     
-                    paste_x = 700  # 直接放在右侧区域起始位置
+                    # 使用right_area的x坐标，已经考虑了flip
+                    paste_x = right_area[0]  # flip时是0，标准时是700
                     paste_y = 0
                 else:
                     # 标准模板保持原有逻辑
@@ -839,8 +962,10 @@ class FinalThumbnailGenerator:
                     paste_x = right_area[0] + (right_width - new_width) // 2
                     paste_y = right_area[1] + (right_height - new_height) // 2
                 
+                # 使用计算好的居中位置
                 template.paste(right_img, (paste_x, paste_y), right_img)
-                print(f"右侧图片已添加: {right_image_path} -> ({paste_x}, {paste_y})")
+                position_desc = "左侧" if flip else "右侧"
+                print(f"{position_desc}图片已添加: {right_image_path} -> ({paste_x}, {paste_y})")
                 
             except Exception as e:
                 print(f"右侧图片添加失败: {e}")
@@ -848,45 +973,42 @@ class FinalThumbnailGenerator:
         # 第二层: 添加Logo（如果有） - 修复：左边距=上边距
         if logo_path and os.path.exists(logo_path):
             try:
-                logo = Image.open(logo_path)
-                if logo.mode != 'RGBA':
-                    logo = logo.convert('RGBA')
+                # 使用预处理函数，确保logo是150x150的正方形
+                logo = self._preprocess_logo(logo_path, target_size=150)
+                if logo is None:
+                    raise Exception("Logo预处理失败")
                 
-                # Logo区域 - 修复：左边距=上边距
-                if is_professional:
-                    logo_area = (50, 50, 290, 200)  # 左边距从60改为50，与上边距相同
+                # Logo位置计算（现在logo是固定的150x150）
+                logo_margin = 20  # Logo边距设置为20px
+                logo_size = 150   # Logo固定大小
+                
+                if not flip:
+                    # 标准布局：左上角
+                    logo_x = logo_margin
+                    logo_y = logo_margin
                 else:
-                    logo_area = (40, 40, 240, 160)  # 标准版本保持一致
+                    # flip布局：右上角，右边距等于原左边距
+                    logo_x = width - logo_margin - logo_size
+                    logo_y = logo_margin
                 
-                logo_width = logo_area[2] - logo_area[0]
-                logo_height = logo_area[3] - logo_area[1]
+                print(f"Logo位置: ({logo_x}, {logo_y}), 大小: {logo_size}x{logo_size}")
                 
-                # 按比例缩放Logo
-                logo_ratio = logo.width / logo.height
-                area_ratio = logo_width / logo_height
+                # 直接贴图（logo已经是150x150的正方形）
+                template.paste(logo, (logo_x, logo_y), logo)
                 
-                if logo_ratio > area_ratio:
-                    new_width = logo_width
-                    new_height = int(new_width / logo_ratio)
-                else:
-                    new_height = logo_height
-                    new_width = int(new_height * logo_ratio)
-                
-                logo = logo.resize((new_width, new_height), Image.Resampling.LANCZOS)
-                
-                # 直接放置Logo在左上角（左边距=上边距）
-                paste_x = logo_area[0]  # 直接使用左边距，不居中
-                paste_y = logo_area[1]  # 直接使用上边距，不居中
-                
-                template.paste(logo, (paste_x, paste_y), logo)
-                print(f"Logo已添加: {logo_path} -> ({paste_x}, {paste_y})")
+                position_desc = "左上角" if not flip else "右上角"
+                print(f"Logo已添加到{position_desc}: {logo_path} -> 位置({logo_x}, {logo_y})")
                 
             except Exception as e:
                 print(f"Logo添加失败: {e}")
         
         # 第三层: 使用PNG贴图方式添加标题文字
+        # 标题边距全局变量
+        title_margin = 50  # 标题左边距，统一控制
+        base_margin = flip_margin if flip_margin is not None else title_margin
+        
         if is_professional:
-            text_x = 55  # 从50px调整到55px，往右5像素
+            text_x = base_margin  # 标准左边距，与Logo对齐
             title_y = 330  # 标题位置居中显示
             
             # 定义PNG尺寸
@@ -904,6 +1026,15 @@ class FinalThumbnailGenerator:
             print(f"生成标题PNG（固定区域 600x280）")
             # 检测标题语言
             title_language = self._detect_language(title)
+            
+            # 中文标题限制18个字符，英文不限制
+            if title_language == "chinese":
+                if len(title) > 18:
+                    original_title = title
+                    title = title[:18] + "..."  # 保留前18个字符，再追加3个点
+                    print(f"中文标题截短: '{original_title}' -> '{title}' (保留前18字符+...)")
+                # 如果正好18字符或更少，不需要处理
+            
             # 英文标题限制3行
             max_title_lines = 3 if title_language == "english" else 6
             
@@ -922,42 +1053,88 @@ class FinalThumbnailGenerator:
                 text_color=title_rgb,  # 使用主题颜色
                 language=title_language,
                 auto_height=False,  # 关闭自动高度调整
-                max_lines=max_title_lines  # 英文3行，中文6行
+                max_lines=max_title_lines,  # 英文3行，中文6行
+                use_stroke=(theme == "custom"),  # custom主题使用黑色描边
+                align='right' if flip else 'left'  # flip模式下使用右对齐
             )
             
             if success:
-                title_img_data = (title_img, text_x, title_y)
-                print(f"标题PNG已生成，等待最终贴入: 位置({text_x}, {title_y}), 固定尺寸(550, 280) [宽度优化]")
+                # 获取标题PNG图片的实际尺寸
+                title_img_width = title_img.size[0]  # PNG图片宽度 (应该是550)
+                
+                # 计算X位置
+                if not flip:
+                    # 标准布局：使用原来的text_x
+                    final_text_x = text_x
+                else:
+                    # flip布局：X = 1600 - title_image_width - title_margin_right
+                    # 1600 - 550 - 50 = 1000
+                    final_text_x = width - title_img_width - title_margin
+                
+                title_img_data = (title_img, final_text_x, title_y)
+                print(f"标题PNG已生成: 位置({final_text_x}, {title_y}), PNG宽度: {title_img_width}px")
+                print(f"标题布局: {'右对齐' if flip else '左对齐'}, 固定尺寸(550, 280)")
         
         
-        # 作者 - 调整位置：往右往上
+        # 作者 - 使用PNG方式，固定在底部上方100px位置
+        author_img_data = None
         if author:
-            if is_professional:
-                # 往上调整：从820调整到800，往上20px
-                author_y = 800  # 900 - 100(底边距) = 800，往上20px
-            else:
-                author_y = 640  # 往上20px
+            # 无论什么模板，作者都应该在底部上方100px的位置
+            author_y = height - 100  # 距离底部100px
             
             # 将作者名改为全大写
             author_upper = author.upper()
             
-            author_font = self._get_best_font(author_upper, author_size)
-            self._draw_text_with_effects(
-                draw, author_upper, (text_x, author_y), author_font,
-                color=final_author_color,  # 使用主题颜色
-                max_width=550 if is_professional else 450  # 与标题副标题保持一致
+            # 生成作者PNG
+            # 将hex颜色转换为RGB
+            def hex_to_rgb(hex_color):
+                hex_color = hex_color.lstrip('#')
+                return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+            
+            author_rgb = hex_to_rgb(final_author_color)
+            
+            # 创建作者PNG，宽度限制为400px
+            success, author_img, _ = create_text_png(
+                text=author_upper,
+                width=400,
+                height=60,  # 作者文字高度
+                text_color=author_rgb,
+                language='english',
+                auto_height=False,
+                max_lines=1,
+                align='right' if flip else 'left'  # flip模式下使用右对齐
             )
             
-            print(f"作者位置: ({text_x}, {author_y}) - 全大写: {author_upper} [右移5px, 上移20px]")
+            if success:
+                # 获取作者PNG图片的实际尺寸
+                author_img_width = author_img.size[0]  # PNG图片宽度 (应该是400)
+                
+                # 计算X位置
+                if not flip:
+                    # 标准布局：左对齐
+                    author_x = text_x
+                else:
+                    # flip布局：X = 1600 - author_image_width - title_margin_right
+                    # 1600 - 400 - 50 = 1150
+                    author_x = width - author_img_width - title_margin
+                
+                author_img_data = (author_img, author_x, author_y)
+                print(f"作者PNG已生成: 位置({author_x}, {author_y}), PNG宽度: {author_img_width}px")
+                print(f"作者全大写: {author_upper}, {'右对齐' if flip else '左对齐'}")
         
         # 三角形已经在right_img处理阶段贴入，这里不再需要单独处理
         print("三角形效果已集成到右侧图片中")
         
-        # 最终步骤: 贴入标题PNG（在三角形之上）
+        # 最终步骤: 贴入标题和作者PNG（在三角形之上）
         if title_img_data:
             title_img, tx, ty = title_img_data
             template.paste(title_img, (tx, ty), title_img)
             print(f"标题PNG最终贴入: 位置({tx}, {ty}) [最上层]")
+        
+        if author_img_data:
+            author_img, ax, ay = author_img_data
+            template.paste(author_img, (ax, ay), author_img)
+            print(f"作者PNG最终贴入: 位置({ax}, {ay}) [最上层]")
         
         # 保存结果
         if template.mode == 'RGBA':
