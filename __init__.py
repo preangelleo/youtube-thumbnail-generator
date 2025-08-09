@@ -45,11 +45,14 @@ def init_templates():
     """Initialize default templates in current directory if needed"""
     return create_default_templates()
 
-def create_generator(template_path=None):
-    """创建缩略图生成器 - 不需要指定模板路径
+def create_generator(template_path=None, google_api_key=None):
+    """创建缩略图生成器 - 支持模板路径和Google API key
     
     Args:
         template_path (str, optional): 模板文件路径。如果不提供，使用默认黑色模板
+        google_api_key (str, optional): Google API key for title optimization.
+                                       If not provided, tries environment variable GOOGLE_API_KEY.
+                                       If unavailable, title optimization is disabled.
         
     Returns:
         FinalThumbnailGenerator: 缩略图生成器实例
@@ -60,8 +63,15 @@ def create_generator(template_path=None):
         
         # 使用自定义模板
         generator = create_generator('my_template.jpg')
+        
+        # 启用title优化功能
+        generator = create_generator(google_api_key='your_google_api_key')
+        
+        # 或设置环境变量
+        # export GOOGLE_API_KEY=your_google_api_key
+        generator = create_generator()  # 会自动从环境变量获取API key
     """
-    return FinalThumbnailGenerator(template_path)
+    return FinalThumbnailGenerator(template_path, google_api_key)
 
 # Define what gets imported with "from youtube_thumbnail_generator import *"
 __all__ = [

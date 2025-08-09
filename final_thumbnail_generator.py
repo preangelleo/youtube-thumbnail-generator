@@ -8,6 +8,13 @@ from PIL import Image, ImageDraw, ImageFont
 from typing import List, Tuple, Optional, Dict, Any
 import os
 from dataclasses import dataclass
+
+# Import title optimizer (optional dependency)
+try:
+    from title_optimizer import create_title_optimizer
+    TITLE_OPTIMIZER_AVAILABLE = True
+except ImportError:
+    TITLE_OPTIMIZER_AVAILABLE = False
 import textwrap
 import platform
 try:
@@ -384,12 +391,15 @@ class LogoConfig:
 class FinalThumbnailGenerator:
     """最终版缩略图生成器"""
     
-    def __init__(self, template_path: str = None):
+    def __init__(self, template_path: str = None, google_api_key: str = None):
         """初始化生成器
         
         Args:
             template_path (str, optional): 模板文件路径。
                                          如果不提供，将使用默认黑色模板
+            google_api_key (str, optional): Google API key for title optimization.
+                                           If not provided, tries environment variable GOOGLE_API_KEY.
+                                           If unavailable, title optimization is disabled.
         """
         if template_path is None:
             # 使用默认黑色模板
@@ -416,6 +426,20 @@ class FinalThumbnailGenerator:
             # 英文字体
             "english": self._get_english_font_paths()
         }
+        
+        # Initialize title optimizer (optional)
+        self.title_optimizer = None
+        if TITLE_OPTIMIZER_AVAILABLE:
+            try:
+                self.title_optimizer = create_title_optimizer(google_api_key)
+                if self.title_optimizer.is_available:
+                    print("Title optimization enabled with Google Gemini API")
+                else:
+                    print("Title optimization disabled - no valid Google API key")
+            except Exception as e:
+                print(f"Failed to initialize title optimizer: {e}")
+        else:
+            print("Title optimization unavailable - google-generativeai package not installed")
     
     def _ensure_template_size(self, template_path: str) -> Image.Image:
         """确保模板尺寸为 1600x900，如果不是则强制转换"""
@@ -1024,6 +1048,22 @@ class FinalThumbnailGenerator:
         # 生成标题PNG（但先不贴入）
         if title:
             print(f"生成标题PNG（固定区域 600x280）")
+            
+            # Optimize title with Gemini API (if available)
+            original_title = title
+            if self.title_optimizer and self.title_optimizer.is_available:
+                try:
+                    title, was_optimized = self.title_optimizer.optimize_title(title)
+                    if was_optimized:
+                        print(f"Title optimized by Gemini: '{original_title}' -> '{title}'")
+                    else:
+                        print(f"Title unchanged by Gemini: '{title}'")
+                except Exception as e:
+                    print(f"Title optimization failed: {e}")
+                    title = original_title
+            else:
+                print("Title optimization skipped - no API key or Gemini unavailable")
+            
             # 检测标题语言
             title_language = self._detect_language(title)
             

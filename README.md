@@ -24,6 +24,7 @@ Professional YouTube thumbnail automatic generation tool with intelligent Chines
 - ✅ **Full Color Customization**: Title color, author color, triangle toggle - all parameterized
 - ✅ **Dynamic Font Scaling**: Auto font size adjustment based on text length (1-17 characters)
 - ✅ **YouTube API Ready**: Built-in optimization for YouTube API v3 thumbnail upload compliance
+- 🆕 **AI Title Optimization**: Google Gemini-powered mixed-language title optimization (optional)
 
 ## 🎨 Three Theme Modes
 
@@ -112,6 +113,142 @@ For the most professional and visually appealing thumbnails:
 - **Dark Theme**: Black bg + White text (#FFFFFF) + Light gray author (#CCCCCC) + Black triangle
 - **Light Theme**: White bg + Black text (#000000) + Dark gray author (#666666) + White triangle
 - **Custom Theme**: User background + White text (#FFFFFF) + Light gray author (#CCCCCC) + No triangle
+
+## 🤖 AI Title Optimization (New!)
+
+### Solve Mixed Language Problems with Google Gemini
+Our system now includes optional AI-powered title optimization using Google Gemini API to automatically fix mixed-language titles and improve formatting.
+
+#### ⚠️ Why Title Optimization Matters
+As mentioned earlier, mixed-language titles cause formatting issues:
+- ❌ "AI技术指南 Complete Guide" - English words split incorrectly in Chinese mode
+- ❌ "Learn Python编程" - Chinese characters break English word boundaries
+
+#### ✅ How AI Optimization Fixes This
+The Gemini API automatically converts mixed-language titles into clean, single-language versions:
+- ✅ "AI技术指南 Complete Guide" → "AI技术完整指南教程"
+- ✅ "Learn Python编程" → "Learn Python Programming Complete Guide"
+
+### 🔑 Setup & Configuration
+
+#### Method 1: Environment Variable (Recommended)
+```bash
+# Set your Google API key as environment variable
+export GOOGLE_API_KEY="your_google_api_key_here"
+
+# Then use normally - optimization happens automatically
+python your_script.py
+```
+
+#### Method 2: Direct API Key
+```python
+from youtube_thumbnail_generator import create_generator
+
+# Pass API key directly
+generator = create_generator(google_api_key="your_google_api_key_here")
+
+# Or use FinalThumbnailGenerator directly
+from youtube_thumbnail_generator import FinalThumbnailGenerator
+generator = FinalThumbnailGenerator(google_api_key="your_google_api_key_here")
+```
+
+#### Method 3: No API Key (Fallback)
+```python
+# Works without API key - just skips optimization
+generator = create_generator()
+# Output: "Title optimization skipped - no API key or Gemini unavailable"
+```
+
+### 🧠 AI System Prompt
+
+The AI uses this system prompt to optimize titles (you can modify this in `title_optimizer.py`):
+
+```
+You are a professional YouTube title optimizer. Your task is to convert mixed-language or poorly formatted titles into clean, single-language titles optimized for YouTube thumbnails.
+
+CRITICAL RULES:
+1. OUTPUT ONLY THE OPTIMIZED TITLE - No prefixes, suffixes, quotes, or explanations
+2. Use SINGLE LANGUAGE ONLY - Pure Chinese OR Pure English OR Pure other language
+3. Maintain the original meaning and intent
+4. Optimize for YouTube thumbnail readability
+5. Length guidelines: Chinese 10-18 characters, English 7-12 words
+
+LANGUAGE DECISION RULES:
+- If >60% Chinese characters: Convert to pure Chinese
+- If >60% English words: Convert to pure English  
+- Otherwise: Choose the dominant language and convert entirely
+
+FORMATTING RULES:
+- Remove unnecessary punctuation for thumbnails
+- Use title case for English
+- No quotation marks, brackets, or special symbols
+- Make it catchy and clickable
+```
+
+### 📝 Customizing the System Prompt
+
+To customize the AI behavior, edit the `TITLE_OPTIMIZATION_SYSTEM_PROMPT` variable in `title_optimizer.py`:
+
+```python
+# File: title_optimizer.py
+TITLE_OPTIMIZATION_SYSTEM_PROMPT = """
+Your custom prompt here...
+Add your specific rules and preferences...
+"""
+```
+
+### ⚙️ How It Works
+
+1. **Detection**: Checks if title contains mixed languages (20-80% Chinese characters)
+2. **API Call**: Sends title to Google Gemini with optimization prompt
+3. **Validation**: Ensures response is valid and non-empty
+4. **Fallback**: Uses original title if optimization fails
+5. **Logging**: Shows whether title was optimized or unchanged
+
+### 📊 Example Optimizations
+
+```python
+generator = create_generator(google_api_key="your_key")
+
+# Mixed Chinese/English
+result = generator.generate_final_thumbnail(
+    title="AI技术指南 Complete Tutorial 2024",  # Mixed language
+    output_path="test.jpg"
+)
+# Console: Title optimized by Gemini: 'AI技术指南 Complete Tutorial 2024' -> 'AI技术完整指南教程'
+
+# Mixed English/Chinese  
+result = generator.generate_final_thumbnail(
+    title="Learn Python编程 from Zero",  # Mixed language
+    output_path="test2.jpg"
+)
+# Console: Title optimized by Gemini: 'Learn Python编程 from Zero' -> 'Learn Python Programming from Zero'
+
+# Pure language (no change needed)
+result = generator.generate_final_thumbnail(
+    title="Complete AI Technology Guide",  # Pure English
+    output_path="test3.jpg"  
+)
+# Console: Title unchanged by Gemini: 'Complete AI Technology Guide'
+```
+
+### 🔧 Requirements
+
+To use title optimization, install the Google Generative AI package:
+
+```bash
+pip install google-generativeai
+```
+
+**Get your Google API key**: https://aistudio.google.com/app/apikey
+
+### 🚨 Important Notes
+
+- **Optional Feature**: Works without API key, just skips optimization
+- **Rate Limits**: Google API has rate limits - consider for high-volume usage
+- **Cost**: Google Gemini API has usage costs - check Google's pricing
+- **Privacy**: Titles are sent to Google's servers for processing
+- **Fallback**: Always falls back to original title if API fails
 
 ## 🧠 Intelligent Text System
 
@@ -671,6 +808,7 @@ youtube_thumbnail_generator/
 ├── function_add_chapter.py           # Chapter functionality  
 ├── youtube_standards.py              # YouTube API compliance utilities
 ├── initial_test.py                   # Interactive testing tool (NEW!)
+├── title_optimizer.py                # AI title optimization with Google Gemini (NEW!)
 ├── assets/
 │   ├── animagent_logo.png           # Default testing logo
 │   └── testing_image.jpeg           # Default testing image
@@ -700,6 +838,7 @@ youtube_thumbnail_generator/
 - `final_thumbnail_generator.py` - Main thumbnail generation engine with theme support, flip layouts, and text positioning
 - `text_png_generator.py` - Advanced text rendering with Chinese/English optimization, smart line-breaking, and font scaling
 - `youtube_standards.py` - YouTube API v3 compliance utilities and image optimization
+- `title_optimizer.py` - AI-powered title optimization using Google Gemini API (optional)
 
 **User Tools:**
 - `initial_test.py` - **Interactive testing tool** - Run to test all 10 configurations with any title
@@ -716,7 +855,16 @@ youtube_thumbnail_generator/
 
 ## 📈 Version History
 
-### v2.3.0 (Current) - Advanced Layout & Text Engine
+### v2.4.0 (Current) - AI-Powered Title Optimization
+- 🆕 **AI Title Optimization**: Google Gemini API integration for mixed-language title fixing
+- 🆕 **Smart Language Detection**: Auto-detects and optimizes mixed Chinese/English titles
+- 🆕 **Configurable System Prompt**: Customizable AI optimization behavior
+- 🆕 **Graceful Fallback**: Works with or without Google API key
+- ✅ **Environment Variable Support**: `GOOGLE_API_KEY` auto-detection
+- ✅ **Enhanced API**: `google_api_key` parameter in all generator functions
+- ✅ **Comprehensive Logging**: Clear feedback on optimization success/failure
+
+### v2.3.0 - Advanced Layout & Text Engine  
 - ✅ **Interactive Testing Tool**: New `initial_test.py` for comprehensive feature validation
 - ✅ **Flip Layout System**: Mirror layouts with precise positioning for creative variety
 - ✅ **Advanced Text Engine**: 
