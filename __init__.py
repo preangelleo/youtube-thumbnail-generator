@@ -27,9 +27,9 @@ Basic Usage:
     )
 """
 
-__version__ = "2.4.0"
+__version__ = "2.4.2"
 __author__ = "Leo Wang"
-__email__ = "leo@example.com"
+__email__ = "me@leowang.net"
 __license__ = "MIT"
 
 # Import main classes and functions

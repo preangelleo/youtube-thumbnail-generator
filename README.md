@@ -1,4 +1,4 @@
-# YouTube Thumbnail Generator v2.4.1
+# YouTube Thumbnail Generator v2.4.2
 
 Professional YouTube thumbnail generator with enhanced Chinese font bold rendering, AI-powered title optimization, and intelligent text layout system.
 
@@ -32,35 +32,23 @@ Professional YouTube thumbnail generator with enhanced Chinese font bold renderi
 
 **Canvas Size**: 1600x900 pixels
 
-### 🌑 Dark Theme - Professional Black Background
+### 🎨 Template Examples with Enhanced Stroke Effects (v2.4.2)
+
+#### Professional Dark Theme Sample
 **Perfect for**: Tech content, gaming, serious topics  
-**Features**: Black background + White bold text + Black triangle overlay + Professional contrast
+**Features**: Enhanced Chinese bold rendering with intelligent stroke effects
 
-#### Chinese Sample (10 characters - optimal length)
-![Chinese Dark Theme](https://api.sumatman.ai/image/20250808_232317_chinese_sample_template_dark.jpg)
+![Professional Dark Theme Example](template_samples/v2.4.2_examples/combo_01_professional_dark_triangle_False_english.jpg)
 
-#### English Sample (7 words - optimal length)  
-![English Dark Theme](https://api.sumatman.ai/image/20250808_232340_english_sample_template_dark.jpg)
+#### 📖 **[View All Examples Gallery →](EXAMPLES.md)**
 
-### 🌕 Light Theme - Clean White Background
-**Perfect for**: Educational content, lifestyle, bright topics  
-**Features**: White background + Black bold text + White triangle overlay + Clean minimalist look
+**More Examples Available:**
+- **12 Template Combinations**: Professional, Standard, Triangle themes × Dark/Light × With/Without triangle overlays
+- **Mixed Language Support**: Chinese and English title examples 
+- **Enhanced Stroke Effects**: Perfect bold rendering for both dark and light backgrounds
+- **API Generation Examples**: All samples generated using the latest API with stroke improvements
 
-#### Chinese Sample (10 characters - optimal length)
-![Chinese Light Theme](https://api.sumatman.ai/image/20250808_232325_chinese_sample_template_light.jpg)
-
-#### English Sample (7 words - optimal length)
-![English Light Theme](https://api.sumatman.ai/image/20250808_232346_english_sample_template_light.jpg)
-
-### 🌈 Custom Theme - Your Own Background
-**Perfect for**: Brand content, creative projects, unique aesthetics  
-**Features**: Custom 1600x900 background + Customizable text colors + No triangle overlay + Full creative control
-
-#### Chinese Sample (10 characters - optimal length)
-![Chinese Custom Theme](https://api.sumatman.ai/image/20250808_232332_chinese_sample_template_custom.jpg)
-
-#### English Sample (7 words - optimal length)
-![English Custom Theme](https://api.sumatman.ai/image/20250808_232353_english_sample_template_custom.jpg)
+**[🎨 Complete Examples Gallery →](EXAMPLES.md)** - View all template combinations with enhanced stroke effects
 
 ## 💡 Optimal Length Recommendations
 
@@ -1001,7 +989,14 @@ youtube_thumbnail_generator/
 
 ## 📈 Version History
 
-### v2.4.1 (Current) - Complete API Integration & Enhanced Features
+### v2.4.2 (Current) - Enhanced Stroke Effects & Examples Gallery
+- 🎨 **Enhanced Examples Gallery**: Complete EXAMPLES.md with all 12 template combinations using v2.4.2 stroke effects
+- 📸 **New Sample Generation**: All examples regenerated with enhanced Chinese bold rendering
+- 📖 **Simplified README**: Streamlined examples section with direct link to comprehensive gallery
+- 🔗 **Better Navigation**: Clear link structure between README and detailed examples
+- ✨ **v2.4.2 Branding**: Updated version references and sample file organization
+
+### v2.4.1 - Complete API Integration & Enhanced Features
 - 🚀 **Complete API Support**: New `/api/generate/random` endpoint for 12 random template combinations
 - 🔧 **Enhanced API Parameters**: Full support for `triangle_direction`, `flip`, `google_api_key`, `youtube_ready` in `/api/generate/enhanced`
 - 📖 **Comprehensive API Documentation**: Detailed parameter descriptions and 12-combination reference table
