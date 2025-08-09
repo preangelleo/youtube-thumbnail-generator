@@ -10,6 +10,10 @@ import os
 from dataclasses import dataclass
 import random
 
+# ========== 配置常量 ==========
+LOGO_SIZE = 100  # Logo目标尺寸 (像素), 100x100正方形
+# 修改此值可以调整所有logo的显示大小
+
 # Import title optimizer (optional dependency)
 try:
     from title_optimizer import create_title_optimizer
@@ -735,38 +739,69 @@ class FinalThumbnailGenerator:
             
             print(f"绘制文字: {line} 位置: ({x}, {line_y}) 颜色: {color}")
     
-    def _convert_to_square(self, image: Image.Image) -> Image.Image:
-        """将图片转换为正方形（居中裁剪）"""
+    def _convert_to_square(self, image: Image.Image, target_size: int = 900) -> Image.Image:
+        """将图片智能转换为正方形
+        
+        处理逻辑：
+        1. 如果已经是target_size x target_size，直接返回
+        2. 如果最小边 < target_size，等比例放大到最小边 = target_size
+        3. 居中裁剪为target_size x target_size正方形
+        """
         width, height = image.size
         
-        # 选择较小的边作为正方形的边长
-        size = min(width, height)
+        # 1. 已经是目标尺寸的正方形，直接返回
+        if width == target_size and height == target_size:
+            print(f"图片已是目标尺寸: {target_size}x{target_size}")
+            return image
         
-        # 计算裁剪位置（居中）
-        left = (width - size) // 2
-        top = (height - size) // 2
-        right = left + size
-        bottom = top + size
+        # 2. 判断最小边长
+        min_side = min(width, height)
         
-        # 裁剪为正方形
-        square_image = image.crop((left, top, right, bottom))
-        print(f"图片转换为正方形: {width}x{height} -> {size}x{size}")
+        # 3. 如果最小边长小于目标尺寸，先等比例放大
+        if min_side < target_size:
+            scale_factor = target_size / min_side
+            new_width = int(width * scale_factor)
+            new_height = int(height * scale_factor)
+            
+            image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+            print(f"图片等比例放大: {width}x{height} -> {new_width}x{new_height} (缩放比例: {scale_factor:.2f})")
+            
+            # 更新尺寸
+            width, height = new_width, new_height
+        
+        # 4. 居中裁剪为目标尺寸的正方形
+        if width != target_size or height != target_size:
+            # 计算裁剪位置（居中）
+            left = (width - target_size) // 2
+            top = (height - target_size) // 2
+            right = left + target_size
+            bottom = top + target_size
+            
+            # 裁剪为正方形
+            square_image = image.crop((left, top, right, bottom))
+            
+            if width > height:
+                print(f"横向图片居中裁剪: {width}x{height} -> {target_size}x{target_size} (左右各去掉{left}px)")
+            elif height > width:
+                print(f"纵向图片居中裁剪: {width}x{height} -> {target_size}x{target_size} (上下各去掉{top}px)")
+            else:
+                print(f"正方形图片裁剪: {width}x{height} -> {target_size}x{target_size}")
+        else:
+            square_image = image
+            print(f"图片无需裁剪，已是目标尺寸: {target_size}x{target_size}")
         
         return square_image
     
-    def _preprocess_logo(self, logo_path: str, target_size: int = 150) -> Image.Image:
+    def _preprocess_logo(self, logo_path: str, target_size: int = LOGO_SIZE) -> Image.Image:
         """预处理Logo为固定大小的正方形"""
         try:
             logo = Image.open(logo_path)
             if logo.mode != 'RGBA':
                 logo = logo.convert('RGBA')
             
-            # 转换为正方形
-            logo = self._convert_to_square(logo)
-            
-            # 缩放到目标大小
-            logo = logo.resize((target_size, target_size), Image.Resampling.LANCZOS)
-            print(f"Logo预处理完成: 缩放到 {target_size}x{target_size}")
+            # 智能转换为目标尺寸的正方形
+            logo = self._convert_to_square(logo, target_size)
+            print(f"Logo预处理完成: {target_size}x{target_size}")
             
             return logo
         except Exception as e:
@@ -998,14 +1033,14 @@ class FinalThumbnailGenerator:
         # 第二层: 添加Logo（如果有） - 修复：左边距=上边距
         if logo_path and os.path.exists(logo_path):
             try:
-                # 使用预处理函数，确保logo是150x150的正方形
-                logo = self._preprocess_logo(logo_path, target_size=150)
+                # 使用预处理函数，确保logo是正方形
+                logo = self._preprocess_logo(logo_path, target_size=LOGO_SIZE)
                 if logo is None:
                     raise Exception("Logo预处理失败")
                 
-                # Logo位置计算（现在logo是固定的150x150）
+                # Logo位置计算（使用配置的logo尺寸）
                 logo_margin = 20  # Logo边距设置为20px
-                logo_size = 150   # Logo固定大小
+                logo_size = LOGO_SIZE   # Logo配置大小
                 
                 if not flip:
                     # 标准布局：左上角
@@ -1018,7 +1053,7 @@ class FinalThumbnailGenerator:
                 
                 print(f"Logo位置: ({logo_x}, {logo_y}), 大小: {logo_size}x{logo_size}")
                 
-                # 直接贴图（logo已经是150x150的正方形）
+                # 直接贴图（logo已经是配置尺寸的正方形）
                 template.paste(logo, (logo_x, logo_y), logo)
                 
                 position_desc = "左上角" if not flip else "右上角"

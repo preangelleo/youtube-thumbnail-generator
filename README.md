@@ -1,4 +1,4 @@
-# YouTube Thumbnail Generator v2.4.2
+# YouTube Thumbnail Generator v2.4.3
 
 Professional YouTube thumbnail generator with enhanced Chinese font bold rendering, AI-powered title optimization, and intelligent text layout system.
 
@@ -421,9 +421,10 @@ author="Leo Wang"  # Auto-converts to "LEO WANG"
 ```python
 logo_path="logos/your_logo.png"
 ```
-- **Position**: Top-left corner (50, 50), left margin = top margin
-- **Area**: 240x150 pixels, auto aspect ratio scaling
+- **Position**: Top-left corner (20, 20), left margin = top margin
+- **Target Size**: 100x100 pixels (automatically processed)
 - **Format**: Supports PNG/JPG, auto-handle transparency
+- **⚠️ Important**: For best results, provide a **square logo** (1:1 aspect ratio). Non-square logos will be center-cropped, which may cut off important parts
 
 **`right_image_path`** (str) - Right-side image path
 ```python
@@ -989,7 +990,22 @@ youtube_thumbnail_generator/
 
 ## 📈 Version History
 
-### v2.4.2 (Current) - Enhanced Stroke Effects & Examples Gallery
+### v2.4.3 (Current) - Intelligent Image Processing & CDN Examples
+- 🧠 **Smart Image Processing**: Intelligent image resize and center-crop algorithm for perfect 900x900 thumbnails
+  - Auto scale-up when min dimension < 900px  
+  - Center crop for both horizontal and vertical images
+  - Preserves aspect ratio during scaling
+- 📏 **Configurable Logo Size**: Logo size now controlled by LOGO_SIZE constant (100x100px)
+  - Easy customization for different logo requirements
+  - Consistent 100x100px output with smart center-cropping
+- 🌐 **CDN-Hosted Examples**: All example images now hosted on public CDN
+  - Dramatically reduced package size (no bundled images)
+  - Fast worldwide loading from CDN
+  - Always up-to-date examples
+- 📖 **Simplified Documentation**: Removed duplicate guides, streamlined user experience
+- ⚠️ **Logo Recommendations**: Clear guidance for square logo usage to prevent cropping issues
+
+### v2.4.2 - Enhanced Stroke Effects & Examples Gallery
 - 🎨 **Enhanced Examples Gallery**: Complete EXAMPLES.md with all 12 template combinations using v2.4.2 stroke effects
 - 📸 **New Sample Generation**: All examples regenerated with enhanced Chinese bold rendering
 - 📖 **Simplified README**: Streamlined examples section with direct link to comprehensive gallery
