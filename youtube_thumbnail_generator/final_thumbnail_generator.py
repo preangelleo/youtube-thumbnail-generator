@@ -1148,10 +1148,10 @@ class FinalThumbnailGenerator:
             success, title_img, _ = create_text_png(
                 text=title,
                 width=550,  # 从600改为550，给右侧更多缓冲空间
-                height=280,  # 固定高度，不再自动调整
+                height=280,  # 基础高度，将根据行数动态调整
                 text_color=title_rgb,  # 使用主题颜色
                 language=title_language,
-                auto_height=False,  # 关闭自动高度调整
+                auto_height=True,  # 启用自动高度调整，支持1-3行动态高度
                 max_lines=max_title_lines,  # 英文3行，中文6行
                 use_stroke=(theme == "custom"),  # custom主题使用黑色描边
                 align='right' if flip else 'left'  # flip模式下使用右对齐
