@@ -43,9 +43,9 @@ def background_generate(task_id, **kwargs):
             tasks[task_id]['error'] = '模板文件不存在'
             return
         
-        # 支持Google API Key参数
-        google_api_key = kwargs.get('google_api_key')
-        generator = FinalThumbnailGenerator(template_path, google_api_key=google_api_key)
+        # 支持Gemini API Key参数（向后兼容google_api_key）
+        gemini_api_key = kwargs.get('gemini_api_key') or kwargs.get('google_api_key')
+        generator = FinalThumbnailGenerator(template_path, gemini_api_key=gemini_api_key)
         
         tasks[task_id]['progress'] = '生成缩略图中...'
         
@@ -145,7 +145,7 @@ def background_generate_random(task_id, **kwargs):
             logo_path=kwargs.get('logo_path'),
             right_image_path=kwargs.get('right_image_path'),
             output_path=output_path,
-            google_api_key=kwargs.get('google_api_key'),
+            gemini_api_key=kwargs.get('gemini_api_key') or kwargs.get('google_api_key'),
             youtube_ready=kwargs.get('youtube_ready', True)
         )
         

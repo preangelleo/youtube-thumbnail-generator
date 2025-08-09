@@ -396,14 +396,15 @@ class LogoConfig:
 class FinalThumbnailGenerator:
     """最终版缩略图生成器"""
     
-    def __init__(self, template_path: str = None, google_api_key: str = None):
+    def __init__(self, template_path: str = None, gemini_api_key: str = None):
         """初始化生成器
         
         Args:
             template_path (str, optional): 模板文件路径。
                                          如果不提供，将使用默认黑色模板
-            google_api_key (str, optional): Google API key for title optimization.
-                                           If not provided, tries environment variable GOOGLE_API_KEY.
+            gemini_api_key (str, optional): Gemini API key for title optimization.
+                                           If not provided, tries environment variable GEMINI_API_KEY.
+                                           For backwards compatibility, also checks GOOGLE_API_KEY.
                                            If unavailable, title optimization is disabled.
         """
         if template_path is None:
@@ -436,7 +437,7 @@ class FinalThumbnailGenerator:
         self.title_optimizer = None
         if TITLE_OPTIMIZER_AVAILABLE:
             try:
-                self.title_optimizer = create_title_optimizer(google_api_key)
+                self.title_optimizer = create_title_optimizer(gemini_api_key)
                 if self.title_optimizer.is_available:
                     print("Title optimization enabled with Gemini API")
                 else:
@@ -834,7 +835,7 @@ class FinalThumbnailGenerator:
                 logo_path=logo_path,
                 right_image_path=right_image_path,
                 output_path=output_path,
-                google_api_key=self.title_optimizer.api_key if self.title_optimizer else None,
+                gemini_api_key=self.title_optimizer.api_key if self.title_optimizer else None,
                 youtube_ready=youtube_ready
             )
         
@@ -1351,7 +1352,7 @@ result = generate_random_thumbnail(title="Title", author="Name")
 ## AI Title Optimization
 ```python
 # Enable Gemini API for mixed-language title optimization
-generator = create_generator(google_api_key="your_gemini_api_key")
+generator = create_generator(gemini_api_key="your_gemini_api_key")
 
 # Or set environment variable
 # export GEMINI_API_KEY="your_key"
@@ -1421,7 +1422,7 @@ Content-Type: application/json
     "enable_triangle": true,                 // Optional
     "triangle_direction": "bottom",          // Optional: top/bottom
     "flip": false,                          // Optional
-    "google_api_key": "your_key",           // Optional: For AI optimization
+    "gemini_api_key": "your_key",           // Optional: For AI optimization
     "youtube_ready": true                    // Optional: YouTube compliance
 }
 ```
@@ -1572,6 +1573,7 @@ def generate_random_thumbnail(title: str,
                             logo_path: str = None,
                             right_image_path: str = None,
                             output_path: str = "random_thumbnail.jpg",
+                            gemini_api_key: str = None,
                             google_api_key: str = None,
                             youtube_ready: bool = True) -> str:
     """
@@ -1591,7 +1593,8 @@ def generate_random_thumbnail(title: str,
         logo_path (str, optional): Path to logo image file
         right_image_path (str, optional): Path to right-side image file
         output_path (str): Output file path. Defaults to "random_thumbnail.jpg"
-        google_api_key (str, optional): Google API key for AI title optimization
+        gemini_api_key (str, optional): Gemini API key for AI title optimization
+        google_api_key (str, optional): Deprecated. Use gemini_api_key instead
         youtube_ready (bool): Whether to optimize for YouTube API compliance
         
     Returns:
@@ -1627,7 +1630,9 @@ def generate_random_thumbnail(title: str,
     print(f"   📁 Output: {output_path}")
     
     # Create generator with optional AI optimization
-    generator = FinalThumbnailGenerator(google_api_key=google_api_key)
+    # 向后兼容：优先使用google_api_key（如果提供）
+    api_key = google_api_key if google_api_key else gemini_api_key
+    generator = FinalThumbnailGenerator(gemini_api_key=api_key)
     
     # Generate thumbnail with random configuration
     result = generator.generate_final_thumbnail(

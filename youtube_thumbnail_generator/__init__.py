@@ -45,16 +45,16 @@ def init_templates():
     """Initialize default templates in current directory if needed"""
     return create_default_templates()
 
-def create_generator(template_path=None, google_api_key=None):
+def create_generator(template_path=None, gemini_api_key=None, google_api_key=None):
     """创建缩略图生成器 - 支持模板路径和Gemini API key
     
     Args:
         template_path (str, optional): 模板文件路径。如果不提供，使用默认黑色模板
-        google_api_key (str, optional): Gemini API key for title optimization.
+        gemini_api_key (str, optional): Gemini API key for title optimization.
                                        If not provided, tries environment variable GEMINI_API_KEY.
-                                       For backwards compatibility, also checks GOOGLE_API_KEY.
-                                       If unavailable, title optimization is disabled.
-        
+        google_api_key (str, optional): Deprecated. Use gemini_api_key instead.
+                                       Kept for backwards compatibility.
+                                       
     Returns:
         FinalThumbnailGenerator: 缩略图生成器实例
         
@@ -65,14 +65,16 @@ def create_generator(template_path=None, google_api_key=None):
         # 使用自定义模板
         generator = create_generator('my_template.jpg')
         
-        # 启用title优化功能
-        generator = create_generator(google_api_key='your_gemini_api_key')
+        # 启用title优化功能（推荐方式）
+        generator = create_generator(gemini_api_key='your_gemini_api_key')
         
         # 或设置环境变量
         # export GEMINI_API_KEY=your_gemini_api_key
         generator = create_generator()  # 会自动从环境变量获取API key
     """
-    return FinalThumbnailGenerator(template_path, google_api_key)
+    # 向后兼容：如果用户使用了google_api_key，优先使用它
+    api_key = google_api_key if google_api_key else gemini_api_key
+    return FinalThumbnailGenerator(template_path, api_key)
 
 # Define what gets imported with "from youtube_thumbnail_generator import *"
 __all__ = [
