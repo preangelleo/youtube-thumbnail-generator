@@ -25,9 +25,9 @@ def _get_universal_font_paths(language="english"):
             ])
         elif system == "Darwin":  # macOS
             paths.extend([
-                "/System/Library/Fonts/Hiragino Sans GB.ttc",
+                "/System/Library/Fonts/STHeiti Medium.ttc",  # 优先使用较粗的Medium weight
                 "/Library/Fonts/NotoSansCJK-Bold.ttc",
-                "/System/Library/Fonts/STHeiti Medium.ttc",
+                "/System/Library/Fonts/Hiragino Sans GB.ttc",
                 "/System/Library/Fonts/PingFang.ttc"
             ])
         elif system == "Windows":
@@ -159,6 +159,11 @@ def create_text_png(text, width=600, height=300, font_size=None,
     if language == 'chinese':
         font_size = int(font_size * 1.3)  # 中文字体比英文大30%
         print(f"中文字体增大30%: {int(font_size/1.3)}px -> {font_size}px")
+        
+        # 为中文字体启用描边效果以增强Bold效果
+        if not use_stroke and font_size >= 30:  # 字体大于30px时自动启用描边
+            use_stroke = True
+            print(f"中文字体自动启用描边效果以增强Bold效果")
     
     # 判断是否为标题
     is_title = (auto_height and line_height_px >= 50) or (font_size >= 40 and height >= 200)
@@ -365,10 +370,36 @@ def create_text_png(text, width=600, height=300, font_size=None,
             line_x = start_x
             
         if use_stroke:
-            # 使用深灰色描边，描边宽度为字体大小的5%
-            stroke_width = max(2, int(font_size * 0.05))
+            # 检测是否包含中文字符，调整描边效果
+            has_chinese = any(ord(c) > 127 for c in line)
+            
+            # 根据文字颜色智能选择描边颜色
+            def get_smart_stroke_color(text_color):
+                """根据文字颜色智能选择描边颜色 - 精确调整灰度"""
+                r, g, b = text_color
+                # 计算文字颜色的亮度 (0-255)
+                brightness = (r * 0.299 + g * 0.587 + b * 0.114)
+                
+                if brightness > 127:  # 浅色文字 (白色/浅灰) - 黑色背景
+                    # 使用中等深度的灰色描边 - 既不会太浅与白色混合，也不会太深看不见
+                    return (128, 128, 128)  # 中等灰色描边
+                else:  # 深色文字 (黑色/深灰) - 白色背景  
+                    # 使用浅灰色描边 - 与黑色文字形成对比但不会太亮
+                    return (192, 192, 192)  # 浅灰色描边
+            
+            stroke_color = get_smart_stroke_color(text_color)
+            
+            if has_chinese and language == 'chinese':
+                # 中文字符使用更粗的描边以增强Bold效果
+                stroke_width = max(3, int(font_size * 0.08))  # 中文字体描边宽度增至8%
+                print(f"中文字体智能描边: 宽度{stroke_width}px, 颜色{stroke_color}")
+            else:
+                # 英文字符使用常规描边
+                stroke_width = max(2, int(font_size * 0.05))
+                print(f"英文字体智能描边: 宽度{stroke_width}px, 颜色{stroke_color}")
+            
             draw.text((line_x, line_y), line, font=font, fill=text_color, 
-                     stroke_width=stroke_width, stroke_fill=(64, 64, 64))  # 深灰色 RGB(64,64,64)
+                     stroke_width=stroke_width, stroke_fill=stroke_color)
             print(f"绘制文字行(带描边): '{line}' at ({line_x}, {line_y}), 描边宽度: {stroke_width}px")
         else:
             draw.text((line_x, line_y), line, font=font, fill=text_color)

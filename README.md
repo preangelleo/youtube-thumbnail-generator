@@ -25,6 +25,7 @@ Professional YouTube thumbnail automatic generation tool with intelligent Chines
 - ✅ **Dynamic Font Scaling**: Auto font size adjustment based on text length (1-17 characters)
 - ✅ **YouTube API Ready**: Built-in optimization for YouTube API v3 thumbnail upload compliance
 - 🆕 **AI Title Optimization**: Google Gemini-powered mixed-language title optimization (optional)
+- 🎲 **Random Template Generation**: One-click thumbnail creation with 8 random template combinations
 
 ## 🎨 Three Theme Modes
 
@@ -107,7 +108,9 @@ For the most professional and visually appealing thumbnails:
 7. **title_color** - Title text color in hex format (e.g., "#FFFFFF")
 8. **author_color** - Author text color in hex format (e.g., "#CCCCCC")  
 9. **enable_triangle** - Enable/disable triangle overlay (boolean)
-10. **youtube_ready** - Generate YouTube API v3 compliant output (boolean, default: True)
+10. **triangle_direction** - Triangle direction: "top" (upward ▲) or "bottom" (downward ▼, default)
+11. **flip** - Mirror layout: False (standard) or True (image left, text right)
+12. **youtube_ready** - Generate YouTube API v3 compliant output (boolean, default: True)
 
 ### Theme Defaults
 - **Dark Theme**: Black bg + White text (#FFFFFF) + Light gray author (#CCCCCC) + Black triangle
@@ -248,6 +251,75 @@ pip install google-generativeai
 
 **Get your Google API key**: https://aistudio.google.com/app/apikey
 
+## 🎲 Random Template Generation
+
+### One-Click Thumbnail Creation with 12 Random Combinations
+
+Sometimes you just want a great-looking thumbnail without choosing specific template settings. The random template generator automatically selects from **12 possible combinations**:
+
+**Template Combinations:**
+- **Theme**: Dark (black background) or Light (white background) - 2 options
+- **Triangle**: Enabled or Disabled - 2 options
+- **Layout**: Standard (logo/text left, image right) or Flip (image left, logo/text right) - 2 options  
+- **Triangle Direction**: Top (upward ▲) or Bottom (downward ▼) - when triangle enabled
+
+**Breakdown:**
+- **With Triangle**: 2 themes × 2 directions × 2 layouts = 8 combinations
+- **Without Triangle**: 2 themes × 2 layouts = 4 combinations
+- **Total**: 8 + 4 = **12 unique combinations**
+
+### 🚀 Simple Usage
+
+```python
+from youtube_thumbnail_generator import generate_random_thumbnail
+
+# Minimal usage - just title and author
+result = generate_random_thumbnail(
+    title="AI技术指南 Complete Tutorial",
+    author="TechChannel"
+)
+
+# With custom images
+result = generate_random_thumbnail(
+    title="Learn Python Programming", 
+    author="CodeMaster",
+    logo_path="/path/to/logo.png",
+    right_image_path="/path/to/image.jpg", 
+    output_path="my_random_thumbnail.jpg"
+)
+
+# With AI optimization
+result = generate_random_thumbnail(
+    title="数据科学与机器学习完整教程",
+    author="AI学院",
+    google_api_key="your_google_api_key_here"
+)
+```
+
+### 📊 Example Output
+
+Each call produces different random combinations:
+
+```bash
+🎲 Random Template Configuration:
+   Theme: light
+   Triangle: Enabled (bottom direction)
+   Layout: Standard
+   📁 Output: thumbnail1.jpg
+
+🎲 Random Template Configuration:
+   Theme: dark
+   Triangle: Disabled
+   Layout: Flip
+   📁 Output: thumbnail2.jpg
+
+🎲 Random Template Configuration:
+   Theme: light  
+   Triangle: Enabled (top direction)
+   Layout: Flip
+   📁 Output: thumbnail3.jpg
+```
+
 ### 🚨 Important Notes
 
 - **Optional Feature**: Works without API key, just skips optimization
@@ -351,6 +423,18 @@ author_color="#0000FF"  # Blue (custom example)
 ```python
 enable_triangle=True   # Default for dark/light themes
 enable_triangle=False  # Default for custom theme
+```
+
+**`triangle_direction`** (str) - Triangle direction when enabled  
+```python
+triangle_direction="bottom"  # Default: downward triangle ▼ (trapezoid)
+triangle_direction="top"     # Upward triangle ▲ (inverted trapezoid)
+```
+
+**`flip`** (bool) - Mirror the entire layout
+```python
+flip=False  # Default: logo/text left, image right
+flip=True   # Mirror: image left, logo/text right
 ```
 
 **`youtube_ready`** (bool) - Optimize for YouTube API v3 compliance

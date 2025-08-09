@@ -8,6 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 from typing import List, Tuple, Optional, Dict, Any
 import os
 from dataclasses import dataclass
+import random
 
 # Import title optimizer (optional dependency)
 try:
@@ -1213,5 +1214,126 @@ class FinalThumbnailGenerator:
             return youtube_optimized_path
         
         return output_path
+
+# Random Template Selection Functions
+
+def get_random_template_config():
+    """
+    Generate random template configuration for 12 possible combinations
+    
+    12 Combinations:
+    - Theme: dark, light (2 options)
+    - Triangle: enabled or disabled (2 options)
+    - Layout: standard, flip (2 options)
+    - Triangle Direction: top, bottom (when triangle enabled)
+    
+    Breakdown:
+    - With Triangle: 2 themes × 2 directions × 2 layouts = 8 combinations
+    - Without Triangle: 2 themes × 2 layouts = 4 combinations
+    - Total: 8 + 4 = 12 combinations
+    
+    Returns:
+        dict: Random configuration with theme, enable_triangle, triangle_direction, and flip
+    """
+    
+    themes = ["dark", "light"]
+    enable_triangles = [True, False]
+    triangle_directions = ["top", "bottom"] 
+    flips = [False, True]
+    
+    theme = random.choice(themes)
+    enable_triangle = random.choice(enable_triangles)
+    flip = random.choice(flips)
+    
+    # Only set triangle_direction if triangle is enabled
+    triangle_direction = random.choice(triangle_directions) if enable_triangle else "bottom"
+    
+    config = {
+        "theme": theme,
+        "enable_triangle": enable_triangle,
+        "triangle_direction": triangle_direction,
+        "flip": flip
+    }
+    
+    return config
+
+def generate_random_thumbnail(title: str,
+                            author: str,
+                            logo_path: str = None,
+                            right_image_path: str = None,
+                            output_path: str = "random_thumbnail.jpg",
+                            google_api_key: str = None,
+                            youtube_ready: bool = True) -> str:
+    """
+    Generate thumbnail with randomly selected template configuration
+    
+    User only needs to provide 4 basic inputs:
+    - title: Title text
+    - author: Author name  
+    - logo_path: Path to logo image (optional, uses default if None)
+    - right_image_path: Path to right-side image (optional, uses default if None)
+    
+    Template configuration is randomly selected from 8 possible combinations.
+    
+    Args:
+        title (str): Title text for the thumbnail
+        author (str): Author name for the thumbnail
+        logo_path (str, optional): Path to logo image file
+        right_image_path (str, optional): Path to right-side image file
+        output_path (str): Output file path. Defaults to "random_thumbnail.jpg"
+        google_api_key (str, optional): Google API key for AI title optimization
+        youtube_ready (bool): Whether to optimize for YouTube API compliance
+        
+    Returns:
+        str: Path to generated thumbnail file
+        
+    Example:
+        # Simple usage - only provide title and author
+        result = generate_random_thumbnail(
+            title="AI技术指南 Complete Tutorial",
+            author="TechChannel"
+        )
+        
+        # With custom images
+        result = generate_random_thumbnail(
+            title="Learn Python Programming",
+            author="CodeMaster", 
+            logo_path="/path/to/logo.png",
+            right_image_path="/path/to/image.jpg",
+            output_path="my_thumbnail.jpg"
+        )
+    """
+    
+    # Get random template configuration
+    config = get_random_template_config()
+    
+    print(f"🎲 Random Template Configuration:")
+    print(f"   Theme: {config['theme']}")
+    if config['enable_triangle']:
+        print(f"   Triangle: Enabled ({config['triangle_direction']} direction)")
+    else:
+        print(f"   Triangle: Disabled")
+    print(f"   Layout: {'Flip' if config['flip'] else 'Standard'}")
+    print(f"   📁 Output: {output_path}")
+    
+    # Create generator with optional AI optimization
+    generator = FinalThumbnailGenerator(google_api_key=google_api_key)
+    
+    # Generate thumbnail with random configuration
+    result = generator.generate_final_thumbnail(
+        title=title,
+        author=author,
+        logo_path=logo_path,
+        right_image_path=right_image_path,
+        output_path=output_path,
+        theme=config["theme"],
+        enable_triangle=config["enable_triangle"],
+        triangle_direction=config["triangle_direction"],
+        flip=config["flip"],
+        youtube_ready=youtube_ready
+    )
+    
+    print(f"🎉 Random thumbnail generated successfully!")
+    return result
 
 # 如需测试，请运行 example_usage.py
