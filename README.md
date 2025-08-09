@@ -1,4 +1,4 @@
-# YouTube Thumbnail Generator v2.3.1
+# YouTube Thumbnail Generator v2.4.1
 
 Professional YouTube thumbnail generator with enhanced Chinese font bold rendering, AI-powered title optimization, and intelligent text layout system.
 
@@ -1001,14 +1001,22 @@ youtube_thumbnail_generator/
 
 ## 📈 Version History
 
-### v2.3.1 (Current) - Complete API Integration & Enhanced Features
+### v2.4.1 (Current) - Complete API Integration & Enhanced Features
 - 🚀 **Complete API Support**: New `/api/generate/random` endpoint for 12 random template combinations
 - 🔧 **Enhanced API Parameters**: Full support for `triangle_direction`, `flip`, `google_api_key`, `youtube_ready` in `/api/generate/enhanced`
 - 📖 **Comprehensive API Documentation**: Detailed parameter descriptions and 12-combination reference table
 - ✅ **API Testing Verified**: All endpoints tested with curl and confirmed working
 - 🎲 **Random API Integration**: Seamless integration with existing random thumbnail generation function
 
-### v2.3.0 - Enhanced Chinese Font Bold Rendering & Interactive Experience
+### v2.4.0 - AI-Powered Title Optimization with Smart Line-breaking  
+- 🆕 **AI Title Optimization**: Google Gemini 2.0 Flash API integration for mixed-language title fixing
+- 🆕 **Smart Line-breaking**: AI creates optimal line breaks (Chinese: 2 lines, English: 3 lines)
+- 🆕 **Pre-formatted Bypass**: Titles with existing \n line breaks skip AI optimization
+- 🆕 **Language-specific Rules**: Character-based for CJK, word-based for Latin scripts
+- 🆕 **Configurable System Prompt**: Customizable AI optimization behavior in title_optimizer.py
+- 🆕 **AI-first Architecture**: Smart optimization with fallback to manual line-breaking
+- ✅ **Environment Variable Support**: `GOOGLE_API_KEY` auto-detection
+- ✅ **Enhanced API**: `google_api_key` parameter in all generator functions
 - 🎨 **Perfect Chinese Bold**: STHeiti Medium font priority + intelligent stroke effects for professional Bold rendering
 - 🧠 **Smart Stroke Colors**: RGB(128,128,128) for white text, RGB(192,192,192) for black text based on brightness detection
 - 🔤 **Auto-Enable Stroke**: Chinese fonts ≥30px automatically enable stroke effects for Enhanced Bold appearance
@@ -1016,12 +1024,6 @@ youtube_thumbnail_generator/
 - 🎲 **12 Template Combinations**: Updated random generation with triangle enable/disable combinations
 - ✅ **Default Flow Optimization**: Users can press Enter through entire flow except title input
 - 🚀 **Quick Start Guide**: Added comprehensive one-click experience documentation
-
-### v2.4.0 - AI-Powered Title Optimization with Smart Line-breaking
-- 🆕 **AI Title Optimization**: Google Gemini 2.0 Flash API integration for mixed-language title fixing
-- 🆕 **Smart Line-breaking**: AI creates optimal line breaks (Chinese: 2 lines, English: 3 lines)
-- 🆕 **Pre-formatted Bypass**: Titles with existing \n line breaks skip AI optimization
-- 🆕 **Language-specific Rules**: Character-based for CJK, word-based for Latin scripts
 - 🆕 **Configurable System Prompt**: Customizable AI optimization behavior in title_optimizer.py
 - 🆕 **AI-first Architecture**: Smart optimization with fallback to manual line-breaking
 - ✅ **Environment Variable Support**: `GOOGLE_API_KEY` auto-detection
