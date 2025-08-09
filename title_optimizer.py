@@ -4,7 +4,6 @@ Title Optimizer using Google Gemini API
 Optimizes mixed-language titles into single-language, properly formatted titles.
 """
 
-import google.generativeai as genai
 import os
 import logging
 from typing import Optional, Tuple
@@ -12,6 +11,9 @@ from typing import Optional, Tuple
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Gemini model configuration - easy to change in one place
+GEMINI_FLASH_MODEL = "gemini-2.0-flash-001"
 
 # System prompt for title optimization with smart line-breaking
 TITLE_OPTIMIZATION_SYSTEM_PROMPT = """You are a professional YouTube title optimizer. Your task is to convert mixed-language or poorly formatted titles into clean, single-language titles optimized for YouTube thumbnails with intelligent line-breaking.
@@ -90,9 +92,10 @@ class TitleOptimizer:
         
         if self.api_key:
             try:
+                import google.generativeai as genai
                 genai.configure(api_key=self.api_key)
                 self.model = genai.GenerativeModel(
-                    "gemini-2.0-flash-exp",
+                    GEMINI_FLASH_MODEL,
                     system_instruction=TITLE_OPTIMIZATION_SYSTEM_PROMPT
                 )
                 self.is_available = True
@@ -130,6 +133,7 @@ class TitleOptimizer:
         
         try:
             # Generate optimized title using system instruction
+            import google.generativeai as genai
             response = self.model.generate_content(
                 title,
                 generation_config=genai.types.GenerationConfig(
