@@ -1,4 +1,4 @@
-# YouTube Thumbnail Generator v2.3
+# YouTube Thumbnail Generator v2.3.1
 
 Professional YouTube thumbnail generator with enhanced Chinese font bold rendering, AI-powered title optimization, and intelligent text layout system.
 
@@ -1001,7 +1001,14 @@ youtube_thumbnail_generator/
 
 ## 📈 Version History
 
-### v2.3.0 (Current) - Enhanced Chinese Font Bold Rendering & Interactive Experience
+### v2.3.1 (Current) - Complete API Integration & Enhanced Features
+- 🚀 **Complete API Support**: New `/api/generate/random` endpoint for 12 random template combinations
+- 🔧 **Enhanced API Parameters**: Full support for `triangle_direction`, `flip`, `google_api_key`, `youtube_ready` in `/api/generate/enhanced`
+- 📖 **Comprehensive API Documentation**: Detailed parameter descriptions and 12-combination reference table
+- ✅ **API Testing Verified**: All endpoints tested with curl and confirmed working
+- 🎲 **Random API Integration**: Seamless integration with existing random thumbnail generation function
+
+### v2.3.0 - Enhanced Chinese Font Bold Rendering & Interactive Experience
 - 🎨 **Perfect Chinese Bold**: STHeiti Medium font priority + intelligent stroke effects for professional Bold rendering
 - 🧠 **Smart Stroke Colors**: RGB(128,128,128) for white text, RGB(192,192,192) for black text based on brightness detection
 - 🔤 **Auto-Enable Stroke**: Chinese fonts ≥30px automatically enable stroke effects for Enhanced Bold appearance
