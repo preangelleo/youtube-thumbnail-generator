@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "youtube-thumbnail-generator"
-version = "2.4.0"
+version = "2.3.0"
 authors = [
     {name = "Leo Wang", email = "leo@example.com"},
 ]
-description = "AI-powered YouTube thumbnail generator with Chinese/English support and intelligent text processing"
+description = "Professional YouTube thumbnail generator with enhanced Chinese font bold rendering and intelligent text processing"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.7"
