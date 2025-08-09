@@ -23,7 +23,7 @@ def read_requirements():
 
 setup(
     name="youtube-thumbnail-generator",
-    version="2.4.9",
+    version="2.4.10",
     author="Leo Wang",
     author_email="me@leowang.net",
     description="Professional YouTube thumbnail generator with enhanced Chinese font bold rendering and intelligent text processing",
