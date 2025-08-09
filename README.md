@@ -1,6 +1,6 @@
-# YouTube Thumbnail Generator v2.1
+# YouTube Thumbnail Generator v2.3
 
-Professional YouTube thumbnail automatic generation tool with intelligent Chinese/English text layout, logo, and precise image control with dynamic adaptation.
+Professional YouTube thumbnail generator with enhanced Chinese font bold rendering, AI-powered title optimization, and intelligent text layout system.
 
 **Author**: Leo Wang (https://leowang.net)
 
@@ -15,7 +15,7 @@ Professional YouTube thumbnail automatic generation tool with intelligent Chines
 
 - ✅ **Intelligent Chinese/English System**: PNG overlay technology, perfect Chinese/English text mixing
 - ✅ **Smart Line-breaking Algorithm**: Chinese 9 character limits, English 3-line truncation  
-- ✅ **Font Differentiation Optimization**: Chinese fonts 30% larger for optimal readability
+- ✅ **Enhanced Chinese Font Bold**: STHeiti Medium priority + intelligent stroke effects for perfect bold rendering
 - ✅ **Professional Visual Effects**: Triangle transition integrated into images, text always on top layer
 - ✅ **Intelligent Image Processing**: Auto square conversion + 900x900 filling
 - ✅ **Multi-endpoint API Support**: Flask RESTful API + Chapter functionality
@@ -25,7 +25,8 @@ Professional YouTube thumbnail automatic generation tool with intelligent Chines
 - ✅ **Dynamic Font Scaling**: Auto font size adjustment based on text length (1-17 characters)
 - ✅ **YouTube API Ready**: Built-in optimization for YouTube API v3 thumbnail upload compliance
 - 🆕 **AI Title Optimization**: Google Gemini-powered mixed-language title optimization (optional)
-- 🎲 **Random Template Generation**: One-click thumbnail creation with 8 random template combinations
+- 🎲 **Random Template Generation**: One-click thumbnail creation with 12 random template combinations
+- 🎮 **Enhanced Interactive Testing**: One-click default experience (enter-to-continue) with 3 testing modes
 
 ## 🎨 Three Theme Modes
 
@@ -250,6 +251,59 @@ pip install google-generativeai
 ```
 
 **Get your Google API key**: https://aistudio.google.com/app/apikey
+
+## 🎨 Enhanced Chinese Font Bold Rendering (New!)
+
+### Perfect Bold Effect for Both Dark and Light Themes
+
+We've completely redesigned the Chinese font rendering system to provide professional Bold effects that look perfect on both dark and light backgrounds.
+
+#### 🔧 Key Improvements
+
+1. **STHeiti Medium Priority**: Upgraded font selection to prioritize STHeiti Medium.ttc for naturally bolder Chinese characters
+2. **Smart Stroke Colors**: Intelligent stroke color selection based on text brightness:
+   - **White text** (Dark theme) → Medium gray stroke `RGB(128,128,128)`
+   - **Black text** (Light theme) → Light gray stroke `RGB(192,192,192)`
+3. **Auto-Enable Stroke**: Chinese fonts ≥30px automatically enable stroke effects
+4. **Enhanced Stroke Width**: Chinese text uses 8% stroke width (vs 5% for English) for stronger Bold effect
+
+#### ⚡ Automatic Optimization
+
+```python
+generator = FinalThumbnailGenerator()
+
+# Chinese text automatically gets Bold enhancement
+result = generator.generate_final_thumbnail(
+    title="AI智能视频生成技术",  # Chinese text auto-enables stroke
+    theme="dark"  # White text with medium gray stroke
+)
+
+result = generator.generate_final_thumbnail(  
+    title="AI智能视频生成技术",  # Chinese text auto-enables stroke
+    theme="light"  # Black text with light gray stroke
+)
+```
+
+#### 🎯 Visual Results
+
+- **Dark Theme**: White Chinese text now has clearly visible medium-gray outline, creating perfect Bold effect
+- **Light Theme**: Black Chinese text has light-gray outline that contrasts beautifully against white background
+- **No More Fusion**: Stroke colors are carefully calibrated to avoid blending with text or background colors
+
+#### 📝 Technical Details
+
+```python
+# Smart stroke color algorithm
+def get_smart_stroke_color(text_color):
+    brightness = (r * 0.299 + g * 0.587 + b * 0.114)
+    
+    if brightness > 127:  # Light text (white/light gray) - usually on dark background
+        return (128, 128, 128)  # Medium gray stroke - visible but not too dark
+    else:  # Dark text (black/dark gray) - usually on light background  
+        return (192, 192, 192)  # Light gray stroke - contrasts with black text
+```
+
+This enhancement ensures Chinese text always appears Bold and professional, regardless of the theme background!
 
 ## 🎲 Random Template Generation
 
@@ -947,7 +1001,16 @@ youtube_thumbnail_generator/
 
 ## 📈 Version History
 
-### v2.4.0 (Current) - AI-Powered Title Optimization with Smart Line-breaking
+### v2.3.0 (Current) - Enhanced Chinese Font Bold Rendering & Interactive Experience
+- 🎨 **Perfect Chinese Bold**: STHeiti Medium font priority + intelligent stroke effects for professional Bold rendering
+- 🧠 **Smart Stroke Colors**: RGB(128,128,128) for white text, RGB(192,192,192) for black text based on brightness detection
+- 🔤 **Auto-Enable Stroke**: Chinese fonts ≥30px automatically enable stroke effects for Enhanced Bold appearance
+- 🎮 **Enhanced Interactive Testing**: Enter-to-continue experience with intelligent defaults (title-only input required)
+- 🎲 **12 Template Combinations**: Updated random generation with triangle enable/disable combinations
+- ✅ **Default Flow Optimization**: Users can press Enter through entire flow except title input
+- 🚀 **Quick Start Guide**: Added comprehensive one-click experience documentation
+
+### v2.4.0 - AI-Powered Title Optimization with Smart Line-breaking
 - 🆕 **AI Title Optimization**: Google Gemini 2.0 Flash API integration for mixed-language title fixing
 - 🆕 **Smart Line-breaking**: AI creates optimal line breaks (Chinese: 2 lines, English: 3 lines)
 - 🆕 **Pre-formatted Bypass**: Titles with existing \n line breaks skip AI optimization
