@@ -63,7 +63,10 @@ class TitleOptimizer:
         if self.api_key:
             try:
                 genai.configure(api_key=self.api_key)
-                self.model = genai.GenerativeModel("gemini-1.5-flash")
+                self.model = genai.GenerativeModel(
+                    "gemini-2.0-flash-exp",
+                    system_instruction=TITLE_OPTIMIZATION_SYSTEM_PROMPT
+                )
                 self.is_available = True
                 logger.info("Title optimizer initialized with Gemini API")
             except Exception as e:
@@ -95,17 +98,12 @@ class TitleOptimizer:
             return title, False
         
         try:
-            # Create the optimization prompt
-            prompt = f"""Original title: {title}
-
-Follow the system instructions to optimize this title."""
-            
-            # Generate optimized title
+            # Generate optimized title using system instruction
             response = self.model.generate_content(
-                prompt,
+                title,
                 generation_config=genai.types.GenerationConfig(
                     temperature=0.1,  # Low temperature for consistent results
-                    max_output_tokens=100,  # Short response
+                    max_output_tokens=50,  # Very short response - just the title
                 )
             )
             
@@ -143,7 +141,7 @@ Follow the system instructions to optimize this title."""
         chinese_ratio = chinese_chars / total_chars
         
         # If it's clearly one language, no optimization needed
-        if chinese_ratio >= 0.8 or chinese_ratio <= 0.2:
+        if chinese_ratio >= 0.9 or chinese_ratio <= 0.1:
             return False
         
         # Mixed language detected
