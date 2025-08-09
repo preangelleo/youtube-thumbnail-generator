@@ -1,4 +1,4 @@
-# YouTube Thumbnail Generator v2.1 - API Documentation
+# YouTube Thumbnail Generator v2.3.0 - API Documentation
 
 **Author**: Leo Wang (https://leowang.net)
 
@@ -12,43 +12,95 @@ Service will start at `http://localhost:5002`
 
 ## 📡 API Endpoints
 
-### 1. Generate Smart Thumbnail
+### 1. Generate Enhanced Thumbnail
 **Endpoint**: `POST /api/generate/enhanced`
 
-**Function**: Generate YouTube thumbnails using v2.1 intelligent system with Chinese/English differentiated processing
+**Function**: Generate fully customizable YouTube thumbnails with all v2.3.0 features including enhanced Chinese Bold fonts and AI optimization
 
-### 2. Generate Chapter Image
+### 2. Generate Random Thumbnail (New!)
+**Endpoint**: `POST /api/generate/random`
+
+**Function**: Generate thumbnails with random selection from 12 template combinations (Dark/Light × Triangle/NoTriangle × Standard/Flip × Direction)
+
+### 3. Generate Chapter Image
 **Endpoint**: `POST /api/generate/chapter`
 
 **Function**: Generate text-overlaid Chapter images, supports Chinese/English
 
-#### Request Parameters (Thumbnail)
+#### Request Parameters (Enhanced Thumbnail)
 ```json
 {
-    "title": "Ultimate Complete Guide to AI Technology Revolution",        // Required: Main title (Chinese >9 chars auto line-break)
-    "subtitle": "Everything You Need to Know About Modern Tech",         // Optional: Subtitle (can be null, Chinese >20 chars line-break)
-    "author": "Leo Wang",                        // Optional: Author name (auto-capitalized)
-    "logo_path": "logos/animagent_logo.png",     // Optional: Logo file path
-    "right_image_path": "assets/testing_image.jpeg" // Optional: Right-side image path
+    // Required Parameters
+    "title": "AI智能视频生成技术",                    // Required: Main title (supports Chinese/English)
+    
+    // Basic Parameters
+    "author": "leowang.net",                     // Optional: Author name
+    "logo_path": "logos/my_logo.png",            // Optional: Logo file path
+    "right_image_path": "assets/video_frame.jpg", // Optional: Right-side image path
+    
+    // Theme & Layout Parameters
+    "theme": "dark",                             // Optional: "dark", "light", or "custom" (default: "dark")
+    "custom_template": "my_background.png",      // Optional: Custom background (when theme="custom")
+    "flip": false,                               // Optional: Flip layout (default: false)
+    
+    // Triangle Parameters
+    "enable_triangle": true,                     // Optional: Enable triangle overlay (default: true)
+    "triangle_direction": "top",                 // Optional: "top" or "bottom" (default: "top")
+    
+    // Color Parameters
+    "title_color": "#FFFFFF",                    // Optional: Title text color (hex format)
+    "author_color": "#CCCCCC",                   // Optional: Author text color (hex format)
+    
+    // AI & Output Parameters
+    "google_api_key": "your_gemini_api_key",     // Optional: Google Gemini API key for title optimization
+    "youtube_ready": true                        // Optional: YouTube API compliance (default: true)
 }
 ```
 
-#### v2.1 Smart Features
-- **Auto Chinese/English Detection**: Automatically choose optimal fonts and processing
-- **Chinese Optimization**: 30% larger fonts, 20% taller subtitle height
-- **Smart Line-breaking**: 9-char limit for Chinese titles, 20-char limit for subtitles
-- **English Processing**: 3-line limit, auto-truncate with ellipsis
-- **Layout Adjustment**: Auto-center title when no subtitle (move down 50px)
-- **Triangle Effects**: Integrated into right-side image, text always on top layer
-- **Unique Filenames**: Each task generates independent files, avoid conflicts
-- **Parameter Tolerance**: Empty strings auto-convert to null, trigger smart layout
+#### Request Parameters (Random Thumbnail)
+```json
+{
+    // Required Parameters
+    "title": "AI智能视频生成技术",                    // Required: Main title
+    
+    // Basic Parameters (same as enhanced)
+    "author": "leowang.net",                     // Optional: Author name
+    "logo_path": "logos/my_logo.png",            // Optional: Logo file path
+    "right_image_path": "assets/video_frame.jpg", // Optional: Right-side image path
+    "google_api_key": "your_gemini_api_key",     // Optional: Google Gemini API key for title optimization
+    "youtube_ready": true                        // Optional: YouTube API compliance (default: true)
+    
+    // Note: theme, flip, enable_triangle, triangle_direction are randomly selected from 12 combinations
+}
+```
 
-#### Response Example
+#### v2.3.0 Smart Features
+- 🎨 **Enhanced Chinese Bold Rendering**: STHeiti Medium priority + intelligent stroke effects for perfect Bold display
+- 🧠 **Smart Stroke Colors**: RGB(128,128,128) for white text, RGB(192,192,192) for black text based on brightness detection
+- 🔤 **Auto-Enable Stroke**: Chinese fonts ≥30px automatically enable stroke effects
+- 🤖 **AI Title Optimization**: Google Gemini-powered mixed-language title optimization with smart line-breaking
+- 🎲 **12 Template Combinations**: Dark/Light × Triangle(On/Off) × Direction(Top/Bottom) × Layout(Standard/Flip)
+- 🎯 **Intelligent Text Processing**: Auto Chinese/English detection with optimized fonts and processing
+- 📐 **Smart Line-breaking**: AI-driven or rule-based line-breaking for optimal readability
+- 🎨 **Triangle Effects**: Integrated overlays with customizable direction and colors
+- 📱 **YouTube API Ready**: Automatic optimization for YouTube thumbnail upload compliance
+- 🔧 **Unique Filenames**: Each task generates independent files to avoid conflicts
+
+#### Response Example (Enhanced)
 ```json
 {
     "task_id": "377f7bc3-b896-44ca-a501-b79308cc059d",
     "status": "processing", 
-    "message": "Thumbnail generation task started"
+    "message": "缩略图生成任务已启动"
+}
+```
+
+#### Response Example (Random)  
+```json
+{
+    "task_id": "abc123-def456-ghi789",
+    "status": "processing",
+    "message": "随机缩略图生成任务已启动，将从12种组合中随机选择"
 }
 ```
 
@@ -64,14 +116,33 @@ Service will start at `http://localhost:5002`
 }
 ```
 
-#### Response Example
+#### Response Example (Chapter)
 ```json
 {
     "task_id": "abc123-def456-ghi789",
     "status": "processing",
-    "message": "Thumbnail generation task started"
+    "message": "Chapter图片生成任务已启动"
 }
 ```
+
+## 📋 12 Random Template Combinations
+
+When using `/api/generate/random`, the system randomly selects from these combinations:
+
+| ID | Theme | Triangle | Direction | Layout | Description |
+|----|--------|----------|-----------|---------|-------------|
+| 1  | Dark   | ON       | Top ▲     | Standard | Dark + Triangle ON (top ▲) + Standard |
+| 2  | Dark   | ON       | Top ▲     | Flip     | Dark + Triangle ON (top ▲) + Flip |
+| 3  | Dark   | ON       | Bottom ▼  | Standard | Dark + Triangle ON (bottom ▼) + Standard |
+| 4  | Dark   | ON       | Bottom ▼  | Flip     | Dark + Triangle ON (bottom ▼) + Flip |
+| 5  | Light  | ON       | Top ▲     | Standard | Light + Triangle ON (top ▲) + Standard |
+| 6  | Light  | ON       | Top ▲     | Flip     | Light + Triangle ON (top ▲) + Flip |
+| 7  | Light  | ON       | Bottom ▼  | Standard | Light + Triangle ON (bottom ▼) + Standard |
+| 8  | Light  | ON       | Bottom ▼  | Flip     | Light + Triangle ON (bottom ▼) + Flip |
+| 9  | Dark   | OFF      | -         | Standard | Dark + Triangle OFF + Standard |
+| 10 | Dark   | OFF      | -         | Flip     | Dark + Triangle OFF + Flip |
+| 11 | Light  | OFF      | -         | Standard | Light + Triangle OFF + Standard |
+| 12 | Light  | OFF      | -         | Flip     | Light + Triangle OFF + Flip |
 
 ### 2. Check Task Status
 **Endpoint**: `GET /api/status/<task_id>`

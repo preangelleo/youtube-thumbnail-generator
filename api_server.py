@@ -43,7 +43,9 @@ def background_generate(task_id, **kwargs):
             tasks[task_id]['error'] = '模板文件不存在'
             return
         
-        generator = FinalThumbnailGenerator(template_path)
+        # 支持Google API Key参数
+        google_api_key = kwargs.get('google_api_key')
+        generator = FinalThumbnailGenerator(template_path, google_api_key=google_api_key)
         
         tasks[task_id]['progress'] = '生成缩略图中...'
         
@@ -61,7 +63,10 @@ def background_generate(task_id, **kwargs):
             custom_template=kwargs.get('custom_template'),
             title_color=kwargs.get('title_color'),
             author_color=kwargs.get('author_color'),
-            enable_triangle=kwargs.get('enable_triangle')
+            enable_triangle=kwargs.get('enable_triangle'),
+            triangle_direction=kwargs.get('triangle_direction'),
+            flip=kwargs.get('flip'),
+            youtube_ready=kwargs.get('youtube_ready', True)
         )
         
         tasks[task_id]['status'] = 'completed'
@@ -115,6 +120,44 @@ def background_generate_chapter(task_id, **kwargs):
         tasks[task_id]['status'] = 'failed'
         tasks[task_id]['error'] = str(e)
         print(f"Chapter生成任务失败 {task_id}: {e}")
+
+def background_generate_random(task_id, **kwargs):
+    """后台生成随机缩略图任务"""
+    try:
+        tasks[task_id]['status'] = 'processing'
+        tasks[task_id]['progress'] = '初始化随机生成器...'
+        
+        # 导入随机生成函数
+        try:
+            from .final_thumbnail_generator import generate_random_thumbnail
+        except ImportError:
+            from final_thumbnail_generator import generate_random_thumbnail
+        
+        tasks[task_id]['progress'] = '生成随机缩略图中...'
+        
+        # 为每个任务生成唯一的文件名，避免冲突
+        output_filename = f"random_{task_id[:8]}.jpg"
+        output_path = f"outputs/{output_filename}"
+        
+        result = generate_random_thumbnail(
+            title=kwargs.get('title', ''),
+            author=kwargs.get('author'),
+            logo_path=kwargs.get('logo_path'),
+            right_image_path=kwargs.get('right_image_path'),
+            output_path=output_path,
+            google_api_key=kwargs.get('google_api_key'),
+            youtube_ready=kwargs.get('youtube_ready', True)
+        )
+        
+        tasks[task_id]['status'] = 'completed'
+        tasks[task_id]['result_file'] = output_filename
+        tasks[task_id]['download_url'] = f'/api/download/{output_filename}'
+        tasks[task_id]['generation_time'] = f"{time.time() - tasks[task_id]['start_time']:.2f}s"
+        
+    except Exception as e:
+        tasks[task_id]['status'] = 'failed'
+        tasks[task_id]['error'] = str(e)
+        print(f"随机缩略图生成任务失败 {task_id}: {e}")
 
 @app.route('/api/generate/enhanced', methods=['POST'])
 def generate_enhanced():
@@ -181,6 +224,41 @@ def generate_chapter():
             'task_id': task_id,
             'status': 'processing',
             'message': 'Chapter图片生成任务已启动'
+        })
+        
+    except Exception as e:
+        return jsonify({'error': f'请求处理失败: {str(e)}'}), 500
+
+@app.route('/api/generate/random', methods=['POST'])
+def generate_random():
+    """生成随机缩略图（12种组合中随机选择）"""
+    try:
+        data = request.get_json()
+        
+        if not data or 'title' not in data:
+            return jsonify({'error': '缺少必填参数: title'}), 400
+        
+        # 创建任务
+        task_id = str(uuid.uuid4())
+        tasks[task_id] = {
+            'status': 'created',
+            'start_time': time.time(),
+            'progress': '随机缩略图任务创建成功'
+        }
+        
+        # 启动后台任务
+        thread = threading.Thread(
+            target=background_generate_random,
+            args=(task_id,),
+            kwargs=data
+        )
+        thread.daemon = True
+        thread.start()
+        
+        return jsonify({
+            'task_id': task_id,
+            'status': 'processing',
+            'message': '随机缩略图生成任务已启动，将从12种组合中随机选择'
         })
         
     except Exception as e:
@@ -254,7 +332,8 @@ def index():
         'name': 'YouTube 缩略图生成器 API',
         'version': '1.0',
         'endpoints': {
-            'POST /api/generate/enhanced': '生成缩略图',
+            'POST /api/generate/enhanced': '生成定制缩略图（支持所有参数）',
+            'POST /api/generate/random': '生成随机缩略图（12种组合随机选择）',
             'POST /api/generate/chapter': '生成Chapter图片',
             'GET /api/status/<task_id>': '查看任务状态',
             'GET /api/download/<filename>': '下载文件',
