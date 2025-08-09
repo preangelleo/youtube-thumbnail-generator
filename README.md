@@ -26,6 +26,7 @@ Professional YouTube thumbnail generator with enhanced Chinese font bold renderi
 - ✅ **YouTube API Ready**: Built-in optimization for YouTube API v3 thumbnail upload compliance
 - 🆕 **AI Title Optimization**: Google Gemini-powered mixed-language title optimization (optional)
 - 🎲 **Random Template Generation**: One-click thumbnail creation with 12 random template combinations
+- 🤖 **AI Agent Documentation**: Built-in `readme()` and `readme_api()` methods for AI code assistants
 
 ## 🎨 Template Examples
 
@@ -105,6 +106,53 @@ result = generator.generate_final_thumbnail(
 )
 ```
 
+### 🎨 Color Customization
+
+Customize text colors for any theme using hex color codes:
+
+```python
+# Example 1: Custom colors with dark theme
+result = generator.generate_final_thumbnail(
+    title="Your Title Here",
+    author="Your Name",
+    theme="dark",
+    title_color="#FF6B35",    # Orange title
+    author_color="#4ECDC4",   # Teal author name
+    output_path="custom_colors.jpg"
+)
+
+# Example 2: Custom colors with light theme
+result = generator.generate_final_thumbnail(
+    title="Another Title",
+    author="Creator Name",
+    theme="light",
+    title_color="#2E86AB",    # Blue title
+    author_color="#A23B72",   # Purple author name
+    output_path="light_custom.jpg"
+)
+
+# Example 3: Custom template with custom colors
+result = generator.generate_final_thumbnail(
+    title="Custom Everything",
+    author="Your Brand",
+    theme="custom",
+    custom_template="my_template.jpg",
+    title_color="#FFFFFF",    # White text
+    author_color="#FFD93D",   # Yellow author
+    enable_triangle=False,    # Disable triangle overlay
+    output_path="fully_custom.jpg"
+)
+```
+
+#### 🎨 Color Parameter Guide:
+- **`title_color`**: Hex color code for the main title text (e.g., "#FF0000" for red)
+- **`author_color`**: Hex color code for the author name text (e.g., "#00FF00" for green)
+- **Format**: Must use hex format with # prefix (e.g., "#FFFFFF", "#000000")
+- **Default Colors**:
+  - Dark theme: White title (#FFFFFF), Light gray author (#CCCCCC)
+  - Light theme: Black title (#000000), Dark gray author (#666666)
+  - Custom theme: Uses provided colors or defaults to theme colors
+
 ### Alternative Usage (Advanced)
 ```python
 from youtube_thumbnail_generator import FinalThumbnailGenerator
@@ -113,6 +161,30 @@ from youtube_thumbnail_generator import FinalThumbnailGenerator
 generator = FinalThumbnailGenerator()
 # ... same usage as above
 ```
+
+## 🤖 AI Agent Support (New in v2.5.0)
+
+Special methods designed for AI code assistants and LLMs to quickly understand the library:
+
+```python
+from youtube_thumbnail_generator import create_generator
+
+generator = create_generator()
+
+# Get complete usage documentation
+docs = generator.readme()
+print(docs)  # Full library documentation for AI agents
+
+# Get API documentation
+api_docs = generator.readme_api()
+print(api_docs)  # Complete REST API documentation
+```
+
+**Perfect for**: 
+- AI-powered development workflows
+- Code generation assistants (GitHub Copilot, Cursor, etc.)
+- LLM-based automation tools
+- No need to search for external documentation
 
 ## 🎲 Random Template Generation
 
@@ -195,6 +267,21 @@ youtube-thumbnail-api
 - **Light Theme**: White background + black text + white triangle  
 - **Custom Theme**: Your background + custom colors + optional triangle
 - **Random Theme**: `theme="random"` or `theme=None` - automatically picks random combinations! 🎲
+
+### Color Parameters
+- **`title_color`** (optional): Hex color code for title text
+  - Format: `"#RRGGBB"` (e.g., `"#FF6B35"` for orange)
+  - Default: `"#FFFFFF"` (white) for dark theme, `"#000000"` (black) for light theme
+- **`author_color`** (optional): Hex color code for author name text
+  - Format: `"#RRGGBB"` (e.g., `"#4ECDC4"` for teal)
+  - Default: `"#CCCCCC"` (light gray) for dark theme, `"#666666"` (dark gray) for light theme
+- **Works with all themes**: Colors can be customized for dark, light, custom, or random themes
+
+### Additional Parameters
+- **`enable_triangle`** (optional): Control triangle overlay display
+  - `True`: Force show triangle
+  - `False`: Force hide triangle
+  - `None`: Use theme default (default)
 
 ## 🤖 AI Title Optimization (Optional)
 

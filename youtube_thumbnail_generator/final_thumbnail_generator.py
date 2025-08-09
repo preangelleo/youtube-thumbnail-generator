@@ -1262,6 +1262,268 @@ class FinalThumbnailGenerator:
             return youtube_optimized_path
         
         return output_path
+    
+    def readme(self) -> str:
+        """
+        Return complete README documentation for AI agents and LLMs.
+        
+        This method is designed for AI code assistants to quickly understand
+        how to use the YouTube Thumbnail Generator library.
+        
+        Returns:
+            str: Complete README documentation with usage examples
+            
+        Example:
+            >>> generator = create_generator()
+            >>> docs = generator.readme()
+            >>> print(docs)  # Full documentation for the library
+        """
+        readme_content = """
+# YouTube Thumbnail Generator - Quick Reference for AI Agents
+
+## Installation
+```bash
+pip install youtube-thumbnail-generator
+```
+
+## Basic Usage
+```python
+from youtube_thumbnail_generator import create_generator
+
+# Create generator
+generator = create_generator()
+
+# Generate thumbnail
+result = generator.generate_final_thumbnail(
+    title="Your Title Here",
+    author="Author Name",
+    logo_path="path/to/logo.png",      # Optional
+    right_image_path="path/to/image.jpg",  # Optional
+    output_path="output.jpg"
+)
+```
+
+## Key Parameters
+
+### Required
+- `title` (str): Main title text
+- `author` (str): Author/creator name
+
+### Optional
+- `logo_path` (str): Path to logo image (auto-resized to 100x100)
+- `right_image_path` (str): Path to right-side image (auto-cropped to 900x900)
+- `output_path` (str): Output file path (default: "output.jpg")
+- `theme` (str): "dark" (default), "light", "custom", or "random"
+- `custom_template` (str): Path to custom background (required when theme="custom")
+- `title_color` (str): Hex color for title (e.g., "#FF6B35")
+- `author_color` (str): Hex color for author (e.g., "#4ECDC4")
+- `enable_triangle` (bool): Show/hide triangle overlay
+- `triangle_direction` (str): "top" or "bottom" (default: "bottom")
+- `flip` (bool): Mirror layout horizontally (default: False)
+- `youtube_ready` (bool): Optimize for YouTube API (default: True)
+
+## Color Customization
+```python
+result = generator.generate_final_thumbnail(
+    title="Custom Colors",
+    author="Your Name",
+    theme="dark",
+    title_color="#FF6B35",   # Orange
+    author_color="#4ECDC4",  # Teal
+    output_path="custom.jpg"
+)
+```
+
+## Random Generation
+```python
+# Method 1: Using theme parameter
+result = generator.generate_final_thumbnail(
+    title="Random Theme",
+    author="Creator",
+    theme="random"  # or theme=None
+)
+
+# Method 2: Direct function
+from youtube_thumbnail_generator import generate_random_thumbnail
+result = generate_random_thumbnail(title="Title", author="Name")
+```
+
+## AI Title Optimization
+```python
+# Enable Gemini API for mixed-language title optimization
+generator = create_generator(google_api_key="your_gemini_api_key")
+
+# Or set environment variable
+# export GEMINI_API_KEY="your_key"
+```
+
+## Theme Details
+- **Dark**: Black background, white text, black triangle
+- **Light**: White background, black text, white triangle
+- **Custom**: Your background image with customizable colors
+- **Random**: Randomly selects from 12 template combinations
+
+## Best Practices
+1. Use square logos (1:1 ratio) to avoid cropping
+2. Use single language titles (pure Chinese OR pure English)
+3. Optimal lengths: Chinese 10-12 chars, English ~7 words
+4. Images any size accepted (auto-processed to 900x900)
+
+## Output
+- Default: 1600x900 PNG with transparency
+- YouTube-ready: 1280x720 JPEG, <2MB, sRGB color space
+"""
+        return readme_content.strip()
+    
+    def readme_api(self) -> str:
+        """
+        Return API documentation for AI agents and LLMs.
+        
+        This method provides complete REST API documentation for the
+        YouTube Thumbnail Generator API service.
+        
+        Returns:
+            str: Complete API documentation with endpoints and examples
+            
+        Example:
+            >>> generator = create_generator()
+            >>> api_docs = generator.readme_api()
+            >>> print(api_docs)  # Full API documentation
+        """
+        api_content = """
+# YouTube Thumbnail Generator API - Quick Reference for AI Agents
+
+## Start API Server
+```bash
+# Install with API support
+pip install "youtube-thumbnail-generator[api]"
+
+# Start server
+youtube-thumbnail-api
+# Server runs at http://localhost:5002
+```
+
+## API Endpoints
+
+### 1. Generate Thumbnail - POST /generate
+```json
+POST http://localhost:5002/generate
+Content-Type: application/json
+
+{
+    "title": "Your Title Here",              // Required
+    "author": "Author Name",                 // Optional
+    "logo_path": "logos/logo.png",          // Optional
+    "right_image_path": "assets/image.jpg",  // Optional
+    "theme": "dark",                         // Optional: dark/light/custom
+    "title_color": "#FF6B35",               // Optional: Hex color
+    "author_color": "#4ECDC4",              // Optional: Hex color
+    "enable_triangle": true,                 // Optional
+    "triangle_direction": "bottom",          // Optional: top/bottom
+    "flip": false,                          // Optional
+    "google_api_key": "your_key",           // Optional: For AI optimization
+    "youtube_ready": true                    // Optional: YouTube compliance
+}
+```
+
+Response:
+```json
+{
+    "task_id": "uuid-here",
+    "status": "processing",
+    "message": "Thumbnail generation task started"
+}
+```
+
+### 2. Random Thumbnail - POST /generate/random
+```json
+POST http://localhost:5002/generate/random
+Content-Type: application/json
+
+{
+    "title": "Your Title",
+    "author": "Your Name",
+    "logo_path": "optional/logo.png",
+    "right_image_path": "optional/image.jpg"
+}
+```
+
+### 3. Add Chapter Text - POST /chapter
+```json
+POST http://localhost:5002/chapter
+Content-Type: application/json
+
+{
+    "text": "Chapter quote or text",
+    "image_path": "background.jpg",  // Optional
+    "font_size": 86,                 // Optional
+    "language": "english",           // Optional: chinese/english
+    "width": 1600,                   // Optional
+    "height": 900                    // Optional
+}
+```
+
+### 4. Check Task Status - GET /status/<task_id>
+```bash
+GET http://localhost:5002/status/uuid-here
+```
+
+Response:
+```json
+{
+    "task_id": "uuid-here",
+    "status": "completed",
+    "output_path": "outputs/uuid-here.jpg",
+    "download_url": "/download/uuid-here.jpg"
+}
+```
+
+### 5. Download Result - GET /download/<filename>
+```bash
+GET http://localhost:5002/download/uuid-here.jpg
+```
+
+### 6. Health Check - GET /health
+```bash
+GET http://localhost:5002/health
+```
+
+## Complete Example
+```python
+import requests
+import time
+
+# 1. Generate thumbnail
+response = requests.post('http://localhost:5002/generate', json={
+    'title': 'AI Tutorial',
+    'author': 'Tech Channel',
+    'theme': 'dark',
+    'title_color': '#FF6B35'
+})
+task = response.json()
+
+# 2. Check status
+task_id = task['task_id']
+while True:
+    status = requests.get(f'http://localhost:5002/status/{task_id}').json()
+    if status['status'] == 'completed':
+        print(f"Download: http://localhost:5002{status['download_url']}")
+        break
+    time.sleep(1)
+```
+
+## Error Responses
+- 400: Bad Request (missing required parameters)
+- 404: Task not found
+- 500: Server error
+
+## Notes
+- All generated files saved in `outputs/` directory
+- Task IDs are UUIDs
+- Files automatically cleaned up after 24 hours
+- Supports CORS for web applications
+"""
+        return api_content.strip()
 
 # Random Template Selection Functions
 

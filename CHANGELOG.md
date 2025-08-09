@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - 2025-01-09
+
+### 🤖 NEW FEATURE - AI Agent Support
+- **Added `readme()` method**: Returns complete library documentation for AI code assistants
+- **Added `readme_api()` method**: Returns full REST API documentation for AI agents
+- **Purpose**: Enable AI agents and LLMs to quickly understand and use the library
+- **No external dependencies**: Documentation is embedded within the code
+
+### 📚 Use Cases
+- **AI Development**: GitHub Copilot, Cursor, and other AI coding assistants can now self-document
+- **LLM Integration**: ChatGPT, Claude, and other LLMs can retrieve usage instructions programmatically
+- **Automation**: Build automated workflows where AI agents can learn the API on-the-fly
+
+### 📝 Documentation Improvements
+- **README Enhancement**: Added AI Agent Support section with usage examples
+- **Color Documentation**: Improved clarity of color parameter documentation
+- **Parameter Guide**: Added comprehensive color customization examples
+
+### 💡 Example Usage
+```python
+generator = create_generator()
+docs = generator.readme()        # Get library documentation
+api_docs = generator.readme_api() # Get API documentation
+```
+
 ## [2.4.11] - 2025-01-09
 
 ### 🐛 Bug Fixes
