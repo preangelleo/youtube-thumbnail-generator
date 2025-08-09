@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "youtube-thumbnail-generator"
-version = "2.4.4"
+version = "2.4.8"
 authors = [
     {name = "Leo Wang", email = "me@leowang.net"},
 ]
@@ -55,7 +55,8 @@ include = ["youtube_thumbnail_generator*"]
 
 [tool.setuptools.package-data]
 youtube_thumbnail_generator = [
-    "../templates/*.jpg",
-    "../templates/*.png", 
-    "../template_samples/*.jpg"
+    "templates/*.jpg",
+    "templates/*.png", 
+    "fonts/*.ttf",
+    "fonts/*.ttc"
 ]

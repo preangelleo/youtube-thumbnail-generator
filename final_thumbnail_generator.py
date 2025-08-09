@@ -814,7 +814,7 @@ class FinalThumbnailGenerator:
                                logo_path: str = None,
                                right_image_path: str = None,
                                output_path: str = "output.jpg",
-                               theme: str = "dark",  # "dark", "light", "custom"
+                               theme: str = "dark",  # "dark", "light", "custom", "random", or None
                                custom_template: str = None,  # 自定义模板路径
                                title_color: str = None,  # 标题颜色，hex格式如"#FFFFFF"
                                author_color: str = None,  # 作者颜色，hex格式如"#CCCCCC"
@@ -824,6 +824,19 @@ class FinalThumbnailGenerator:
                                flip_margin: int = None,  # flip时的右边距，None时使用默认值50
                                youtube_ready: bool = True) -> str:  # 是否优化为YouTube API兼容格式
         """生成最终版缩略图"""
+        
+        # Check if user wants random generation
+        if theme == "random" or theme is None:
+            print(f"🎲 检测到随机主题请求 (theme={theme})，调用随机生成函数")
+            return generate_random_thumbnail(
+                title=title,
+                author=author,
+                logo_path=logo_path,
+                right_image_path=right_image_path,
+                output_path=output_path,
+                google_api_key=self.title_optimizer.api_key if self.title_optimizer else None,
+                youtube_ready=youtube_ready
+            )
         
         print(f"开始生成最终缩略图: {output_path}")
         print(f"主题模式: {theme}")

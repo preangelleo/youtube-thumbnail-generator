@@ -23,7 +23,7 @@ def read_requirements():
 
 setup(
     name="youtube-thumbnail-generator",
-    version="2.4.4",
+    version="2.4.8",
     author="Leo Wang",
     author_email="me@leowang.net",
     description="Professional YouTube thumbnail generator with enhanced Chinese font bold rendering and intelligent text processing",
@@ -60,9 +60,10 @@ setup(
     include_package_data=True,
     package_data={
         'youtube_thumbnail_generator': [
-            '../templates/*.jpg',
-            '../templates/*.png', 
-            '../template_samples/*.jpg'
+            'templates/*.jpg',
+            'templates/*.png',
+            'fonts/*.ttf',
+            'fonts/*.ttc'
         ],
     },
     entry_points={

@@ -5,6 +5,106 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.8] - 2025-01-09
+
+### 🎲 NEW FEATURE - Smart Random Theme Integration
+- **Enhanced User Experience**: Users can now generate random thumbnails using `theme="random"` or `theme=None`
+- **Seamless Integration**: Main `FinalThumbnailGenerator` class automatically detects random requests
+- **Parameter Forwarding**: All user parameters (title, author, logo_path, etc.) are forwarded to random generation
+- **No Breaking Changes**: Existing code continues to work unchanged
+
+### 🚀 Three Ways to Generate Random Thumbnails
+1. **`theme="random"`**: Direct random request (recommended)
+2. **`theme=None`**: Empty theme triggers random generation  
+3. **Direct Function**: `generate_random_thumbnail()` for maximum flexibility
+
+### 🎯 What Gets Randomized
+- **Theme**: Dark or Light background
+- **Triangle**: Enabled/Disabled + Top/Bottom direction
+- **Layout**: Normal or Flipped layout
+- **Result**: 12 possible combinations for endless creative variety
+
+### 📝 Documentation Updates
+- **README Enhanced**: Added comprehensive random functionality usage examples
+- **Method Comparison**: Clear explanation of all three random generation approaches
+- **User-Friendly**: Examples show real-world usage patterns
+
+### 🔧 Technical Implementation
+- **Smart Detection**: Automatic detection of `theme="random"` and `theme=None` in main function
+- **Function Delegation**: Seamless handoff to `generate_random_thumbnail()` with all parameters
+- **Backward Compatible**: All existing themes ("dark", "light", "custom") work exactly as before
+
+This major UX improvement makes random thumbnail generation incredibly easy and intuitive!
+
+## [2.4.7] - 2025-01-09
+
+### 🚨 CRITICAL BUG FIX - AI Title Optimization
+- **Fixed Import Error**: Corrected relative import path for `title_optimizer` module
+- **AI Feature Working**: Google Gemini title optimization now properly detects installed packages
+- **Accurate Error Messages**: No more false "google-generativeai package not installed" warnings
+- **Import Path Fixed**: Changed `from title_optimizer import` to `from .title_optimizer import`
+
+### 🤖 AI Title Optimization Now Works
+- **Proper Detection**: Library correctly identifies when `google-generativeai` is installed
+- **Clear Status Messages**: 
+  - ✅ "Title optimization enabled with Google Gemini API" (when API key valid)
+  - ✅ "Title optimization disabled - no valid Google API key" (when no key)
+  - ❌ No more false "package not installed" errors
+
+### 🔧 Technical Details
+- **Root Cause**: Incorrect relative import in `final_thumbnail_generator.py:19`
+- **Fix Applied**: Added dot prefix for proper relative import within package
+- **Impact**: Users with valid API keys can now use AI title optimization feature
+- **Backward Compatibility**: No breaking changes, existing code continues to work
+
+This fixes the critical issue where AI title optimization was incorrectly reporting package availability.
+
+## [2.4.6] - 2025-01-09
+
+### 🎯 Unified API Experience  
+- **Primary Method**: `create_generator()` now promoted as the recommended approach
+- **Clear Documentation**: Separated simple vs advanced usage patterns in README
+- **Zero Configuration**: `create_generator()` provides the cleanest user experience
+- **Better Onboarding**: New users get simpler, more intuitive API
+
+### 📚 Documentation Improvements
+- **Updated Examples**: All README examples now use `create_generator()`
+- **AI Integration**: Enhanced Google API key configuration examples 
+- **User Guidance**: Clear distinction between recommended and advanced methods
+- **Backward Compatibility**: `FinalThumbnailGenerator()` still documented for power users
+
+### 🚀 User Experience Enhancements
+- **Simplified Imports**: `from youtube_thumbnail_generator import create_generator`
+- **Named Parameters**: More flexible parameter passing with `create_generator(template_path=..., google_api_key=...)`
+- **Consistent Interface**: Both methods create identical functionality
+- **No Breaking Changes**: Existing code continues to work without modification
+
+This release focuses entirely on improving the developer experience without changing any core functionality.
+
+## [2.4.5] - 2025-01-09
+
+### 🚨 CRITICAL PACKAGE FIX
+- **Fixed PyPI Package Structure**: Complete restructuring to fix missing Python modules
+- **Proper Package Directory**: Created `youtube_thumbnail_generator/` directory structure
+- **Import Issues Resolved**: Users can now successfully `from youtube_thumbnail_generator import FinalThumbnailGenerator`
+- **All Python Files Included**: API server, thumbnail generator, and all modules now properly packaged
+- **Template & Font Assets**: Correctly bundled all required resources in package directory
+
+### Package Structure Changes
+- Moved all `.py` files to `youtube_thumbnail_generator/` directory
+- Moved `templates/` and `fonts/` folders inside package directory  
+- Updated `setup.py` and `pyproject.toml` for proper package discovery
+- Fixed `package_data` paths to correctly include bundled resources
+
+This is a **critical fix** for the serious packaging issue in v2.4.4 where users couldn't import the library after installation.
+
+## [2.4.4] - 2025-01-09
+
+### 🔗 PyPI Documentation Compatibility
+- **Fixed PyPI Documentation Links**: All documentation links now work properly from both GitHub and PyPI
+- **PyPI-Compatible README**: Removed external CDN images that caused broken image icons on PyPI
+- **Better User Navigation**: Clear links to GitHub-hosted documentation from any platform
+
 ## [2.4.3] - 2025-01-09
 
 ### 🧠 Smart Image Processing

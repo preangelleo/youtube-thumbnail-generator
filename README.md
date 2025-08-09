@@ -1,4 +1,4 @@
-# YouTube Thumbnail Generator v2.4.4
+# YouTube Thumbnail Generator v2.4.8
 
 Professional YouTube thumbnail generator with enhanced Chinese font bold rendering, AI-powered title optimization, and intelligent text layout system.
 
@@ -88,14 +88,14 @@ pip install "youtube-thumbnail-generator[api]"
 
 ## 🚀 Quick Start
 
-### 1. Simple Python Usage
+### 1. Simple Python Usage (Recommended)
 ```python
-from youtube_thumbnail_generator import FinalThumbnailGenerator
+from youtube_thumbnail_generator import create_generator
 
-# Create generator with default template
-generator = FinalThumbnailGenerator()
+# Create generator with zero configuration (recommended)
+generator = create_generator()
 
-# Generate YouTube-ready thumbnail (1280x720, <2MB, optimized for API upload)
+# Generate YouTube-ready thumbnail (1280x720, <2MB, optimized for API upload)  
 result = generator.generate_final_thumbnail(
     title="Complete AI Technology Guide",
     author="Leo Wang",
@@ -104,6 +104,65 @@ result = generator.generate_final_thumbnail(
     output_path="outputs/thumbnail.jpg"
 )
 ```
+
+### Alternative Usage (Advanced)
+```python
+from youtube_thumbnail_generator import FinalThumbnailGenerator
+
+# Direct class instantiation (for advanced users)
+generator = FinalThumbnailGenerator()
+# ... same usage as above
+```
+
+## 🎲 Random Template Generation
+
+Generate thumbnails with random themes, triangle variations, and layouts for creative inspiration!
+
+### Method 1: Using theme="random" (Recommended)
+```python
+from youtube_thumbnail_generator import create_generator
+
+generator = create_generator()
+
+# Generate with completely random settings
+result = generator.generate_final_thumbnail(
+    title="Your Amazing Title",
+    author="Your Name",
+    theme="random",  # ✨ Magic happens here!
+    output_path="random_thumbnail.jpg"
+)
+```
+
+### Method 2: Using theme=None
+```python
+# Omit theme parameter or set to None - same as theme="random"
+result = generator.generate_final_thumbnail(
+    title="Another Great Title",
+    author="Creator Name",
+    theme=None,  # Also triggers random generation
+    output_path="another_random.jpg"
+)
+```
+
+### Method 3: Direct Random Function
+```python
+from youtube_thumbnail_generator import generate_random_thumbnail
+
+# Call random function directly (most flexible)
+result = generate_random_thumbnail(
+    title="Direct Random Call",
+    author="Your Name",
+    logo_path="logos/logo.png",
+    right_image_path="images/image.jpg", 
+    output_path="direct_random.jpg"
+)
+```
+
+### 🎯 What Gets Randomized?
+- **Theme**: Dark or Light background
+- **Triangle**: Enabled/Disabled + Top/Bottom direction  
+- **Layout**: Normal or Flipped layout
+- **Result**: 12 possible combinations for endless variety!
 
 ### 2. Interactive Testing Tool
 ```bash
@@ -135,24 +194,52 @@ youtube-thumbnail-api
 - **Dark Theme**: Black background + white text + black triangle (default)
 - **Light Theme**: White background + black text + white triangle  
 - **Custom Theme**: Your background + custom colors + optional triangle
+- **Random Theme**: `theme="random"` or `theme=None` - automatically picks random combinations! 🎲
 
 ## 🤖 AI Title Optimization (Optional)
 
 Fix mixed-language titles automatically with Google Gemini API:
 
-```bash
-# Set environment variable
-export GOOGLE_API_KEY="your_google_api_key_here"
+```python
+from youtube_thumbnail_generator import create_generator
 
-# Use normally - optimization happens automatically
-python your_script.py
+# Method 1: Pass API key directly
+generator = create_generator(google_api_key="your_google_api_key_here")
+
+# Method 2: Set environment variable (recommended)
+# export GOOGLE_API_KEY="your_google_api_key_here"
+generator = create_generator()  # Auto-detects from environment
+
+# Optimization happens automatically during generation
+result = generator.generate_final_thumbnail(title="Your title", ...)
 ```
 
 **Examples:**
 - ❌ "AI技术指南 Complete Guide" → ✅ "AI技术完整\n指南教程" (clean Chinese)
 - ❌ "Learn Python编程" → ✅ "Learn Python\nProgramming\nComplete Guide" (clean English)
 
-## ✨ What's New in v2.4.4
+## ✨ What's New in v2.4.7
+
+- 🚨 **CRITICAL BUG FIX**: Fixed AI title optimization import error
+- 🤖 **AI Feature Working**: Google Gemini title optimization now properly detects installed packages
+- ✅ **Correct Error Messages**: No more false "google-generativeai package not installed" warnings  
+- 🔧 **Import Path Fixed**: Corrected relative import path for title_optimizer module
+
+## What's New in v2.4.6
+
+- 🎯 **Unified API Experience**: `create_generator()` now promoted as the recommended method
+- 📚 **Improved Documentation**: Clear distinction between simple and advanced usage patterns
+- 🚀 **Better User Experience**: Zero-configuration setup with `create_generator()` 
+- 🔄 **Backward Compatibility**: `FinalThumbnailGenerator()` still available for advanced users
+
+## What's New in v2.4.5
+
+- 🚨 **CRITICAL FIX**: Fixed PyPI package structure - Python modules now properly included
+- 📦 **Package Structure Fixed**: Users can now successfully import `from youtube_thumbnail_generator import FinalThumbnailGenerator`
+- 🔧 **Proper Package Directory**: All Python files now correctly packaged in `youtube_thumbnail_generator/` directory
+- ✅ **Import Issues Resolved**: Fixed the critical issue where users couldn't import the library after pip install
+
+## What's New in v2.4.4
 
 - 🔗 **Fixed PyPI Documentation Links**: All documentation links now work properly from both GitHub and PyPI
 - 📖 **PyPI-Compatible README**: Removed external CDN images that caused broken image icons on PyPI
@@ -204,4 +291,4 @@ python your_script.py
 
 ---
 
-**Generated with YouTube Thumbnail Generator v2.4.3** 🚀
+**Generated with YouTube Thumbnail Generator v2.4.8** 🚀
