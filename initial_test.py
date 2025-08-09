@@ -1,145 +1,86 @@
 #!/usr/bin/env python3
 """
-Interactive YouTube Thumbnail Generator Test
-Tests all themes and configurations with user-provided title
+YouTube Thumbnail Generator - Interactive Test
+只供用户使用的简单测试工具
 """
 
 import os
-import sys
-from final_thumbnail_generator import FinalThumbnailGenerator, get_resource_path, create_default_templates
-
-def get_default_template():
-    """Get path to the default professional template"""
-    return get_resource_path("templates/professional_template.jpg")
+from final_thumbnail_generator import FinalThumbnailGenerator, get_resource_path
 
 def test_youtube_thumbnails():
-    """Interactive test for all thumbnail templates and configurations."""
+    """交互式测试工具"""
     
-    # Create output directory if it doesn't exist
+    # 确保输出目录存在
     output_dir = "Outputs/interactive_test"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-        print(f"Created output directory: {output_dir}")
     
-    # Initialize generator with default template
-    generator = FinalThumbnailGenerator(get_default_template())
-    
-    # Get user input
-    print("\n" + "="*60)
     print("🎨 YouTube Thumbnail Generator - Interactive Test")
     print("="*60)
     
-    # Get title from user
-    title = input("\n请输入要测试的标题 (Enter title to test): ").strip()
-    if not title:
-        title = "测试标题 Test Title"
-        print(f"使用默认标题: {title}")
+    # 获取用户输入的标题
+    while True:
+        title = input("\n请输入要测试的标题: ").strip()
+        if title:
+            break
+        print("❌ 请输入有效标题")
     
-    # Common parameters
-    author = "leowang.net"
-    logo_path = None  # Use system default logo
-    right_image_path = None  # Use system default image
+    # 询问是否启用AI优化
+    while True:
+        enable_ai = input("\n启用AI标题优化? (y/n): ").strip().lower()
+        if enable_ai in ['y', 'yes', 'n', 'no']:
+            break
+        print("❌ 请输入 y 或 n")
     
-    # Custom template path for custom theme
-    custom_template_path = "/Users/lgg/coding/sumatman/Temps/web_1754109069175_1aptvbwpn/images/scene_007_chinese.png"
+    # 如果启用AI，获取API key
+    api_key = None
+    if enable_ai in ['y', 'yes']:
+        api_key = input("\n请输入你的Google API Key: ").strip()
+        if not api_key:
+            print("❌ 未提供API Key，将使用fallback模式")
     
-    # Test configurations
-    test_configs = []
-    
-    # For dark and light themes: 2 flip states × 2 triangle directions = 4 variations each
-    for theme in ["dark", "light"]:
-        for flip in [False, True]:
-            for triangle_dir in ["bottom", "top"]:
-                test_configs.append({
-                    "theme": theme,
-                    "flip": flip,
-                    "triangle_direction": triangle_dir,
-                    "desc": f"{theme}_{['std','flip'][flip]}_{triangle_dir}"
-                })
-    
-    # For custom theme: 2 flip states only (no triangle)
-    for flip in [False, True]:
-        test_configs.append({
-            "theme": "custom",
-            "flip": flip,
-            "triangle_direction": None,
-            "desc": f"custom_{['std','flip'][flip]}"
-        })
-    
-    print(f"\n测试配置 (Test configurations):")
-    print(f"- Dark theme: 4 variations (2 flip × 2 triangle)")
-    print(f"- Light theme: 4 variations (2 flip × 2 triangle)")  
-    print(f"- Custom theme: 2 variations (2 flip only)")
-    print(f"Total: 10 configurations")
-    print(f"\n使用标题: '{title}'")
-    
-    generated_files = []
-    
-    # Test all configurations
-    for i, config in enumerate(test_configs, 1):
-        theme = config["theme"]
-        flip = config["flip"]
-        triangle_dir = config["triangle_direction"]
-        desc = config["desc"]
-        
-        # Generate output filename
-        output_path = f"{output_dir}/test_{desc}.jpg"
-        
-        print(f"\n[{i}/10] 生成: {desc}")
-        print(f"  Theme: {theme}")
-        print(f"  Flip: {'Yes' if flip else 'No'}")
-        print(f"  Triangle: {triangle_dir if triangle_dir else 'N/A'}")
-        
-        try:
-            # Generate thumbnail based on theme
-            if theme == "custom":
-                result = generator.generate_final_thumbnail(
-                    title=title,
-                    logo_path=logo_path,
-                    right_image_path=right_image_path,
-                    output_path=output_path,
-                    theme=theme,
-                    custom_template=custom_template_path,
-                    flip=flip,
-                    youtube_ready=True
-                )
-            else:
-                result = generator.generate_final_thumbnail(
-                    title=title,
-                    author=author,
-                    logo_path=logo_path,
-                    right_image_path=right_image_path,
-                    output_path=output_path,
-                    theme=theme,
-                    triangle_direction=triangle_dir,
-                    flip=flip,
-                    youtube_ready=True
-                )
-            
-            if result:
-                file_size = os.path.getsize(output_path) / 1024  # KB
-                print(f"  ✅ 成功: {output_path} ({file_size:.1f} KB)")
-                generated_files.append(output_path)
-                
-        except Exception as e:
-            print(f"  ❌ 错误: {e}")
-    
-    # Summary
     print(f"\n{'='*60}")
-    print(f"🎉 测试完成 (Test completed)!")
+    print("🚀 开始生成缩略图...")
     print(f"{'='*60}")
-    print(f"\n生成文件: {len(generated_files)}/10")
-    print(f"输出目录: {output_dir}")
     
-    print("\n文件列表:")
-    for file in generated_files:
-        print(f"  - {os.path.basename(file)}")
+    # 创建生成器
+    try:
+        if enable_ai in ['y', 'yes'] and api_key:
+            generator = FinalThumbnailGenerator(
+                template_path=get_resource_path("templates/professional_template.jpg"),
+                google_api_key=api_key
+            )
+        else:
+            generator = FinalThumbnailGenerator(
+                template_path=get_resource_path("templates/professional_template.jpg")
+            )
+        
+        # 生成缩略图
+        output_path = f"{output_dir}/test_result.jpg"
+        result = generator.generate_final_thumbnail(
+            title=title,
+            author="测试作者",
+            theme="dark",
+            output_path=output_path
+        )
+        
+        if result == output_path:
+            print(f"\n✅ 成功!")
+            print(f"📁 缩略图已保存到: {output_path}")
+            print(f"💡 请查看文件验证效果")
+        else:
+            print(f"\n❌ 失败: {result}")
     
-    print("\n文件说明:")
-    print("  - std = 标准布局 (standard layout)")
-    print("  - flip = 镜像布局 (mirrored layout)")
-    print("  - bottom = 倒梯形 (triangle pointing down)")
-    print("  - top = 正梯形 (triangle pointing up)")
+    except Exception as e:
+        print(f"\n❌ 错误: {e}")
+    
+    print(f"\n🎯 测试完成!")
 
 if __name__ == "__main__":
-    test_youtube_thumbnails()
+    try:
+        test_youtube_thumbnails()
+    except KeyboardInterrupt:
+        print("\n\n👋 测试已取消")
+    except Exception as e:
+        print(f"\n❌ 程序错误: {e}")
+        print("请确保在正确的目录运行此脚本")

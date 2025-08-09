@@ -125,9 +125,10 @@ As mentioned earlier, mixed-language titles cause formatting issues:
 - ❌ "Learn Python编程" - Chinese characters break English word boundaries
 
 #### ✅ How AI Optimization Fixes This
-The Gemini API automatically converts mixed-language titles into clean, single-language versions:
-- ✅ "AI技术指南 Complete Guide" → "AI技术完整指南教程"
-- ✅ "Learn Python编程" → "Learn Python Programming Complete Guide"
+The Gemini API automatically converts mixed-language titles into clean, single-language versions with smart line-breaking:
+- ✅ "AI技术指南 Complete Guide" → "AI技术完整\n指南教程" (2 lines, 6+4 chars)
+- ✅ "Learn Python编程" → "Learn Python\nProgramming\nComplete Guide" (3 lines, balanced)
+- ✅ "How to Build React Applications" → "Build React Apps\nFrom Scratch\nFull Guide" (natural breaks)
 
 ### 🔑 Setup & Configuration
 
@@ -171,7 +172,12 @@ CRITICAL RULES:
 2. Use SINGLE LANGUAGE ONLY - Pure Chinese OR Pure English OR Pure other language
 3. Maintain the original meaning and intent
 4. Optimize for YouTube thumbnail readability
-5. Length guidelines: Chinese 10-18 characters, English 7-12 words
+5. SMART LINE-BREAKING: Use \n to create optimal line breaks for thumbnail display
+
+LANGUAGE-SPECIFIC REQUIREMENTS:
+- CHINESE/CJK: 10-18 characters total, max 2 lines, 6-9 characters per line
+- ENGLISH/LATIN: 7-15 words total, max 3 lines, 2-6 words per line
+- Use \n for line breaks and natural pause points
 
 LANGUAGE DECISION RULES:
 - If >60% Chinese characters: Convert to pure Chinese
@@ -205,31 +211,31 @@ Add your specific rules and preferences...
 4. **Fallback**: Uses original title if optimization fails
 5. **Logging**: Shows whether title was optimized or unchanged
 
-### 📊 Example Optimizations
+### 📊 Example Optimizations with Smart Line-breaking
 
 ```python
 generator = create_generator(google_api_key="your_key")
 
-# Mixed Chinese/English
+# Mixed Chinese/English with smart line-breaking
 result = generator.generate_final_thumbnail(
     title="AI技术指南 Complete Tutorial 2024",  # Mixed language
     output_path="test.jpg"
 )
-# Console: Title optimized by Gemini: 'AI技术指南 Complete Tutorial 2024' -> 'AI技术完整指南教程'
+# Console: Title optimized by Gemini: 'AI技术指南 Complete Tutorial 2024' -> 'AI技术完整\n指南教程'
 
-# Mixed English/Chinese  
+# Long English title with intelligent line breaks
 result = generator.generate_final_thumbnail(
-    title="Learn Python编程 from Zero",  # Mixed language
+    title="How to Build React Applications from Scratch",  # Long English
     output_path="test2.jpg"
 )
-# Console: Title optimized by Gemini: 'Learn Python编程 from Zero' -> 'Learn Python Programming from Zero'
+# Console: Title optimized by Gemini: 'How to Build React Applications from Scratch' -> 'Build React Apps\nFrom Scratch\nFull Guide'
 
-# Pure language (no change needed)
+# Pre-formatted titles are bypassed
 result = generator.generate_final_thumbnail(
-    title="Complete AI Technology Guide",  # Pure English
+    title="Already Formatted\nTitle Test",  # Pre-formatted
     output_path="test3.jpg"  
 )
-# Console: Title unchanged by Gemini: 'Complete AI Technology Guide'
+# Console: Title unchanged by Gemini: 'Already Formatted\nTitle Test' (bypassed)
 ```
 
 ### 🔧 Requirements
@@ -245,10 +251,12 @@ pip install google-generativeai
 ### 🚨 Important Notes
 
 - **Optional Feature**: Works without API key, just skips optimization
+- **Smart Line-breaking**: AI creates optimal line breaks for thumbnail readability
+- **Pre-formatted Bypass**: Titles with existing \n line breaks are not re-optimized
 - **Rate Limits**: Google API has rate limits - consider for high-volume usage
 - **Cost**: Google Gemini API has usage costs - check Google's pricing
 - **Privacy**: Titles are sent to Google's servers for processing
-- **Fallback**: Always falls back to original title if API fails
+- **Fallback**: Always falls back to original manual line-breaking if AI fails
 
 ## 🧠 Intelligent Text System
 
@@ -855,11 +863,13 @@ youtube_thumbnail_generator/
 
 ## 📈 Version History
 
-### v2.4.0 (Current) - AI-Powered Title Optimization
-- 🆕 **AI Title Optimization**: Google Gemini API integration for mixed-language title fixing
-- 🆕 **Smart Language Detection**: Auto-detects and optimizes mixed Chinese/English titles
-- 🆕 **Configurable System Prompt**: Customizable AI optimization behavior
-- 🆕 **Graceful Fallback**: Works with or without Google API key
+### v2.4.0 (Current) - AI-Powered Title Optimization with Smart Line-breaking
+- 🆕 **AI Title Optimization**: Google Gemini 2.0 Flash API integration for mixed-language title fixing
+- 🆕 **Smart Line-breaking**: AI creates optimal line breaks (Chinese: 2 lines, English: 3 lines)
+- 🆕 **Pre-formatted Bypass**: Titles with existing \n line breaks skip AI optimization
+- 🆕 **Language-specific Rules**: Character-based for CJK, word-based for Latin scripts
+- 🆕 **Configurable System Prompt**: Customizable AI optimization behavior in title_optimizer.py
+- 🆕 **AI-first Architecture**: Smart optimization with fallback to manual line-breaking
 - ✅ **Environment Variable Support**: `GOOGLE_API_KEY` auto-detection
 - ✅ **Enhanced API**: `google_api_key` parameter in all generator functions
 - ✅ **Comprehensive Logging**: Clear feedback on optimization success/failure

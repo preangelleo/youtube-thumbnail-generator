@@ -1049,13 +1049,17 @@ class FinalThumbnailGenerator:
         if title:
             print(f"生成标题PNG（固定区域 600x280）")
             
-            # Optimize title with Gemini API (if available)
+            # Optimize title with Gemini API (if available) - AI handles length and line-breaking
             original_title = title
+            ai_optimized = False
+            
             if self.title_optimizer and self.title_optimizer.is_available:
                 try:
                     title, was_optimized = self.title_optimizer.optimize_title(title)
                     if was_optimized:
                         print(f"Title optimized by Gemini: '{original_title}' -> '{title}'")
+                        ai_optimized = True
+                        # AI-optimized titles already have proper line-breaking, skip manual processing
                     else:
                         print(f"Title unchanged by Gemini: '{title}'")
                 except Exception as e:
@@ -1064,19 +1068,25 @@ class FinalThumbnailGenerator:
             else:
                 print("Title optimization skipped - no API key or Gemini unavailable")
             
-            # 检测标题语言
-            title_language = self._detect_language(title)
-            
-            # 中文标题限制18个字符，英文不限制
-            if title_language == "chinese":
-                if len(title) > 18:
-                    original_title = title
-                    title = title[:18] + "..."  # 保留前18个字符，再追加3个点
-                    print(f"中文标题截短: '{original_title}' -> '{title}' (保留前18字符+...)")
-                # 如果正好18字符或更少，不需要处理
-            
-            # 英文标题限制3行
-            max_title_lines = 3 if title_language == "english" else 6
+            # Only apply manual processing if AI optimization was not used (fallback logic)
+            if not ai_optimized:
+                # 检测标题语言 (fallback)
+                title_language = self._detect_language(title)
+                
+                # 中文标题限制18个字符，英文不限制 (fallback)
+                if title_language == "chinese":
+                    if len(title) > 18:
+                        original_title_fallback = title
+                        title = title[:18] + "..."  # 保留前18个字符，再追加3个点
+                        print(f"中文标题截短 (fallback): '{original_title_fallback}' -> '{title}' (保留前18字符+...)")
+                    # 如果正好18字符或更少，不需要处理
+                
+                # 英文标题限制3行 (fallback)
+                max_title_lines = 3 if title_language == "english" else 6
+            else:
+                # AI optimized - use flexible detection for display
+                title_language = self._detect_language(title.replace('\\n', '').replace('\n', ''))
+                max_title_lines = 6  # Allow AI to determine line count
             
             # 将hex颜色转换为RGB元组
             def hex_to_rgb(hex_color):

@@ -13,38 +13,66 @@ from typing import Optional, Tuple
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# System prompt for title optimization
-TITLE_OPTIMIZATION_SYSTEM_PROMPT = """You are a professional YouTube title optimizer. Your task is to convert mixed-language or poorly formatted titles into clean, single-language titles optimized for YouTube thumbnails.
+# System prompt for title optimization with smart line-breaking
+TITLE_OPTIMIZATION_SYSTEM_PROMPT = """You are a professional YouTube title optimizer. Your task is to convert mixed-language or poorly formatted titles into clean, single-language titles optimized for YouTube thumbnails with intelligent line-breaking.
 
 CRITICAL RULES:
 1. OUTPUT ONLY THE OPTIMIZED TITLE - No prefixes, suffixes, quotes, or explanations
 2. Use SINGLE LANGUAGE ONLY - Pure Chinese OR Pure English OR Pure other language
 3. Maintain the original meaning and intent
 4. Optimize for YouTube thumbnail readability
-5. Length guidelines: Chinese 10-18 characters, English 7-12 words
+5. SMART LINE-BREAKING: Use \\n to create optimal line breaks for thumbnail display
+
+LANGUAGE-SPECIFIC REQUIREMENTS:
+
+CHINESE/CJK (Chinese, Japanese, Korean):
+- Length: 10-18 characters total
+- Line breaking: Maximum 2 lines, 6-9 characters per line
+- Use \\n for line breaks: "第一行内容\\n第二行内容"
+- Character-based counting (each CJK character = 1 count)
+
+ENGLISH/LATIN:
+- Length: 7-15 words total  
+- Line breaking: Maximum 3 lines, 2-6 words per line
+- Use \\n for line breaks: "First Line\\nSecond Line\\nThird Line"
+- Word-based counting (each word = 1 count)
+
+OTHER LANGUAGES:
+- Follow similar rules to their script family (CJK or Latin-based)
+- Prioritize readability and thumbnail display optimization
 
 LANGUAGE DECISION RULES:
-- If >60% Chinese characters: Convert to pure Chinese
-- If >60% English words: Convert to pure English  
+- If >60% Chinese/CJK characters: Convert to pure Chinese/CJK
+- If >60% English/Latin words: Convert to pure English/Latin
 - Otherwise: Choose the dominant language and convert entirely
+
+LINE-BREAKING STRATEGY:
+- Break at natural pause points (after key concepts)
+- Keep related words/characters together
+- Ensure each line is visually balanced
+- Prioritize the most important information in the first line
 
 FORMATTING RULES:
 - Remove unnecessary punctuation for thumbnails
 - Use title case for English
 - No quotation marks, brackets, or special symbols
 - Make it catchy and clickable
+- Use \\n (literal backslash-n) for line breaks
 
 EXAMPLES:
 Input: "AI技术指南 Complete Tutorial 2024"
-Output: AI技术完整指南教程
+Output: AI技术完整\\n指南教程
 
 Input: "Learn Python编程 from Zero"  
-Output: Learn Python Programming from Zero
+Output: Learn Python\\nProgramming\\nComplete Guide
 
 Input: "最新科技News今日更新"
-Output: 最新科技资讯今日更新
+Output: 最新科技\\n资讯更新
 
-Remember: Output ONLY the optimized title, nothing else."""
+Input: "How to Build React应用程序"
+Output: How to Build\\nReact Applications\\nStep by Step
+
+Remember: Output ONLY the optimized title with \\n line breaks, nothing else."""
 
 class TitleOptimizer:
     """Google Gemini-powered title optimizer"""
@@ -77,7 +105,7 @@ class TitleOptimizer:
     
     def optimize_title(self, title: str) -> Tuple[str, bool]:
         """
-        Optimize title using Gemini API
+        Optimize title using Gemini API with smart line-breaking
         
         Args:
             title: Original title to optimize
@@ -92,10 +120,13 @@ class TitleOptimizer:
             logger.info("Gemini API not available - using original title")
             return title, False
         
-        # Check if title needs optimization (contains mixed languages)
-        if not self._needs_optimization(title):
-            logger.info("Title appears to be single language - no optimization needed")
+        # Check if title already has line breaks (pre-formatted by user)
+        if '\\n' in title or '\n' in title:
+            logger.info("Title already contains line breaks - bypassing optimization")
             return title, False
+        
+        # For AI-powered optimization, we optimize all titles (not just mixed-language)
+        # This enables smart line-breaking even for single-language titles
         
         try:
             # Generate optimized title using system instruction

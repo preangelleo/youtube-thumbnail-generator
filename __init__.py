@@ -27,7 +27,7 @@ Basic Usage:
     )
 """
 
-__version__ = "2.2.2"
+__version__ = "2.4.0"
 __author__ = "Leo Wang"
 __email__ = "leo@example.com"
 __license__ = "MIT"

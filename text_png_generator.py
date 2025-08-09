@@ -492,9 +492,21 @@ def _chinese_smart_wrap(text, max_chars=20, is_title=False):
     return [first_line, second_line]
 
 def _wrap_text(text, font, max_width, language='english', is_title=False):
-    """文字换行处理 - 支持中文智能换行"""
+    """文字换行处理 - 支持中文智能换行和AI预格式化标题"""
     
-    # 中文特殊处理
+    # Check if text already contains line breaks (AI-optimized or user pre-formatted)
+    if '\\n' in text:
+        # Handle escaped newlines from AI
+        lines = text.split('\\n')
+        print(f"AI-formatted title detected: {len(lines)} lines")
+        return lines
+    elif '\n' in text:
+        # Handle actual newlines from user
+        lines = text.split('\n')
+        print(f"User pre-formatted title detected: {len(lines)} lines")  
+        return lines
+    
+    # 中文特殊处理 (fallback)
     if language == 'chinese':
         return _chinese_smart_wrap(text, is_title=is_title)
     
