@@ -5,7 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.4.8] - 2025-01-09
+## [2.4.9] - 2025-01-09
+
+### 🚨 CRITICAL HOTFIX - Missing Source Code in v2.4.8
+- **Emergency Fix**: v2.4.8 package was missing all Python source code files
+- **Root Cause**: Incorrect package structure - source files were in root directory instead of package subdirectory
+- **Solution**: Reorganized project structure with proper `youtube_thumbnail_generator/` package directory
+- **Impact**: v2.4.8 users unable to import module - all users should upgrade to v2.4.9 immediately
+
+### 🔧 Package Structure Fixed
+- **Before**: Flat structure with Python files in project root
+- **After**: Proper package structure with `youtube_thumbnail_generator/` directory containing all modules
+- **Wheel Size**: Increased from 7KB (broken) to 61KB (complete with all source files)
+- **Verification**: All Python modules, templates, and resources now correctly included
+
+### ✅ What's Included
+- All Python source files properly packaged
+- All template images included
+- Proper module imports working
+- Random theme functionality from v2.4.8 fully functional
+
+**IMPORTANT**: Skip v2.4.8 and install v2.4.9 directly!
+
+## [2.4.8] - 2025-01-09 ⚠️ BROKEN - DO NOT USE
 
 ### 🎲 NEW FEATURE - Smart Random Theme Integration
 - **Enhanced User Experience**: Users can now generate random thumbnails using `theme="random"` or `theme=None`
