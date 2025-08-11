@@ -1161,6 +1161,7 @@ class FinalThumbnailGenerator:
             if success:
                 # 获取标题PNG图片的实际尺寸
                 title_img_width = title_img.size[0]  # PNG图片宽度 (应该是550)
+                title_img_height = title_img.size[1]  # PNG图片高度 (动态: 160/260/360px)
                 
                 # 计算X位置
                 if not flip:
@@ -1171,9 +1172,15 @@ class FinalThumbnailGenerator:
                     # 1600 - 550 - 50 = 1000
                     final_text_x = width - title_img_width - title_margin
                 
-                title_img_data = (title_img, final_text_x, title_y)
-                print(f"标题PNG已生成: 位置({final_text_x}, {title_y}), PNG宽度: {title_img_width}px")
-                print(f"标题布局: {'右对齐' if flip else '左对齐'}, 固定尺寸(550, 280)")
+                # 计算Y位置：垂直居中标题PNG在背景中
+                # 背景高度900px，需要将title_img_height居中
+                final_text_y = (height - title_img_height) // 2
+                print(f"标题PNG垂直居中计算: 背景{height}px - 标题{title_img_height}px = 剩余{height - title_img_height}px")
+                print(f"垂直居中Y位置: {final_text_y}px (原固定位置: {title_y}px)")
+                
+                title_img_data = (title_img, final_text_x, final_text_y)
+                print(f"标题PNG已生成: 位置({final_text_x}, {final_text_y}), PNG尺寸: {title_img_width}x{title_img_height}px")
+                print(f"标题布局: {'右对齐' if flip else '左对齐'}, 动态垂直居中")
         
         
         # 作者 - 使用PNG方式，固定在底部上方100px位置

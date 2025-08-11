@@ -239,6 +239,17 @@ def create_text_png(text, width=600, height=300, font_size=None,
             else:  # 3行
                 height = 360  # 3行中文标题：360px高度（增加60px，更激进的底边）
                 print(f"中文标题3行，高度: {height}px")
+        elif is_title and language == 'english':
+            # 英文标题的动态高度计算，确保有足够的垂直空间（与中文标题同样逻辑）
+            if num_lines == 1:
+                height = 160  # 1行英文标题：160px高度
+                print(f"英文标题1行，高度: {height}px")
+            elif num_lines == 2:
+                height = 260  # 2行英文标题：260px高度
+                print(f"英文标题2行，高度: {height}px")
+            else:  # 3行
+                height = 360  # 3行英文标题：360px高度（修复：与中文标题同样处理）
+                print(f"英文标题3行，高度: {height}px")
         elif num_lines > 1:
             # 其他多行文字的处理
             if is_title and line_height_px >= 50:  # 标题
@@ -255,8 +266,8 @@ def create_text_png(text, width=600, height=300, font_size=None,
         img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
         draw = ImageDraw.Draw(img)
         
-        # 为中文标题调整边距
-        if is_title and language == 'chinese':
+        # 为中文和英文标题调整边距
+        if is_title and (language == 'chinese' or language == 'english'):
             # 根据行数动态调整上下边距（增加边距以适应放大的字体）
             if num_lines == 1:
                 top_margin = 45  # 1行时上下边距45px（增加10px）
@@ -264,6 +275,7 @@ def create_text_png(text, width=600, height=300, font_size=None,
                 top_margin = 40  # 2行时上下边距40px（增加10px）
             else:
                 top_margin = 35  # 3行时上下边距35px（增加10px）
+            print(f"{language}标题边距调整: {num_lines}行 -> 上下边距{top_margin}px")
         else:
             top_margin = int(min(width, height) * margin_ratio)
         
