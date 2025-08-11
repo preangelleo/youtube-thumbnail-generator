@@ -1,3 +1,4 @@
+
 # Python
 __pycache__/
 *.py[cod]
@@ -90,3 +91,11 @@ logos/animagent_logo.png
 # Keep empty directories structure
 !outputs/.gitkeep
 !uploads/.gitkeep
+
+# Claude Code generated folders
+.claude-flow/
+.swarm/
+
+# Root level templates (duplicated - the real ones are in youtube_thumbnail_generator/templates/)
+/templates/
+
