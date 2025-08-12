@@ -3,6 +3,10 @@ Pillow>=10.0.0
 numpy>=1.24.0
 python-dotenv>=1.0.0
 
+# API dependencies
+Flask>=2.3.0
+flask-cors>=4.0.0
+
 # AI optimization (optional)
 google-generativeai>=0.3.0
 

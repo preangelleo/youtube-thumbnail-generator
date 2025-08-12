@@ -28,9 +28,14 @@ cd youtube-thumbnail-generator
 
 # Install dependencies
 pip install -r requirements.txt
+
+# Or install from PyPI
+pip install youtube-thumbnail-generator
 ```
 
 ### Basic Usage
+
+#### Python Library
 
 ```python
 from src.thumbnail_generator import ThumbnailGenerator
@@ -45,19 +50,49 @@ thumbnail = generator.generate(
 )
 ```
 
+#### CLI Usage
+
+```bash
+# Basic thumbnail
+youtube-thumbnail "Amazing Python Tutorial" -o thumbnail.png
+
+# With AI optimization
+youtube-thumbnail "Python Tutorial" --enable-ai --language en
+
+# Custom styling
+youtube-thumbnail "Tutorial" --font-size 100 --bg-color1 "#FF0000"
+```
+
+#### REST API
+
+```bash
+# Start the API server
+python -m src.api
+
+# Generate thumbnail via API
+curl -X POST http://localhost:5000/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Amazing Tutorial",
+    "enable_ai_optimization": true,
+    "target_language": "en"
+  }'
+```
+
 ### With AI Optimization
 
 ```python
-# Enable AI optimization
+# Enable AI optimization with explicit control
 generator = ThumbnailGenerator(
     gemini_api_key="your-api-key",
-    enable_ai_optimization=True
+    enable_ai_optimization=True  # Explicit toggle
 )
 
-# Generate with AI-enhanced text
+# Generate with forced language
 thumbnail = generator.generate(
     text="Python Tutorial for Beginners",
     target_language="en",  # Force English
+    enable_ai_optimization=True,  # Override default
     output_path="ai_thumbnail.png"
 )
 ```
@@ -71,11 +106,64 @@ For usage examples, see [examples/example_usage.py](examples/example_usage.py)
 ## 🐳 Docker
 
 ```bash
-# Build the image
-docker build -t youtube-thumbnail-generator .
+# Pull from Docker Hub
+docker pull preangelleo/youtube-thumbnail-generator:latest
 
-# Run the container
-docker run -v $(pwd)/output:/app/output youtube-thumbnail-generator
+# Run the API server
+docker run -p 5000:5000 \
+  -e GEMINI_API_KEY=your-key \
+  -e ENABLE_AI_OPTIMIZATION=true \
+  preangelleo/youtube-thumbnail-generator
+
+# Or build locally
+docker build -t youtube-thumbnail-generator .
+docker run -p 5000:5000 youtube-thumbnail-generator
+```
+
+## 🌐 API Endpoints
+
+### POST /generate
+Generate a single thumbnail with full parameter control.
+
+```json
+{
+  "text": "Amazing Tutorial",
+  "enable_ai_optimization": true,
+  "target_language": "en",
+  "background_type": "gradient",
+  "font_size": 80
+}
+```
+
+### POST /batch
+Generate multiple thumbnails in one request.
+
+```json
+{
+  "texts": ["Tutorial 1", "Tutorial 2"],
+  "enable_ai_optimization": false,
+  "target_language": "zh"
+}
+```
+
+### POST /optimize-text
+Optimize text using AI (requires API key).
+
+```json
+{
+  "text": "Basic Python Tutorial",
+  "target_language": "en",
+  "style": "engaging"
+}
+```
+
+### POST /detect-language
+Detect the language of text.
+
+```json
+{
+  "text": "Python编程教程"
+}
 ```
 
 ## 🔧 Configuration

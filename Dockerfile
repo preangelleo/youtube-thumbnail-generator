@@ -25,6 +25,10 @@ RUN mkdir -p /app/output
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
+ENV PORT=5000
 
-# Default command
-CMD ["python", "examples/example_usage.py"]
+# Expose port for API
+EXPOSE 5000
+
+# Default command - run Flask API
+CMD ["python", "-m", "src.api"]
