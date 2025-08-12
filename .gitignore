@@ -35,6 +35,10 @@ env/
 *.swn
 .DS_Store
 
+# Claude Code directories
+.claude-flow/
+.swarm/
+
 # Environment variables
 .env
 .env.local
