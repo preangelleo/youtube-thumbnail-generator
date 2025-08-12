@@ -126,6 +126,49 @@ def sanitize_filename(filename: str) -> str:
     return filename
 
 
+def normalize_language_code(lang: str) -> str:
+    """Normalize language input to standard ISO 639-1 code.
+    
+    Args:
+        lang: Language code or name (e.g., 'en', 'English', 'chinese', 'zh')
+    
+    Returns:
+        Normalized language code ('en' or 'zh')
+    """
+    if not lang:
+        return None
+    
+    lang_lower = lang.lower().strip()
+    
+    # Map full names and variations to standard codes
+    language_map = {
+        # English variations
+        'en': 'en',
+        'eng': 'en',
+        'english': 'en',
+        'en-us': 'en',
+        'en-gb': 'en',
+        'en_us': 'en',
+        'en_gb': 'en',
+        
+        # Chinese variations
+        'zh': 'zh',
+        'chi': 'zh',
+        'chinese': 'zh',
+        'zh-cn': 'zh',
+        'zh-tw': 'zh',
+        'zh_cn': 'zh',
+        'zh_tw': 'zh',
+        'mandarin': 'zh',
+        'simplified': 'zh',
+        'traditional': 'zh',
+        '中文': 'zh',
+        '中国': 'zh',
+    }
+    
+    return language_map.get(lang_lower, lang_lower)
+
+
 def parse_color(color_str: str) -> Tuple[int, int, int]:
     """Parse color string to RGB tuple.
     

@@ -12,7 +12,7 @@ A powerful YouTube thumbnail generator with optional AI text optimization and mu
 - **Customizable Backgrounds**: Solid colors, gradients, or image backgrounds
 - **Multiple Font Support**: Various fonts and styles
 - **AI Text Optimization**: Optional Gemini AI integration for better text
-- **Multi-Language Support**: Automatic language detection or manual specification
+- **Multi-Language Support**: Automatic language detection or manual specification (supports `en`/`english`, `zh`/`chinese`)
 - **Flexible Layouts**: Multiple text positions and sizes
 - **High Quality Output**: 1280x720 HD thumbnails
 - **Docker Support**: Easy deployment with Docker
@@ -92,9 +92,10 @@ generator = ThumbnailGenerator(
 )
 
 # Generate with explicit source language (skip detection)
+# Supports both ISO codes and full names
 thumbnail = generator.generate(
     text="Python Tutorial for Beginners",
-    source_language="en",  # Skip detection, specify it's English
+    source_language="en",  # or "english" - Skip detection, specify it's English
     enable_ai_optimization=True,
     output_path="ai_thumbnail.png"
 )
@@ -102,8 +103,8 @@ thumbnail = generator.generate(
 # Generate with translation (requires AI)
 thumbnail = generator.generate(
     text="Python编程教程",
-    source_language="zh",  # Input is Chinese
-    target_language="en",  # Translate to English
+    source_language="chinese",  # or "zh" - Input is Chinese
+    target_language="english",  # or "en" - Translate to English
     enable_ai_optimization=True,  # Required for translation
     output_path="translated_thumbnail.png"
 )

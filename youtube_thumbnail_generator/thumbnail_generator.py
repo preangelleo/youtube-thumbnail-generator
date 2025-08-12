@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from .text_optimizer import TextOptimizer
 from .background_manager import BackgroundManager
 from .font_manager import FontManager
-from .utils import detect_language, validate_dimensions
+from .utils import detect_language, validate_dimensions, normalize_language_code
 
 load_dotenv()
 
@@ -93,8 +93,8 @@ class ThumbnailGenerator:
         
         # Determine source language
         if source_language:
-            # User explicitly specified the language - skip detection
-            detected_language = source_language
+            # User explicitly specified the language - normalize and skip detection
+            detected_language = normalize_language_code(source_language)
         else:
             # Auto-detect language
             detected_language = detect_language(text)
@@ -105,7 +105,7 @@ class ThumbnailGenerator:
             # Determine optimization target language
             # If target_language is specified and different from source, it's translation
             # Otherwise, optimize in the same language
-            optimization_language = target_language if target_language else detected_language
+            optimization_language = normalize_language_code(target_language) if target_language else detected_language
             
             # Optimize the text
             optimized_text = self.text_optimizer.optimize(

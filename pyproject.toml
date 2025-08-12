@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "youtube-thumbnail-generator"
-version = "1.1.0"
+version = "2.6.2"
 authors = [
     {name = "preangelleo"}
 ]
@@ -50,12 +50,12 @@ dev = [
 "Documentation" = "https://github.com/preangelleo/youtube-thumbnail-generator/docs"
 
 [project.scripts]
-youtube-thumbnail = "src.cli:main"
-youtube-thumbnail-api = "src.api:main"
+youtube-thumbnail = "youtube_thumbnail_generator.cli:main"
+youtube-thumbnail-api = "youtube_thumbnail_generator.api:main"
 
 [tool.setuptools.packages.find]
 where = ["."]  
-include = ["src*"]
+include = ["youtube_thumbnail_generator*"]
 
 [tool.setuptools.package-data]
 "*" = ["*.txt", "*.md", "*.yml", "*.yaml"]

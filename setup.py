@@ -15,7 +15,7 @@ requirements = [
 
 setup(
     name="youtube-thumbnail-generator",
-    version="1.1.0",
+    version="2.6.2",
     author="preangelleo",
     author_email="",
     description="A powerful YouTube thumbnail generator with AI text optimization",
@@ -37,7 +37,8 @@ setup(
     install_requires=requirements,
     entry_points={
         "console_scripts": [
-            "youtube-thumbnail=src.cli:main",
+            "youtube-thumbnail=youtube_thumbnail_generator.cli:main",
+            "youtube-thumbnail-api=youtube_thumbnail_generator.api:main",
         ],
     },
     include_package_data=True,

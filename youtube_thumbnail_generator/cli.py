@@ -7,7 +7,7 @@ import argparse
 import sys
 import os
 from .thumbnail_generator import ThumbnailGenerator
-from .utils import detect_language
+from .utils import detect_language, normalize_language_code
 
 def main():
     """Main CLI entry point."""
@@ -113,14 +113,14 @@ def main():
     
     parser.add_argument(
         '--source-language',
-        choices=['en', 'zh'],
-        help='Specify input text language to skip auto-detection'
+        choices=['en', 'zh', 'english', 'chinese', 'English', 'Chinese'],
+        help='Specify input text language to skip auto-detection (en/zh/english/chinese)'
     )
     
     parser.add_argument(
         '--target-language',
-        choices=['en', 'zh'],
-        help='Target language for translation (only with AI optimization)'
+        choices=['en', 'zh', 'english', 'chinese', 'English', 'Chinese'],
+        help='Target language for translation (en/zh/english/chinese, only with AI optimization)'
     )
     
     parser.add_argument(
@@ -249,8 +249,8 @@ def main():
                 font_color=args.font_color,
                 text_position=args.text_position,
                 enable_ai_optimization=enable_ai,
-                source_language=args.source_language,
-                target_language=args.target_language,
+                source_language=normalize_language_code(args.source_language) if args.source_language else None,
+                target_language=normalize_language_code(args.target_language) if args.target_language else None,
                 custom_prompt=args.ai_prompt,
                 quality=args.quality
             )
@@ -278,8 +278,8 @@ def main():
                 font_color=args.font_color,
                 text_position=args.text_position,
                 enable_ai_optimization=enable_ai,
-                source_language=args.source_language,
-                target_language=args.target_language,
+                source_language=normalize_language_code(args.source_language) if args.source_language else None,
+                target_language=normalize_language_code(args.target_language) if args.target_language else None,
                 custom_prompt=args.ai_prompt,
                 quality=args.quality
             )

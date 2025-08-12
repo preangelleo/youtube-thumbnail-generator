@@ -13,6 +13,7 @@ import io
 from PIL import Image
 
 from .thumbnail_generator import ThumbnailGenerator
+from .utils import detect_language, normalize_language_code
 
 app = Flask(__name__)
 CORS(app)
@@ -62,8 +63,8 @@ def generate_thumbnail():
         "font_color": "#FFFFFF",
         "text_position": "center",
         "enable_ai_optimization": true,
-        "source_language": null,  // null = auto-detect, "en" or "zh" to skip detection
-        "target_language": "en",  // For translation (only used if different from source)
+        "source_language": null,  // null = auto-detect, "en", "zh", "english", "chinese" to skip detection
+        "target_language": "en",  // For translation ("en", "zh", "english", "chinese"), only used if different from source
         "custom_prompt": null,
         "quality": 95,
         "format": "png",
@@ -86,8 +87,8 @@ def generate_thumbnail():
         font_color = data.get('font_color', '#FFFFFF')
         text_position = data.get('text_position', 'center')
         enable_ai = data.get('enable_ai_optimization')
-        source_language = data.get('source_language')  # User-specified input language
-        target_language = data.get('target_language')  # For translation
+        source_language = normalize_language_code(data.get('source_language'))  # User-specified input language
+        target_language = normalize_language_code(data.get('target_language'))  # For translation
         custom_prompt = data.get('custom_prompt')
         quality = data.get('quality', 95)
         output_format = data.get('format', 'png').lower()
@@ -258,8 +259,8 @@ def optimize_text():
     Request JSON:
     {
         "text": "Original text",
-        "source_language": "zh",  // Optional: specify input language
-        "target_language": "en",  // Translate to English
+        "source_language": "zh",  // Optional: specify input language ("en", "zh", "english", "chinese")
+        "target_language": "en",  // Translate to English ("en", "zh", "english", "chinese")
         "style": "engaging",
         "max_length": 50,
         "custom_prompt": null
@@ -279,8 +280,8 @@ def optimize_text():
             return jsonify({'error': 'Text is required'}), 400
         
         text = data.get('text', '')
-        source_language = data.get('source_language')  # Optional
-        target_language = data.get('target_language', 'en')
+        source_language = normalize_language_code(data.get('source_language'))  # Optional
+        target_language = normalize_language_code(data.get('target_language') or 'en')
         style = data.get('style', 'engaging')
         max_length = data.get('max_length', 50)
         custom_prompt = data.get('custom_prompt')
