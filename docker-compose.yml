@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  thumbnail-generator:
+    build: .
+    image: youtube-thumbnail-generator:latest
+    container_name: thumbnail-generator
+    volumes:
+      - ./output:/app/output
+      - ./input:/app/input
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - ENABLE_AI_OPTIMIZATION=${ENABLE_AI_OPTIMIZATION:-false}
+      - DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE:-auto}
+    command: python examples/example_usage.py

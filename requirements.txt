@@ -1,0 +1,17 @@
+# Core dependencies
+Pillow>=10.0.0
+numpy>=1.24.0
+python-dotenv>=1.0.0
+
+# AI optimization (optional)
+google-generativeai>=0.3.0
+
+# Language detection
+langdetect>=1.0.9
+
+# Development dependencies
+pytest>=7.4.0
+pytest-cov>=4.1.0
+black>=23.7.0
+flake8>=6.1.0
+mypy>=1.5.0
