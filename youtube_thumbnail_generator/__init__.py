@@ -1,23 +1,93 @@
-from .thumbnail_generator import ThumbnailGenerator
-from .text_optimizer import TextOptimizer
-from .background_manager import BackgroundManager
-from .font_manager import FontManager
+"""
+YouTube Thumbnail Generator v2.2
 
-__version__ = "2.6.2"
+A professional YouTube thumbnail generation library with three theme modes, intelligent Chinese/English 
+text processing, smart line-breaking algorithms, and full color customization.
 
-# Backward compatibility function
-def create_generator(**kwargs):
-    """Create a ThumbnailGenerator instance (backward compatibility).
+Features:
+- Three Theme Modes: Dark, Light, Custom with automatic color defaults
+- Full Color Customization: title_color, author_color parameters with hex support
+- Dynamic Font Scaling: Auto-scaling based on text length (1-17 characters)
+- Triangle Control: enable_triangle parameter for overlay management
+- Custom Background Support: Use your own 1600x900 templates
+- Chinese/English Optimization: 30% larger fonts for Chinese, optimal lengths guidance
+- Smart Line-breaking: 9 chars for Chinese titles, intelligent English wrapping
+- Professional Templates: All templates included automatically in package
+
+Basic Usage:
+    from youtube_thumbnail_generator import FinalThumbnailGenerator
     
-    This function is provided for backward compatibility with v2.5.x.
-    New code should use ThumbnailGenerator directly.
-    """
-    return ThumbnailGenerator(**kwargs)
+    generator = FinalThumbnailGenerator("templates/professional_template.jpg")
+    result = generator.generate_final_thumbnail(
+        title="Your Amazing Title",
+        author="Your Name", 
+        theme="dark",  # "dark", "light", or "custom"
+        title_color="#FFFFFF",  # Custom colors
+        output_path="output.jpg"
+    )
+"""
 
+__version__ = "2.6.3"
+__author__ = "Leo Wang"
+__email__ = "me@leowang.net"
+__license__ = "MIT"
+
+# Import main classes and functions
+from .final_thumbnail_generator import FinalThumbnailGenerator, get_resource_path, create_default_templates, optimize_for_youtube_api, generate_triangle_template, get_random_template_config, generate_random_thumbnail
+from .text_png_generator import create_text_png
+from .function_add_chapter import add_chapter_to_image
+
+def get_default_template():
+    """Get path to the default professional template"""
+    return get_resource_path("templates/professional_template.jpg")
+
+def init_templates():
+    """Initialize default templates in current directory if needed"""
+    return create_default_templates()
+
+def create_generator(template_path=None, gemini_api_key=None, google_api_key=None):
+    """创建缩略图生成器 - 支持模板路径和Gemini API key
+    
+    Args:
+        template_path (str, optional): 模板文件路径。如果不提供，使用默认黑色模板
+        gemini_api_key (str, optional): Gemini API key for title optimization.
+                                       If not provided, tries environment variable GEMINI_API_KEY.
+        google_api_key (str, optional): Deprecated. Use gemini_api_key instead.
+                                       Kept for backwards compatibility.
+                                       
+    Returns:
+        FinalThumbnailGenerator: 缩略图生成器实例
+        
+    Example:
+        # 使用默认模板
+        generator = create_generator()
+        
+        # 使用自定义模板
+        generator = create_generator('my_template.jpg')
+        
+        # 启用title优化功能（推荐方式）
+        generator = create_generator(gemini_api_key='your_gemini_api_key')
+        
+        # 或设置环境变量
+        # export GEMINI_API_KEY=your_gemini_api_key
+        generator = create_generator()  # 会自动从环境变量获取API key
+    """
+    # 向后兼容：如果用户使用了google_api_key，优先使用它
+    api_key = google_api_key if google_api_key else gemini_api_key
+    return FinalThumbnailGenerator(template_path, api_key)
+
+# Define what gets imported with "from youtube_thumbnail_generator import *"
 __all__ = [
-    "ThumbnailGenerator",
-    "TextOptimizer",
-    "BackgroundManager",
-    "FontManager",
-    "create_generator",  # Added for backward compatibility
+    'FinalThumbnailGenerator',
+    'create_text_png', 
+    'add_chapter_to_image',
+    'get_default_template',
+    'get_resource_path',
+    'init_templates',
+    'create_generator',
+    'optimize_for_youtube_api',
+    'generate_triangle_template',
+    'get_random_template_config',
+    'generate_random_thumbnail',
+    '__version__'
 ]

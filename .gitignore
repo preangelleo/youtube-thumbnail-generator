@@ -56,6 +56,8 @@ thumbnails/
 htmlcov/
 .tox/
 .hypothesis/
+test_*.py
+*_test.py
 
 # Documentation
 docs/_build/

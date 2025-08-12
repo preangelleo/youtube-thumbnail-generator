@@ -15,7 +15,7 @@ requirements = [
 
 setup(
     name="youtube-thumbnail-generator",
-    version="2.6.2",
+    version="2.6.3",
     author="preangelleo",
     author_email="",
     description="A powerful YouTube thumbnail generator with AI text optimization",

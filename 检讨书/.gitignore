@@ -1,0 +1,32 @@
+# 检讨书目录专用 .gitignore
+# 防止个人反思文档被公开
+
+# 忽略所有检讨书文件
+*.md
+*.txt
+*.pdf
+*.doc
+*.docx
+
+# 但保留示例文件
+!example.md
+!template.md
+
+# 忽略临时文件
+*.tmp
+*.bak
+*~
+
+# 忽略个人反思文件
+personal_*
+private_*
+reflection_*
+review_*
+检讨_*
+反思_*
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
