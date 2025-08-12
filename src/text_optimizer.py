@@ -28,6 +28,7 @@ class TextOptimizer:
     def optimize(
         self,
         text: str,
+        source_language: str = "en",
         target_language: str = "en",
         custom_prompt: Optional[str] = None,
         max_length: int = 50,
@@ -37,7 +38,8 @@ class TextOptimizer:
         
         Args:
             text: Original text to optimize
-            target_language: Target language (en/zh)
+            source_language: Language of input text (en/zh)
+            target_language: Target language for output (en/zh)
             custom_prompt: Custom optimization prompt
             max_length: Maximum character length
             style: Style of optimization (engaging/professional/casual/dramatic)
@@ -53,22 +55,44 @@ class TextOptimizer:
             if custom_prompt:
                 prompt = custom_prompt.format(text=text)
             else:
-                language_name = "English" if target_language == "en" else "Chinese"
+                source_lang_name = "English" if source_language == "en" else "Chinese"
+                target_lang_name = "English" if target_language == "en" else "Chinese"
                 
-                prompt = f"""
-                Optimize this text for a YouTube thumbnail. Make it more {style} and attention-grabbing.
-                
-                Requirements:
-                - Target language: {language_name}
-                - Maximum {max_length} characters
-                - Should be catchy and clickable
-                - Use power words when appropriate
-                - Keep the core meaning
-                
-                Original text: "{text}"
-                
-                Return ONLY the optimized text, nothing else.
-                """
+                # Check if translation is needed
+                if source_language != target_language:
+                    # Translation + optimization
+                    prompt = f"""
+                    Translate and optimize this {source_lang_name} text for a YouTube thumbnail.
+                    Translate it to {target_lang_name} and make it more {style} and attention-grabbing.
+                    
+                    Requirements:
+                    - Translate from {source_lang_name} to {target_lang_name}
+                    - Maximum {max_length} characters
+                    - Should be catchy and clickable
+                    - Use power words appropriate for {target_lang_name} audience
+                    - Keep the core meaning
+                    
+                    Original text: "{text}"
+                    
+                    Return ONLY the translated and optimized text in {target_lang_name}, nothing else.
+                    """
+                else:
+                    # Just optimization in the same language
+                    prompt = f"""
+                    Optimize this {source_lang_name} text for a YouTube thumbnail. 
+                    Make it more {style} and attention-grabbing.
+                    
+                    Requirements:
+                    - Keep it in {source_lang_name}
+                    - Maximum {max_length} characters
+                    - Should be catchy and clickable
+                    - Use power words when appropriate
+                    - Keep the core meaning
+                    
+                    Original text: "{text}"
+                    
+                    Return ONLY the optimized text, nothing else.
+                    """
             
             # Generate optimized text
             response = self.model.generate_content(prompt)

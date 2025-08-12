@@ -57,7 +57,10 @@ thumbnail = generator.generate(
 youtube-thumbnail "Amazing Python Tutorial" -o thumbnail.png
 
 # With AI optimization
-youtube-thumbnail "Python Tutorial" --enable-ai --language en
+youtube-thumbnail "Python Tutorial" --enable-ai --source-language en
+
+# With translation (Chinese to English)
+youtube-thumbnail "Python编程" --enable-ai --source-language zh --target-language en
 
 # Custom styling
 youtube-thumbnail "Tutorial" --font-size 100 --bg-color1 "#FF0000"
@@ -75,7 +78,7 @@ curl -X POST http://localhost:5000/generate \
   -d '{
     "text": "Amazing Tutorial",
     "enable_ai_optimization": true,
-    "target_language": "en"
+    "source_language": "en"  // Skip auto-detection
   }'
 ```
 
@@ -88,12 +91,21 @@ generator = ThumbnailGenerator(
     enable_ai_optimization=True  # Explicit toggle
 )
 
-# Generate with forced language
+# Generate with explicit source language (skip detection)
 thumbnail = generator.generate(
     text="Python Tutorial for Beginners",
-    target_language="en",  # Force English
-    enable_ai_optimization=True,  # Override default
+    source_language="en",  # Skip detection, specify it's English
+    enable_ai_optimization=True,
     output_path="ai_thumbnail.png"
+)
+
+# Generate with translation (requires AI)
+thumbnail = generator.generate(
+    text="Python编程教程",
+    source_language="zh",  # Input is Chinese
+    target_language="en",  # Translate to English
+    enable_ai_optimization=True,  # Required for translation
+    output_path="translated_thumbnail.png"
 )
 ```
 

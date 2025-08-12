@@ -62,7 +62,8 @@ class ThumbnailGenerator:
         font_color: str = "#FFFFFF",
         text_position: str = "center",
         enable_ai_optimization: Optional[bool] = None,
-        target_language: Optional[str] = None,
+        source_language: Optional[str] = None,  # User-specified input language
+        target_language: Optional[str] = None,  # For translation (only with AI)
         custom_prompt: Optional[str] = None,
         quality: int = 95,
     ) -> str:
@@ -78,7 +79,8 @@ class ThumbnailGenerator:
             font_color: Color of the text
             text_position: Position of the text (center/top/bottom)
             enable_ai_optimization: Override default AI optimization setting
-            target_language: Target language for optimization (en/zh/auto)
+            source_language: Explicitly specify input language (en/zh) to skip detection
+            target_language: Target language for translation (only used with AI optimization)
             custom_prompt: Custom prompt for AI optimization
             quality: JPEG/PNG quality (1-100)
         
@@ -89,20 +91,27 @@ class ThumbnailGenerator:
         use_ai = self.enable_ai_optimization if enable_ai_optimization is None else enable_ai_optimization
         use_ai = use_ai and self.text_optimizer is not None
         
+        # Determine source language
+        if source_language:
+            # User explicitly specified the language - skip detection
+            detected_language = source_language
+        else:
+            # Auto-detect language
+            detected_language = detect_language(text)
+        
         # Optimize text if AI is enabled
         optimized_text = text
         if use_ai:
-            # Determine target language
-            if target_language is None:
-                target_language = self.default_language
-            
-            if target_language == "auto":
-                target_language = detect_language(text)
+            # Determine optimization target language
+            # If target_language is specified and different from source, it's translation
+            # Otherwise, optimize in the same language
+            optimization_language = target_language if target_language else detected_language
             
             # Optimize the text
             optimized_text = self.text_optimizer.optimize(
                 text,
-                target_language=target_language,
+                source_language=detected_language,
+                target_language=optimization_language,
                 custom_prompt=custom_prompt
             )
         

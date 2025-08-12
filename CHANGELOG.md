@@ -5,6 +5,24 @@ All notable changes to YouTube Thumbnail Generator will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2024-01-11
+
+### Changed
+- **BREAKING**: Renamed `target_language` to `source_language` for clarity
+- Added proper separation between source and target languages:
+  - `source_language`: Explicitly specify input language (skip auto-detection)
+  - `target_language`: For translation (only used with AI optimization when different from source)
+- Improved AI optimization logic:
+  - Translation only happens when target_language differs from source_language
+  - target_language is only meaningful when AI optimization is enabled
+- Updated API, CLI, and documentation to reflect the new language handling
+
+### Fixed
+- Language parameter logic now correctly distinguishes between:
+  - Input language specification (to skip detection)
+  - Translation target (only with AI)
+- Clarified that translation requires AI optimization to be enabled
+
 ## [1.0.0] - 2024-01-11
 
 ### Added

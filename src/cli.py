@@ -112,10 +112,15 @@ def main():
     )
     
     parser.add_argument(
-        '--language',
-        choices=['en', 'zh', 'auto'],
-        default='auto',
-        help='Target language for optimization (default: auto)'
+        '--source-language',
+        choices=['en', 'zh'],
+        help='Specify input text language to skip auto-detection'
+    )
+    
+    parser.add_argument(
+        '--target-language',
+        choices=['en', 'zh'],
+        help='Target language for translation (only with AI optimization)'
     )
     
     parser.add_argument(
@@ -189,7 +194,7 @@ def main():
         generator = ThumbnailGenerator(
             gemini_api_key=args.api_key or os.getenv('GEMINI_API_KEY'),
             enable_ai_optimization=enable_ai,
-            default_language=args.language,
+            default_language='auto',  # Always auto-detect by default
             width=args.width,
             height=args.height
         )
@@ -244,7 +249,8 @@ def main():
                 font_color=args.font_color,
                 text_position=args.text_position,
                 enable_ai_optimization=enable_ai,
-                target_language=args.language if args.language != 'auto' else None,
+                source_language=args.source_language,
+                target_language=args.target_language,
                 custom_prompt=args.ai_prompt,
                 quality=args.quality
             )
@@ -272,7 +278,8 @@ def main():
                 font_color=args.font_color,
                 text_position=args.text_position,
                 enable_ai_optimization=enable_ai,
-                target_language=args.language if args.language != 'auto' else None,
+                source_language=args.source_language,
+                target_language=args.target_language,
                 custom_prompt=args.ai_prompt,
                 quality=args.quality
             )

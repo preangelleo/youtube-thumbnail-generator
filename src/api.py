@@ -62,7 +62,8 @@ def generate_thumbnail():
         "font_color": "#FFFFFF",
         "text_position": "center",
         "enable_ai_optimization": true,
-        "target_language": "en",
+        "source_language": null,  // null = auto-detect, "en" or "zh" to skip detection
+        "target_language": "en",  // For translation (only used if different from source)
         "custom_prompt": null,
         "quality": 95,
         "format": "png",
@@ -85,7 +86,8 @@ def generate_thumbnail():
         font_color = data.get('font_color', '#FFFFFF')
         text_position = data.get('text_position', 'center')
         enable_ai = data.get('enable_ai_optimization')
-        target_language = data.get('target_language')
+        source_language = data.get('source_language')  # User-specified input language
+        target_language = data.get('target_language')  # For translation
         custom_prompt = data.get('custom_prompt')
         quality = data.get('quality', 95)
         output_format = data.get('format', 'png').lower()
@@ -110,6 +112,7 @@ def generate_thumbnail():
                 font_color=font_color,
                 text_position=text_position,
                 enable_ai_optimization=enable_ai,
+                source_language=source_language,
                 target_language=target_language,
                 custom_prompt=custom_prompt,
                 quality=quality
@@ -255,7 +258,8 @@ def optimize_text():
     Request JSON:
     {
         "text": "Original text",
-        "target_language": "en",
+        "source_language": "zh",  // Optional: specify input language
+        "target_language": "en",  // Translate to English
         "style": "engaging",
         "max_length": 50,
         "custom_prompt": null
@@ -275,13 +279,20 @@ def optimize_text():
             return jsonify({'error': 'Text is required'}), 400
         
         text = data.get('text', '')
+        source_language = data.get('source_language')  # Optional
         target_language = data.get('target_language', 'en')
         style = data.get('style', 'engaging')
         max_length = data.get('max_length', 50)
         custom_prompt = data.get('custom_prompt')
         
+        # Auto-detect source if not provided
+        if not source_language:
+            from .utils import detect_language
+            source_language = detect_language(text)
+        
         optimized = gen.text_optimizer.optimize(
             text=text,
+            source_language=source_language,
             target_language=target_language,
             custom_prompt=custom_prompt,
             max_length=max_length,
