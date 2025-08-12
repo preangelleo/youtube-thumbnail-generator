@@ -4,9 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "youtube-thumbnail-generator"
-version = "1.0.0"
+version = "1.1.0"
 authors = [
-    {name = "preangelleo", email = ""}
+    {name = "preangelleo"}
 ]
 description = "A powerful YouTube thumbnail generator with AI text optimization and multi-language support"
 readme = "README.md"

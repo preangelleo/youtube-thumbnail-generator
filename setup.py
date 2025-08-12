@@ -3,12 +3,19 @@ from setuptools import setup, find_packages
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-with open("requirements.txt", "r", encoding="utf-8") as fh:
-    requirements = [line.strip() for line in fh if line.strip() and not line.startswith("#")]
+requirements = [
+    "Pillow>=10.0.0",
+    "numpy>=1.24.0",
+    "python-dotenv>=1.0.0",
+    "Flask>=2.3.0",
+    "flask-cors>=4.0.0",
+    "google-generativeai>=0.3.0",
+    "langdetect>=1.0.9",
+]
 
 setup(
     name="youtube-thumbnail-generator",
-    version="1.0.0",
+    version="1.1.0",
     author="preangelleo",
     author_email="",
     description="A powerful YouTube thumbnail generator with AI text optimization",
