@@ -74,10 +74,10 @@ jobs:
         context: .
         push: true
         tags: |
-          ${{ secrets.DOCKER_USERNAME }}/youtube-thumbnail-generator:latest
-          ${{ secrets.DOCKER_USERNAME }}/youtube-thumbnail-generator:${{ github.sha }}
-        cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/youtube-thumbnail-generator:buildcache
-        cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/youtube-thumbnail-generator:buildcache,mode=max
+          betashow/youtube-thumbnail-generator:latest
+          betashow/youtube-thumbnail-generator:${{ github.sha }}
+        cache-from: type=registry,ref=betashow/youtube-thumbnail-generator:buildcache
+        cache-to: type=registry,ref=betashow/youtube-thumbnail-generator:buildcache,mode=max
 
   release:
     needs: test
