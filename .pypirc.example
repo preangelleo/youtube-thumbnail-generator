@@ -1,0 +1,12 @@
+[distutils]
+index-servers =
+    pypi
+    testpypi
+
+[pypi]
+username = __token__
+password = # Your PyPI API token here (starts with pypi-)
+
+[testpypi]
+username = __token__
+password = # Your TestPyPI API token here (starts with pypi-)
