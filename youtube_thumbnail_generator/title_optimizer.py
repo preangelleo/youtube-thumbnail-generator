@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Gemini model configuration - easy to change in one place
-GEMINI_FLASH_MODEL = "gemini-2.0-flash-001"
+GEMINI_FLASH_MODEL = "gemini-2.5-flash-001"
 
 # System prompt for title optimization with smart line-breaking
 TITLE_OPTIMIZATION_SYSTEM_PROMPT = """You are a professional YouTube title optimizer. Your task is to convert mixed-language or poorly formatted titles into clean, single-language titles optimized for YouTube thumbnails with intelligent line-breaking.
